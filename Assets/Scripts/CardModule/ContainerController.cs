@@ -7,7 +7,6 @@ using Assets.Scripts.Tools;
 public class ContainerController : MonoBehaviour,ITargetInPool
 {
     // 链接
-    public GameObject CardObject;
 
     //--------------属性--------------//
     public CardType Type { get { return container.type; } }
@@ -16,7 +15,10 @@ public class ContainerController : MonoBehaviour,ITargetInPool
     public Container Container { get { return container; } set { container = value; } }
     
     //------------消息响应------------//
-    private void SetCardObject(GameObject card) { CardObject = card; }
+    public void SetCard(Card card)
+    {
+        container.Card = card;
+    }
 
     public void OnReset()
     {

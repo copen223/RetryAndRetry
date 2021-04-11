@@ -6,6 +6,22 @@ using UnityEngine.UI;
 
 public class CardViewController : MonoBehaviour
 {
+    //-------------------------------------------事件定义-----------------------------------------------//
+
+    public delegate void BoolHandler(bool isStart);
+    public event BoolHandler AnimationEventObserver;
+    private void OnAnimationOver()
+    {
+        AnimationEventObserver?.Invoke(false);
+    }
+    private void OnAnimationStart()
+    {
+        AnimationEventObserver?.Invoke(true);
+    }
+
+    public void AddOberserver(BoolHandler handler,object who) { AnimationEventObserver += handler; /*Debug.Log("监听者添加：" + who.ToString());*/ }
+    public void RemoveOberserver(BoolHandler handler,object who) { AnimationEventObserver -= handler; /*Debug.Log("监听者移出：" + who.ToString());*/ }
+
     //--------------------------------------------------------------------------------------------------//
     //-----------------------------------------卡牌动画开始---------------------------------------------//
     //--------------------------------------------------------------------------------------------------//
@@ -29,8 +45,8 @@ public class CardViewController : MonoBehaviour
     private void Start()
     {
         controller = transform.parent.GetComponent<CardController>();
-        DeckTransform = controller.transform.parent.GetComponent<HandController>().DeckObject.GetComponent<Transform>();
-        DiscardTransform = controller.transform.parent.GetComponent<HandController>().DiscardObject.GetComponent<Transform>();
+        DeckTransform = controller.transform.parent.transform.parent.GetComponent<HandController>().DeckObject.GetComponent<Transform>();
+        DiscardTransform = controller.transform.parent.transform.parent.GetComponent<HandController>().DiscardObject.GetComponent<Transform>();
     }
 
     public void StartAnimation(int index)
@@ -44,7 +60,7 @@ public class CardViewController : MonoBehaviour
         ,ReplaceAnimation(true),ReplaceAnimation(false)};
 
         StartCoroutine(animations_list[index]);
-        controller.SendMessage("OnAnimationStart");
+        OnAnimationStart();
     }
 
     public void OnReset()
@@ -52,6 +68,7 @@ public class CardViewController : MonoBehaviour
         transform.localScale = new Vector3(1, 1, 1);
         transform.localPosition = new Vector3(0, 0, 0);
         transform.localRotation = Quaternion.Euler(new Vector3(0,0,0));
+        OnAnimationOver();
     }
 
 
@@ -74,6 +91,7 @@ public class CardViewController : MonoBehaviour
             timer += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
+        OnAnimationOver();
     }
     // 专注时动画，不可打断
     IEnumerator FallDownAnimation(bool isFall)
@@ -102,7 +120,7 @@ public class CardViewController : MonoBehaviour
         }
         canBreakAnimation = true;
 
-        transform.parent.SendMessage("OnAnimationOver");
+        OnAnimationOver();
     }
     // 移动动画
     IEnumerator MoveToPos(Vector3 pos)
@@ -128,18 +146,14 @@ public class CardViewController : MonoBehaviour
     {
         canBreakAnimation = false;
         float startY = isBefore ? 0 : 180;
-        float endY = isBefore ? 180 : 0;
+        float endY = isBefore ? 180 : 360;
         float curY = transform.localRotation.y;
-        float curZ = transform.localRotation.z;
-        float endZ = 0;
-        float startZ = curZ;
         float timer = 0;
 
         while (curY != endY)
         {
             curY = Mathf.LerpAngle(startY, endY, timer / Time_Animation_Rotate);
-            curZ = Mathf.LerpAngle(startZ, endZ, timer/Time_Animation_Rotate);
-            Vector3 rotate = new Vector3(transform.localRotation.x, curY, curZ );
+            Vector3 rotate = new Vector3(transform.localRotation.x, curY, transform.localRotation.z );
             transform.localRotation = Quaternion.Euler(rotate);
 
             timer += Time.deltaTime;
@@ -147,7 +161,7 @@ public class CardViewController : MonoBehaviour
         }
         canBreakAnimation = true;
 
-        transform.parent.SendMessage("OnAnimationOver");
+        OnAnimationOver();
     }
 
     private Vector3 Vector3Lerp(Vector3 startPos, Vector3 targetPos, float t)
@@ -173,7 +187,7 @@ public class CardViewController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         canBreakAnimation = true;
-        controller.SendMessage("OnAnimationOver");
+        OnAnimationOver();
     }
 
 
@@ -185,7 +199,7 @@ public class CardViewController : MonoBehaviour
     public Text Description_Text;
 
     // 卡牌更换
-    private void OnCardChanged(Card card)
+    public void OnCardChanged(Card card)
     {
         CardName_Text.text = card.name;
         Description_Text.text = card.GetCardDescription();

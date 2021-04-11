@@ -10,9 +10,11 @@ namespace Assets.Scripts.CardModule.CardStates
     {
         public override void StateStart()
         {
+            base.StateStart();
+
             int index = 4;
             Controller.SpriteObject.SendMessage("StartAnimation", index);
-            transform.parent.SendMessage("OnCardDiscard", gameObject);
+            Controller.Hand.SendMessage("OnCardDiscard", gameObject);
         }
 
         public override void StateUpdate()
@@ -20,15 +22,20 @@ namespace Assets.Scripts.CardModule.CardStates
             
         }
 
-        public void OnAnimationOver()
+        protected override void OnAnimationDo(bool isStart)
         {
-            if (Controller.currentState != this)
-                return;
-            ChangeStateTo<CardInactive>();
+            base.OnAnimationDo(isStart);
+            if(!isStart)
+            {
+                if (Controller.currentState != this)
+                    return;
+                ChangeStateTo<CardInactive>();
+            }
         }
 
         public override void StateExit()
         {
+            base.StateExit();
         }
     }
 }

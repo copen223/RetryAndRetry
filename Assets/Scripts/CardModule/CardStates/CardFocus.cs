@@ -12,6 +12,8 @@ namespace Assets.Scripts.CardModule.CardStates
     {
         public override void StateStart()
         {
+            base.StateStart();
+
             SetEventProtect();
         }
 
@@ -22,7 +24,7 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
-            
+            base.StateExit();
 
         }
 

@@ -14,7 +14,9 @@ namespace Assets.Scripts.CardModule.CardStates
         int lineId;
         public override void StateStart()
         {
-            transform.parent.SendMessage("OnCardMake",gameObject);
+            base.StateStart();
+
+            Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject,true);  //  告诉中央我在打出，其他的互动停止。
             Vector3 holderPos = GetComponent<CardController>().holder.transform.position;
             holderPos = new Vector3(holderPos.x, holderPos.y, 1);
             points.Add(holderPos);
@@ -59,8 +61,10 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
+            base.StateExit();
+
             LineDrawer.instance.FinishDrawing(lineId);
-            transform.parent.SendMessage("OnCardMakingOver", gameObject);
+            Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, true);  //  告诉中央我打出了，其他的互动停止。
         }
 
 

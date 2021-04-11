@@ -69,7 +69,7 @@ namespace Assets.Scripts.Tools
         private GameObject CreatNewTarget()
         {
             var gb = GameObject.Instantiate(prefab);
-            gb.SetActive(false);
+            gb.SetActive(true);
             list.Add(gb);
             return gb;
         }

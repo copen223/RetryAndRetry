@@ -12,6 +12,7 @@ namespace Assets.Scripts.CardModule.CardStates
     {
         public override void StateStart()
         {
+            base.StateStart();
             int index = 0;
             Controller.SpriteObject.SendMessage("StartAnimation", index);
             SetEventProtect();
@@ -24,7 +25,7 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
-            
+            base.StateExit();
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -37,6 +38,9 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (!Controller.canInteract)
+                return;
+
             if (Controller.currentState != this)
                 return;
             if (IsEventProtecting)

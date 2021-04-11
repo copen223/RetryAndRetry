@@ -8,41 +8,53 @@ using Assets.Scripts.Tools;
 
 public class CardController : MonoBehaviour,ITargetInPool
 {
+
+    [Header("链接")]
     public List<CardState> CardStates = new List<CardState>();
     public CardState currentState;
+    public GameObject Hand;
+
+    // 链接
+    public GameObject SpriteObject;
+    public CardViewController SpriteController;
+    public GameObject holder
+    {
+        get { return Hand.GetComponent<HandController>().Holder; }
+        set { }
+    }
+    private Card card;
+    public Card Card { set { card = value; SpriteObject.GetComponent<CardViewController>().OnCardChanged(Card); } get { return card; } }
 
 
 
     [Header("移动速度")]
     public float Speed;
 
-    // 链接
-    public GameObject SpriteObject;
-    public GameObject holder
-    {
-        get { return transform.parent.GetComponent<HandController>().Holder; }
-        set { }
-    }
-    private Card card;
+    // 缓存
     public Card ToBeReplacedCard;
-    public Card Card { set { card = value; SpriteObject.SendMessage("OnCardChanged", card); } get { return card; } }
-
-    private GameObject container;
-    private void SetContainer(GameObject _container) { container = _container; }
 
     // 控制参量
-    bool canInteract = true;
+    public bool canInteract = true;
     bool isMaking = false;
 
     private void Start()
     {
+        // 链接初始化
+        Hand = transform.parent.transform.parent.gameObject;
         CardStates = new List<CardState>(transform.GetComponents<CardState>());
         currentState = CardStates[0];
+        SpriteObject = transform.Find("Sprite").gameObject;
+        SpriteController = SpriteObject.GetComponent<CardViewController>();
     }
     private void Update()
     {
         currentState.StateUpdate();
     }
+
+    //---------------------事件--------------------//
+
+
+
 
     // 消息发送
     public void CardBroadcastMessage()
@@ -52,7 +64,7 @@ public class CardController : MonoBehaviour,ITargetInPool
 
 
     //---------------------------消息响应-------------------------------------//
-    private void StartMoveToCorrectPos(Vector3 pos)
+    public void StartMoveToCorrectPos(Vector3 pos)
     {
         StartCoroutine(MoveToTargetPos(pos));
     }
@@ -74,22 +86,13 @@ public class CardController : MonoBehaviour,ITargetInPool
         canInteract = active;
     }
 
-    private void HandleMessage(CardEvent.Message message)
-    {
-        switch (message)
-        {
-            case CardEvent.Message.CardIsMaking: SetInteractActive(false); break;
-            case CardEvent.Message.CardMakingOver: SetInteractActive(true); break;
-        }
-    }
-
     private void OnAnimationStart()
     {
-        transform.parent.GetComponent<HandController>().HandBroadcastMessage("OnAnimationStart");
+        Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationStart");
     }
     private void OnAnimationOver() 
     {
-        transform.parent.GetComponent<HandController>().HandBroadcastMessage("OnAnimationOver"); 
+        Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationOver"); 
     }
 
     private void OnCardReplaced(Card rep)
@@ -105,6 +108,12 @@ public class CardController : MonoBehaviour,ITargetInPool
 
     public void OnReset()
     {
-        currentState.ChangeStateTo<CardIdle>();
+        SpriteObject.SetActive(true);
+        SpriteObject.GetComponent<CardViewController>().OnReset();
+    }
+
+    public void OnEnable()
+    {
+        SetInteractActive(true);
     }
 }

@@ -11,6 +11,7 @@ namespace Assets.Scripts.CardModule.CardStates
     {
         public override void StateStart()
         {
+            base.StateStart();
             Controller.SpriteObject.SendMessage("OnReset");
         }
 
@@ -20,6 +21,7 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
+            base.StateExit();
         }
 
         private void OnDraw()

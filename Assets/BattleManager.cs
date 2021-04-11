@@ -1,14 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.BattleModule.BattleStates;
 
 public class BattleManager : MonoBehaviour
 {
+    //---------------------链接-------------------//
+    public HandController HandController;
+
+
     static public BattleManager instance;
 
     private void Awake()
     {
         instance = this;
+        HandController = GameObject.Find("Hand").GetComponent<HandController>();
     }
 
     private void Start()
@@ -38,9 +44,49 @@ public class BattleManager : MonoBehaviour
     [Header("事件订阅者")]
     public List<GameObject> ListenersList = new List<GameObject>();
 
-    public void ManagerBroadcastMessage(string message)
+    //-----------------------事件--------------------------------//
+    public enum BattleEvent
     {
-        foreach (var listener in ListenersList)
-            listener.SendMessage(message);
+        PlayerTurnStart,
+        PlayerDrawStart,
+        PlayerActionStart,
+        ComputerTurnStart,
+        ComputerActionStart,
+        TurnEnd
+    }
+
+    public delegate void VoidHandle();
+    public event VoidHandle EventObserver_PlayerTurnStart;
+    public event VoidHandle EventObserver_PlayerDrawStart;
+    public event VoidHandle EventObserver_ActionStart;
+    public event VoidHandle EventObserver_TurnEnd;
+    public event VoidHandle EventObserver_ComputerTurnStart;
+    public event VoidHandle EventObserver_ComputerActionStart;
+
+    public void AddEventObserver(BattleEvent battleEvent,VoidHandle handle)
+    {
+        switch (battleEvent)
+        {
+            case BattleEvent.PlayerTurnStart: EventObserver_PlayerTurnStart += handle;break;
+            case BattleEvent.PlayerDrawStart: EventObserver_PlayerDrawStart += handle; break;
+            case BattleEvent.PlayerActionStart: EventObserver_ActionStart += handle; break;
+            case BattleEvent.TurnEnd: EventObserver_TurnEnd += handle; break;
+            case BattleEvent.ComputerTurnStart: EventObserver_ComputerTurnStart += handle; break;
+            case BattleEvent.ComputerActionStart: EventObserver_ComputerActionStart += handle; break;
+        }        
+    }
+
+    public void EventInvokeByState(BattleEvent battleEvent)
+    {
+        switch (battleEvent)
+        {
+            case BattleEvent.PlayerTurnStart: EventObserver_PlayerTurnStart?.Invoke(); break;
+            case BattleEvent.PlayerDrawStart: EventObserver_PlayerDrawStart?.Invoke(); break;
+            case BattleEvent.PlayerActionStart: EventObserver_ActionStart?.Invoke(); break;
+            case BattleEvent.TurnEnd: EventObserver_TurnEnd?.Invoke(); break;
+            case BattleEvent.ComputerTurnStart: EventObserver_ComputerTurnStart?.Invoke(); break;
+            case BattleEvent.ComputerActionStart: EventObserver_ComputerActionStart?.Invoke(); break;
+        }
+
     }
 }

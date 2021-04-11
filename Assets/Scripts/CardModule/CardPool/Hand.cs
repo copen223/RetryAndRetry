@@ -9,7 +9,34 @@ namespace Assets.Scripts.CardModule
 {
     public class Hand : CardPool
     {
-        public Hand(PlayerController holder, List<Card> cardList) : base(holder, cardList) { }
+        public Hand(PlayerController holder, List<Card> cardList) : base(holder, cardList) { Containers = holder.containers; }
+
+        public List<Container> Containers;
+
+        public override void AddCard(Card card)
+        {
+            // 添加卡牌
+            base.AddCard(card);
+            // 对应卡槽
+            if (Containers.Count >= list.Count)
+                card.Container = Containers[list.Count - 1];
+            else
+                card.Container = null;
+        }
+
+        public override void RemoveCard(Card card)
+        {
+            base.RemoveCard(card);
+            int i = 0;
+            for(;i< Containers.Count && i<list.Count;i++)
+            {
+                Containers[i].Card = list[i];
+            }
+            for(;i<Containers.Count;i++)
+            {
+                Containers[i].Card = null;
+            }
+        }
 
         private void ReplaceAllCard(List<Container> containers,Deck deck,DiscardPool discard)
         {

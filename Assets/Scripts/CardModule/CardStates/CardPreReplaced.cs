@@ -12,8 +12,8 @@ namespace Assets.Scripts.CardModule.CardStates
     {
         public override void StateStart()
         {
+            base.StateStart();
             Controller.SpriteObject.SendMessage("StartAnimation", 6);
-            SetEventProtect();
         }
 
         public override void StateUpdate()
@@ -23,15 +23,22 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
-            
-
+            base.StateExit();
         }
 
-        public void OnAnimationOver()
+        protected override void OnAnimationDo(bool isStart)
         {
-            if (Controller.currentState!= this)
-                return;
-            ChangeStateTo<CardAfterReplaced>();
+            base.OnAnimationDo(isStart);
+            Debug.Log(name);
+            if (!isStart)
+            {
+                if (Controller.currentState != this)
+                    return;
+                ChangeStateTo<CardAfterReplaced>();
+            }
+
+
         }
+
     }
 }

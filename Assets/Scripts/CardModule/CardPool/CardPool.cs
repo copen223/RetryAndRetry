@@ -18,12 +18,12 @@ namespace Assets.Scripts.CardModule
             list = cardList;
         }
 
-        public void AddCard(Card card)
+        public virtual void AddCard(Card card)
         {
             list.Add(card);
         }
 
-        public void RemoveCard(Card card)
+        public virtual void RemoveCard(Card card)
         {
             list.Remove(card);
         }

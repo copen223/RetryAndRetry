@@ -11,6 +11,7 @@ namespace Assets.Scripts.CardModule.CardStates
     {
         public override void StateStart()
         {
+            base.StateStart();
             int index = 1;
             Controller.SpriteObject.SendMessage("StartAnimation", index);
         }
@@ -21,6 +22,7 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
+            base.StateExit();
         }
 
         public void OnPointerEnter(PointerEventData eventData)

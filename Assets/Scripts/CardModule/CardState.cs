@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class CardState : MonoBehaviour
 {
+    //------------------------------------事件订阅--------------------------------//
+    protected virtual void OnAnimationDo(bool isStart) { }
+
     public CardController Controller;
-    public virtual void StateStart() { }
+    public virtual void StateStart() { Controller.SpriteController.AddOberserver(OnAnimationDo,this); }
 
     public virtual void StateUpdate() { }
 
-    public virtual void StateExit() { }
+    public virtual void StateExit() { Controller.SpriteController.RemoveOberserver(OnAnimationDo,this); }
 
     public void ChangeStateTo<T>()
     {

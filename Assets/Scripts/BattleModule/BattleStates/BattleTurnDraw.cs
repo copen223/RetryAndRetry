@@ -12,8 +12,8 @@ namespace Assets.Scripts.BattleModule.BattleStates
         {
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
             if (actor.group.IsPlayer)
-                Manager.ManagerBroadcastMessage("OnPlayerTurnDraw");
-            else if(actor.group.IsEnemy)
+                Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerDrawStart);
+            else if (actor.group.IsEnemy)
                 ChangeStateTo<BattleTurnAction>();
         }
 
