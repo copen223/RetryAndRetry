@@ -169,7 +169,6 @@ GameObject:
   - component: {fileID: 1936907623240386320}
   - component: {fileID: 1936907623240386321}
   - component: {fileID: 1936907623240386408}
-  - component: {fileID: 2715907536210029204}
   - component: {fileID: 1936907623240386411}
   - component: {fileID: 1936907623240386410}
   - component: {fileID: 1936907623240386413}
@@ -221,9 +220,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardStates: []
   currentState: {fileID: 0}
-  Speed: 800
-  SpriteObject: {fileID: 1936907623898211412}
   Hand: {fileID: 0}
+  SpriteObject: {fileID: 1936907623898211412}
+  SpriteController: {fileID: 0}
+  Speed: 800
+  canInteract: 1
 --- !u!114 &1936907623240386408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,20 +235,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aa366b57873f0a408755477645cd800, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Controller: {fileID: 1936907623240386321}
-  IsEventProtecting: 0
---- !u!114 &2715907536210029204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936907623240386323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f277ddf45f318742bed12187cc0f07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Controller: {fileID: 1936907623240386321}

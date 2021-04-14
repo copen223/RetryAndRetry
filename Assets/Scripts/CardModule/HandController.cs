@@ -115,7 +115,7 @@ public class HandController : MonoBehaviour
     //---------------消息发送------------------//
     public void HandBroadcastMessage(string message)
     {
-        foreach (var gb in ListenerObjectsList) gb.SendMessage(message);
+      // foreach (var gb in ListenerObjectsList) gb.SendMessage(message);
     }
 
 
@@ -239,6 +239,7 @@ public class HandController : MonoBehaviour
                 CardObjects_list.Add(cardView);     // 更新显示层对象列表
                 cardView.GetComponent<CardController>().Card = hand.list[i];    // 更新显示层与数据链接
                 cardView.transform.localPosition = GetCorrectCardPos(i);    // 根据列表Index更新位置
+                cardView.SendMessage("OnReset");
             }
             // 有卡则换
             else

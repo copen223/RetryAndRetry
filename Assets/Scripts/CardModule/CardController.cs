@@ -35,7 +35,6 @@ public class CardController : MonoBehaviour,ITargetInPool
 
     // 控制参量
     public bool canInteract = true;
-    bool isMaking = false;
 
     private void Start()
     {
@@ -109,6 +108,13 @@ public class CardController : MonoBehaviour,ITargetInPool
     public void OnReset()
     {
         SpriteObject.SetActive(true);
+        if (card != null && currentState != null)
+        {
+            if (card.situation == CardSituation.Idle)
+                currentState.ChangeStateTo<CardIdle>();
+            if (card.situation == CardSituation.Focused)
+                currentState.ChangeStateTo<CardFocus>();
+        }
         SpriteObject.GetComponent<CardViewController>().OnReset();
     }
 

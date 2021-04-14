@@ -73,5 +73,13 @@ namespace Assets.Scripts.Tools
             list.Add(gb);
             return gb;
         }
+
+        public void ReSet()
+        {
+            foreach(var gb in list)
+            {
+                gb.SetActive(false);
+            }
+        }
     }
 }

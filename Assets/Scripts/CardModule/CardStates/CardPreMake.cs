@@ -64,7 +64,7 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateExit();
 
             LineDrawer.instance.FinishDrawing(lineId);
-            Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, true);  //  告诉中央我打出了，其他的互动停止。
+            Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);  //  告诉中央我打出了，其他的互动可进行。
         }
 
 

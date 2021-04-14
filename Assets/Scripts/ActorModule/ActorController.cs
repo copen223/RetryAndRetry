@@ -9,7 +9,8 @@ public class ActorController : MonoBehaviour
     public ActorGroup group;
 
     // 属性
-    private float healPoint;
+    public float HealPoint;
+    public float HealPoint_Max;
 
 
     // 事件发放
@@ -32,9 +33,9 @@ public class ActorController : MonoBehaviour
     private List<float> damageDatasList = new List<float>();
     private void OnBehit(float damage)
     {
-        if (healPoint - damage <= 0)
-            damage = healPoint;
-        healPoint -= damage;
+        if (HealPoint - damage <= 0)
+            damage = HealPoint;
+        HealPoint -= damage;
         ActorBroadcastMessage("OnBehit", damage);
     }
 

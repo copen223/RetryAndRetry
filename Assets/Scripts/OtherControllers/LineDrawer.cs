@@ -22,23 +22,26 @@ public class LineDrawer : MonoBehaviour
     public int DrawLine(List<Vector3> points,int materialId,int linerId)
     {
         int id;
-        
-        var drawerObject = DrawerObjects.GetTarget(out id);
-        if (linerId >= 0)
+        GameObject drawerObject;
+
+        if (linerId < 0)
+        {
+            drawerObject = DrawerObjects.GetTarget(out id);   // 第一次获取对象，则创建对象并获取ID
+            var line = drawerObject.GetComponent<LineRenderer>();
+            line.SetPositions(points.ToArray());        // 更新线点
+            line.material = Materials[materialId];
+            drawerObject.SetActive(true);
+            return id;
+        }
+        else   // 非首次获取对象，则根据ID获取对象
         {
             drawerObject = DrawerObjects.GetTarget(linerId);
             var line2 = drawerObject.GetComponent<LineRenderer>();
-            line2.SetPositions(points.ToArray());
+            line2.SetPositions(points.ToArray());       // 更新线点
             line2.material = Materials[materialId];
             drawerObject.SetActive(true);
             return linerId;
         }
-        DrawerObjects.GetIndex(drawerObject);
-        var line = drawerObject.GetComponent<LineRenderer>();
-        line.SetPositions(points.ToArray());
-        line.material = Materials[materialId];
-        drawerObject.SetActive(true);
-        return id;
     }
     public void FinishDrawing(int id)
     {

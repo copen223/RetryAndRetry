@@ -71,6 +71,14 @@ public class CardViewController : MonoBehaviour
         OnAnimationOver();
     }
 
+    public void SetFocusRotation()
+    {
+        transform.localScale = new Vector3(1, 1, 1);
+        transform.localPosition = new Vector3(transform.localPosition.x, OffsetY_Animation_selected, transform.localPosition.z);
+        transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 90));
+        OnAnimationOver();
+    }
+
 
     private List<IEnumerator> animations_list;
 

@@ -13,7 +13,6 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             base.StateStart();
 
-            Controller.SpriteObject.SetActive(false);
             Controller.SpriteObject.transform.localPosition = UnityEngine.Vector3.zero;
             Controller.SpriteObject.transform.localScale = UnityEngine.Vector3.one;
             gameObject.SetActive(false);
@@ -31,11 +30,6 @@ namespace Assets.Scripts.CardModule.CardStates
             Controller.SpriteObject.SetActive(true);
         }
 
-        public void OnReset()
-        {
-            if (Controller.currentState!= this)
-                return;
-            ChangeStateTo<CardReset>();
-        }
+        
     }
 }

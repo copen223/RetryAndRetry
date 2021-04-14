@@ -12,6 +12,8 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             base.StateStart();
 
+            Controller.Card.situation = CardSituation.Idle;
+
             int index = 4;
             Controller.SpriteObject.SendMessage("StartAnimation", index);
             Controller.Hand.SendMessage("OnCardDiscard", gameObject);

@@ -47,12 +47,15 @@ public class BattleManager : MonoBehaviour
     //-----------------------事件--------------------------------//
     public enum BattleEvent
     {
+        // 流程事件
         PlayerTurnStart,
         PlayerDrawStart,
         PlayerActionStart,
         ComputerTurnStart,
         ComputerActionStart,
-        TurnEnd
+        TurnEnd,
+        // 其他事件
+        ActorQueueCountChange
     }
 
     public delegate void VoidHandle();

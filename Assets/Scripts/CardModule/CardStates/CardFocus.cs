@@ -13,6 +13,10 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateStart()
         {
             base.StateStart();
+            Controller.Card.situation = CardSituation.Focused;
+
+            if(Controller.SpriteObject.transform.localRotation.z!=90)
+                Controller.SpriteController.SetFocusRotation();
 
             SetEventProtect();
         }
@@ -30,6 +34,8 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (!Controller.canInteract)
+                return;
             if (Controller.currentState != this)
                 return;
             if (IsEventProtecting)

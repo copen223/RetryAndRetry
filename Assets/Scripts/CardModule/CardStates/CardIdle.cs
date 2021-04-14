@@ -12,6 +12,7 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateStart()
         {
             base.StateStart();
+            Controller.Card.situation = CardSituation.Idle;
             int index = 1;
             Controller.SpriteObject.SendMessage("StartAnimation", index);
         }
