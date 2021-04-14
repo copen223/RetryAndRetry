@@ -3,25 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.CardModule;
 using Assets.Scripts.Tools;
+using UnityEngine.UI;
 
 public class ContainerController : MonoBehaviour,ITargetInPool
 {
     // 链接
+    public Image ContainerColorImage;
+    public Color ActiveTypeColor;
+    public Color PassiveTypeColor;
+
 
     //--------------属性--------------//
     public CardType Type { get { return container.type; } }
 
+    public Container Container { get { return container; } set { container = value; OnContainerChanged(); } }
     private Container container;
-    public Container Container { get { return container; } set { container = value; } }
-    
-    //------------消息响应------------//
-    public void SetCard(Card card)
+
+    private void OnContainerChanged()
     {
-        container.Card = card;
+        if (Type == CardType.Active) ContainerColorImage.color = ActiveTypeColor;
+        else if (Type == CardType.Passive) ContainerColorImage.color = PassiveTypeColor;
     }
 
     public void OnReset()
     {
-
+        
     }
+
+    //------------消息响应------------//
 }

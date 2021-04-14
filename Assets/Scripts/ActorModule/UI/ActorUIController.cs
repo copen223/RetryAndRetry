@@ -30,8 +30,9 @@ public class ActorUIController : MonoBehaviour
         foreach(var actor in actors )   //  为每个actor创建一个fitui
         {
             var gb = fitsPool.GetTarget(FitUIParent);
+            gb.SetActive(true);
             var controller = gb.GetComponent<ActorFitUIController>();
-            controller.Target = gb;
+            controller.Target = actor;
         }
     }
 }

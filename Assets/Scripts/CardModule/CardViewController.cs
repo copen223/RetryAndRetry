@@ -68,6 +68,7 @@ public class CardViewController : MonoBehaviour
         transform.localScale = new Vector3(1, 1, 1);
         transform.localPosition = new Vector3(0, 0, 0);
         transform.localRotation = Quaternion.Euler(new Vector3(0,0,0));
+        canBreakAnimation = true;
         OnAnimationOver();
     }
 

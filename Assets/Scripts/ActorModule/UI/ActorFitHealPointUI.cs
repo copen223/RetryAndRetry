@@ -13,7 +13,6 @@ public class ActorFitHealPointUI : MonoBehaviour
 
     void Start()
     {
-        //UpdatePosition();
     }
 
     // Update is called once per frame

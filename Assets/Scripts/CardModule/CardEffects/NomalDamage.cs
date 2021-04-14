@@ -19,7 +19,7 @@ namespace Assets.Scripts.CardModule.CardEffects
         {
             foreach(var target in targets)
             {
-                target.SendMessage("OnBehit",damage);
+                target.GetComponent<ActorController>().OnBehit(damage);
             }
         }
     }

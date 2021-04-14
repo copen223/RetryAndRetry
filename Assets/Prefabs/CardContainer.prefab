@@ -137,4 +137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 133be484f2055f248b54bbdf75be60c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardObject: {fileID: 0}
+  ContainerColorImage: {fileID: 8175700391624909401}
+  ActiveTypeColor: {r: 0.860367, g: 0.9056604, b: 0.25119257, a: 1}
+  PassiveTypeColor: {r: 0.24142039, g: 0.5368868, b: 0.9339623, a: 1}
