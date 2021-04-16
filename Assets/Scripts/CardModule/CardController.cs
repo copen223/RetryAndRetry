@@ -17,6 +17,8 @@ public class CardController : MonoBehaviour,ITargetInPool
     // 链接
     public GameObject SpriteObject;
     public CardViewController SpriteController;
+    public GameObject ActionObject;
+    public CardActionController ActionController;
     public GameObject holder
     {
         get { return Hand.GetComponent<HandController>().Holder; }
@@ -44,6 +46,8 @@ public class CardController : MonoBehaviour,ITargetInPool
         currentState = CardStates[0];
         SpriteObject = transform.Find("Sprite").gameObject;
         SpriteController = SpriteObject.GetComponent<CardViewController>();
+        ActionObject = transform.Find("Action").gameObject;
+        ActionController = ActionObject.GetComponent<CardActionController>();
     }
     private void Update()
     {
@@ -51,15 +55,6 @@ public class CardController : MonoBehaviour,ITargetInPool
     }
 
     //---------------------事件--------------------//
-
-
-
-
-    // 消息发送
-    public void CardBroadcastMessage()
-    {
-
-    }
 
 
     //---------------------------消息响应-------------------------------------//

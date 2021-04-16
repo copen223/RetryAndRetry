@@ -10,9 +10,11 @@ namespace Assets.Scripts.CardModule.CardEffects
     {
         float damage;
 
-        public NomalDamage(float _damage)
+        public NomalDamage(float _damage, EffectTrigger trigger,EffectDoType doType)
         {
             damage = _damage;
+            Trigger = trigger;
+            DoType = doType;
         }
 
         public override void DoEffect(ActorController user, List<ActorController> targets)

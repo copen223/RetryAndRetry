@@ -10,13 +10,27 @@ namespace Assets.Scripts.CardModule.CardStates
 {
     class CardPreMake : CardState
     {
+        // 控制参量
+        bool IsActiveCard;
+
+
         List<Vector3> points = new List<Vector3>();
         int lineId;
         public override void StateStart()
         {
             base.StateStart();
-
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject,true);  //  告诉中央我在打出，其他的互动停止。
+
+            Card card = Controller.Card;
+
+            //----------阶段1，判断卡牌类型----------//
+            if (card.type == CardType.Passive)
+                IsActiveCard = false;
+            else
+                IsActiveCard = true;
+
+
+
             Vector3 holderPos = GetComponent<CardController>().holder.transform.position;
             holderPos = new Vector3(holderPos.x, holderPos.y, 1);
             points.Add(holderPos);
@@ -58,6 +72,28 @@ namespace Assets.Scripts.CardModule.CardStates
                 else ChangeStateTo<CardIdle>();
             }
         }
+        public void OnCancleMake()
+        {
+            bool ifMouseOver = false;
+            List<RaycastResult> results = new List<RaycastResult>();
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = Input.mousePosition;
+            EventSystem.current.RaycastAll(eventData, results);
+            if (results.Count > 0)
+            {
+                foreach (var result in results)
+                {
+                    var gb = ExecuteEvents.GetEventHandler<IEventSystemHandler>(result.gameObject);
+                    if (gb == gameObject) ifMouseOver = true;
+                }
+            }
+
+            if (ifMouseOver)
+                ChangeStateTo<CardSelected>();
+            else ChangeStateTo<CardIdle>();
+        }
+        public void OnFinishPre()
+        { }
 
         public override void StateExit()
         {

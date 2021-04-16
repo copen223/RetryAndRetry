@@ -66,7 +66,7 @@ public class ActorController : MonoBehaviour
         switch (actorEvent)
         {
             case ActorEvent.OnBehit: EventObserver_OnBehit?.Invoke(gameObject); break;
-            case ActorEvent.OnHealUp: EventObserver_OnBehit?.Invoke(gameObject); break;
+            case ActorEvent.OnHealUp: EventObserver_OnHealUp?.Invoke(gameObject); break;
         }
 
     }

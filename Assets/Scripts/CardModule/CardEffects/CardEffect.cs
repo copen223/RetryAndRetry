@@ -8,8 +8,8 @@ namespace Assets.Scripts.CardModule
 {
     public class CardEffect
     {
-        public EffectTrigger trigger;   // 效果触发条件
-        public EffectDoType doType;     // 效果发动类型
+        public EffectTrigger Trigger;   // 效果触发条件
+        public EffectDoType DoType;     // 效果发动类型
 
         public virtual void DoEffect(ActorController user, List<ActorController> targets) { }
 
