@@ -66,6 +66,19 @@ namespace Assets.Scripts.Tools
             return gb;
         }
 
+        public GameObject GetTarget()
+        {
+            foreach (var bg in list)
+            {
+                if (!bg.activeInHierarchy)
+                {
+                    return bg;
+                }
+            }
+            var gb = CreatNewTarget();
+            return gb;
+        }
+
         private GameObject CreatNewTarget()
         {
             var gb = GameObject.Instantiate(prefab);

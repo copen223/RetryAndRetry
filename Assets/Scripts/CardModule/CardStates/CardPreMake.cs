@@ -16,8 +16,25 @@ namespace Assets.Scripts.CardModule.CardStates
 
         List<Vector3> points = new List<Vector3>();
         int lineId;
+
+        // 缓存
+        List<CardEffect> WaitToDoEffects = new List<CardEffect>();  // 打出触发的效果列表
+        List<CardEffect> FirstDoEffects = new List<CardEffect>();   // 第一列处理效果，往往是指向型
+        List<CardEffect> SecondDoEffects = new List<CardEffect>();  // 第二列处理效果，往往是自动型
+        int effectIndex;// 待处理效果索引
+        bool isActing;  // 效果选定/发动/处理中
+        bool isFirst;   // 正在处理第一队列
+
+
         public override void StateStart()
         {
+            //---------------初始化--------------
+            effectIndex = 0;
+            isActing = false;
+            isFirst = true;
+            //-----------------------------------
+
+
             base.StateStart();
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject,true);  //  告诉中央我在打出，其他的互动停止。
 
@@ -29,25 +46,29 @@ namespace Assets.Scripts.CardModule.CardStates
             else
                 IsActiveCard = true;
 
-
-
-            Vector3 holderPos = GetComponent<CardController>().holder.transform.position;
-            holderPos = new Vector3(holderPos.x, holderPos.y, 1);
-            points.Add(holderPos);
-            points.Add(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            lineId = -1;
+            if(IsActiveCard)
+            {
+                Controller.ActionController.StartAction(card.CardAction);
+                Controller.ActionController.OnActionOverEvent += OnCardActionOver;
+            }
         }
+
+        bool canAction;
+        int actionIndex;
+        public void ActionOver()
+        {
+            canAction = true;
+        }
+
 
         public override void StateUpdate()
         {
-            // 画线
-            lineId = LineDrawer.instance.DrawLine(points, 0, lineId);
-            points[1] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            points[1] = new Vector3(points[1].x, points[1].y, 1);
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (!IsActiveCard)
             {
-                ChangeStateTo<CardDiscard>();
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    ChangeStateTo<CardDiscard>();
+                }
             }
 
             // 退出状态
@@ -92,15 +113,25 @@ namespace Assets.Scripts.CardModule.CardStates
                 ChangeStateTo<CardSelected>();
             else ChangeStateTo<CardIdle>();
         }
-        public void OnFinishPre()
-        { }
 
         public override void StateExit()
         {
             base.StateExit();
 
-            LineDrawer.instance.FinishDrawing(lineId);
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);  //  告诉中央我打出了，其他的互动可进行。
+        }
+
+        public void OnCardActionOver()
+        {
+            Controller.ActionController.OnActionOverEvent -= OnCardActionOver;
+            ChangeStateTo<CardDiscard>();
+        }
+
+        // 正在进行的action结束时调用该函数
+        public void OnEffectActionOver()
+        {
+            isActing = false;
+            effectIndex += 1;
         }
 
 

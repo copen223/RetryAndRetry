@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.CardModule.CardActions
 {
-    public abstract class CardAction
+    public class CardAction
     {
 
     }

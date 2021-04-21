@@ -224,6 +224,8 @@ MonoBehaviour:
   Hand: {fileID: 0}
   SpriteObject: {fileID: 1936907623898211412}
   SpriteController: {fileID: 0}
+  ActionObject: {fileID: 0}
+  ActionController: {fileID: 0}
   Speed: 800
   canInteract: 1
 --- !u!114 &1936907623240386408
@@ -528,3 +530,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27b39b5d36504574d96314785142a401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Controller: {fileID: 0}
+  ContactPrefab: {fileID: 107345557026001997, guid: 8e379d82bd8268b438facae121d0f607, type: 3}
+  IsAction: 0

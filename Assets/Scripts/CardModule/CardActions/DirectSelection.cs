@@ -8,5 +8,6 @@ namespace Assets.Scripts.CardModule.CardActions
 {
     public class DirectSelection:CardAction
     {
+        
     }
 }

@@ -10,11 +10,10 @@ namespace Assets.Scripts.CardModule.CardEffects
     {
         float damage;
 
-        public NomalDamage(float _damage, EffectTrigger trigger,EffectDoType doType)
+        public NomalDamage(float _damage, EffectTrigger trigger)
         {
             damage = _damage;
             Trigger = trigger;
-            DoType = doType;
         }
 
         public override void DoEffect(ActorController user, List<ActorController> targets)
@@ -23,6 +22,14 @@ namespace Assets.Scripts.CardModule.CardEffects
             {
                 target.GetComponent<ActorController>().OnBehit(damage);
             }
+        }
+
+        public override void DoEffect(Combat combat)
+        {
+            if (isAtking)
+                combat.Dfder.OnBehit(damage);
+            else
+                combat.Atker.OnBehit(damage);
         }
     }
 }
