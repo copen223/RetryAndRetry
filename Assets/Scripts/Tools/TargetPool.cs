@@ -94,5 +94,16 @@ namespace Assets.Scripts.Tools
                 gb.SetActive(false);
             }
         }
+
+        public void RemoveFromPool(GameObject gb)
+        {
+            list.Remove(gb);
+        }
+        public void AddToPool(GameObject gb)
+        {
+            list.Add(gb);
+        }
+
+
     }
 }

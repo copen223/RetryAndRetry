@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.CardModule.CardActions;
+using UnityEngine;
 
 namespace Assets.Scripts.CardModule
 {
@@ -29,7 +30,21 @@ namespace Assets.Scripts.CardModule
 
         public CardType type;               // 卡牌类型 主动型/被动型 主动型打出时会生效，被动型专注时会生效
         public CardSituation situation;     // 表明卡牌在手牌中的状态，刷新时根据该项来决定显示层状态
-        public FoucsPos focusPos;           // 卡牌专注位置
+        private GameObject focusTrail;       // 卡牌专注轨迹
+        public void SetFocusTrail(GameObject gb)
+        {
+            focusTrail = gb;
+            gb.GetComponent<FocusTrailController>().Card = this;
+        }
+        public GameObject CancleFocusTrail()
+        {
+            var gb = focusTrail;
+            focusTrail.GetComponent<FocusTrailController>().Card = null;
+            focusTrail = null;
+            return gb;
+        }
+        public bool IfHasTrail { get { return focusTrail != null; } }
+
         public List<CardEffect> effects;    // 卡牌效果列表
         public CardAction CardAction;       // 卡牌如何使用，是射线选择，还是直接选择目标，还是自动完成
         //----------卡槽-------------

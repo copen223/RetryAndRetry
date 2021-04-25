@@ -20,10 +20,16 @@ public class CardActionController : MonoBehaviour
     private List<GameObject> contactObjects = new List<GameObject>();   // 接触的battleTrail
     private List<GameObject> targets = new List<GameObject>();  // 选中的对象
     private List<Combat> combats = new List<Combat>();
+
+    public GameObject FocusTrailPrefab;     // 专注轨迹预组
+    private TargetPool focusTrailPool;      // 专注轨迹池
+
+    public void AddNewTrailToPool(GameObject gb) { focusTrailPool.AddToPool(gb); }
     // 控制参量
     public bool IsAction;
 
     private bool IfInputMouse0;
+    private bool IfInputMouse1;
     public void StartAction(CardAction _action)
     {
         IsAction = true;
@@ -32,6 +38,11 @@ public class CardActionController : MonoBehaviour
         {
             StartCoroutine(DrawAttackTrail());
         }
+        else if(action is FocusTrail)
+        {
+            StartCoroutine(DrawFocusTrail());
+        }
+
     }
 
     IEnumerator DrawAttackTrail() 
@@ -49,6 +60,7 @@ public class CardActionController : MonoBehaviour
         while (true)
         {
             //---------------每帧重置数据-----------------//
+            foreach (var target in targets) target.GetComponent<ActorController>().ShowAllFocusTrail(false);
             contactPoints.Clear();
             contactObjects.Clear();
             targets.Clear();
@@ -100,7 +112,7 @@ public class CardActionController : MonoBehaviour
             //------------更新contacts和combat-------------------//
             foreach(var target in targets)
             {
-                // target.SendMessage("ShowFocusTrail");   // 让对象的focusTrai显示出来
+                target.GetComponent<ActorController>().ShowAllFocusTrail(true);
             }
 
             RaycastHit2D[] contactHits = Physics2D.RaycastAll(Controller.holder.transform.position, dir, dis); // 再射一次
@@ -145,15 +157,74 @@ public class CardActionController : MonoBehaviour
                     {
                         combat.StartDoCombat();
                     }
+                    break;
                 }
+            }
+            if (IfInputMouse1)
+            {
+                // 取消输入
+                LineDrawer.instance.FinishAllDrawing(this);
                 break;
             }
-            
+
             yield return new WaitForEndOfFrame();
         }
 
         LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
         OnActionOverEvent?.Invoke();    //  结束Action返回消息
+    }
+
+    IEnumerator DrawFocusTrail()
+    {
+        List<Vector3> points = new List<Vector3>();
+        while (true)
+        {
+            //-------------------每帧更新-------------------
+            points.Clear();
+            focusTrailPool.ReSet();
+            //-------------------计算位置和点集------------------
+            var mouseScreenPos = Input.mousePosition;
+            var mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+            Vector2 dir = mouseWorldPos - Controller.holder.transform.position;    // 鼠标相对玩家位置
+            dir = dir.normalized;
+
+            FocusTrail trail = action as FocusTrail;
+
+            float x = trail.Distance_X * (dir.x < 0 ? (-1) : 1);
+            float y = trail.Distance_Y * (dir.y < 0 ? (-1) : 1);
+
+            // 获得世界坐标
+            Vector3 point1 = new Vector3(x, 0, 0) + Controller.holder.transform.position;
+            Vector3 point2 = new Vector3(x, y, 0) + Controller.holder.transform.position;
+            Vector3 point3 = new Vector3(0, y, 0) + Controller.holder.transform.position;
+            points.Add(point1); points.Add(point2); points.Add(point3);
+            //-------------------显示-------------------------
+
+            var gb = focusTrailPool.GetTarget(Controller.holder.transform.Find("FocusTrails"));
+            gb.GetComponent<FocusTrailController>().Seter = Controller.holder;
+            gb.GetComponent<FocusTrailController>().SetPoints(points);
+            gb.SetActive(true);
+
+            //-------------------输入-------------------------
+            if(IfInputMouse0 && !gb.GetComponent<FocusTrailController>().IfOccupied)
+            {
+                focusTrailPool.RemoveFromPool(gb);
+                Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
+                Controller.Card.SetFocusTrail(gb);
+                break;
+            }
+            if(IfInputMouse1)
+            {
+                // 取消输入
+                gb.SetActive(false);
+                break;
+            }
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        OnActionOverEvent?.Invoke();    // 通知action结束
+
     }
 
     private void SetContactPointPos()
@@ -173,10 +244,12 @@ public class CardActionController : MonoBehaviour
     {
         Controller = transform.parent.GetComponent<CardController>();
         contactPool = new TargetPool(ContactPrefab);
+
+        focusTrailPool = new TargetPool(FocusTrailPrefab);
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0)) IfInputMouse0 = true; else IfInputMouse0 = false;
-
+        if (Input.GetKeyDown(KeyCode.Mouse1)) IfInputMouse1 = true; else IfInputMouse1 = false;
     }
 }

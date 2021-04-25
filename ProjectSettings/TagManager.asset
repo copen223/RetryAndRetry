@@ -6,7 +6,7 @@ TagManager:
   tags:
   - BattleTrail
   - Actor
-  - FocusTraill
+  - FocusTrail
   layers:
   - Default
   - TransparentFX

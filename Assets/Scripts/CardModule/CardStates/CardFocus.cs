@@ -29,7 +29,14 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
-
+            // 取消focus
+            if (Controller.Card.IfHasTrail)
+            {
+                var focusObject = Controller.Card.CancleFocusTrail();
+                Controller.holder.GetComponent<ActorController>().RemoveFocusTrail(focusObject);
+                focusObject.SetActive(false);
+                Controller.ActionController.AddNewTrailToPool(focusObject);
+            }
         }
 
         public void OnPointerClick(PointerEventData eventData)

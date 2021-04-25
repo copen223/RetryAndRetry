@@ -29,7 +29,7 @@ namespace Assets.Scripts.CardModule.CardStates
         protected override void OnAnimationDo(bool isStart)
         {
             base.OnAnimationDo(isStart);
-            Debug.Log(name);
+            //Debug.Log(name);
             if (!isStart)
             {
                 if (Controller.currentState != this)

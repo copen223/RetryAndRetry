@@ -9,6 +9,7 @@ public class FocusTrailController : MonoBehaviour
     LineRenderer lineRenderer;
     PolygonCollider2D collider2d;
 
+    public GameObject Seter;   // 正设置该轨迹的对象
     public GameObject Actor;   // 该专注曲线应用的对象
     public Card Card;          // 产生该专注曲线的卡牌
 
@@ -17,6 +18,9 @@ public class FocusTrailController : MonoBehaviour
 
     //------------------测试集---------------
     public List<Vector3> points_test = new List<Vector3>();
+
+    //------------------标志参量---------------
+    public bool IfOccupied;
 
     private void Awake()
     {
@@ -39,10 +43,16 @@ public class FocusTrailController : MonoBehaviour
 
     public void SetPoints(List<Vector3> points)
     {
+        //if(lineRenderer == null)
+        //{
+        //    lineRenderer = gameObject.GetComponent<LineRenderer>();
+        //    collider2d = gameObject.GetComponent<PolygonCollider2D>();
+        //}
         linePoints = points.ToArray();
         lineRenderer.positionCount = linePoints.Length;
         lineRenderer.SetPositions(linePoints);  
         UpdateColliderByLinePoints();
+        CheckIfOccupied();
     }
 
     /// <summary>
@@ -50,10 +60,15 @@ public class FocusTrailController : MonoBehaviour
     /// </summary>
     private void UpdateColliderByLinePoints()
     {
-        transform.position = linePoints[0];
-
         List<Vector2> linePoints2 = new List<Vector2>();
-        for (int i = 0; i < linePoints.Length; i++) linePoints2.Add(linePoints[i]); // 二维化
+        transform.localPosition = new Vector3(0, 0, 0);
+        foreach(var point in linePoints)
+        {
+            linePoints2.Add(point - transform.position);
+        }
+
+        //List<Vector2> linePoints2 = new List<Vector2>();
+        //for (int i = 0; i < linePoints.Length; i++) linePoints2.Add(linePoints[i]); // 二维化
         List<Vector2> colliderPoints1 = new List<Vector2>(); // 一侧线框的点集
         List<Vector2> colliderPoints2 = new List<Vector2>(); // 另一侧线框的点集
 
@@ -87,8 +102,30 @@ public class FocusTrailController : MonoBehaviour
 
         // 设置组件参数 over
         collider2d.points = colliderPoints.ToArray();
-
-
     }
 
+    private void CheckIfOccupied()
+    {
+        List<Collider2D> results = new List<Collider2D>();
+        var filter = new ContactFilter2D();
+     
+        collider2d.OverlapCollider(filter, results);
+
+        foreach (var collision in results)
+        {
+            if (collision.gameObject != gameObject && collision.tag == "FocusTrail")
+            {
+                Debug.Log(collision.gameObject);
+                Debug.Log(collision.GetComponent<FocusTrailController>().Actor);
+                Debug.Log(Seter);
+                if (collision.GetComponent<FocusTrailController>().Actor == Seter)
+                {
+                    Debug.Log("yes");
+                    IfOccupied = true;
+                    return;
+                }
+            }
+        }
+        IfOccupied = false;
+    }
 }

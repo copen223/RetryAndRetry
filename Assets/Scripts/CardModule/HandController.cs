@@ -24,6 +24,10 @@ public class HandController : MonoBehaviour
     public Vector2 ContainerOffset;
     public Transform CardsParent;
     public Transform ContainersParent;
+    public float ShowHandTime;
+    public Vector3 ShowHandPos;
+    public Vector3 HideHandPos;
+    private bool isCorouting = false;
 
     [Header("其他链接")]
     public GameObject Holder;
@@ -55,11 +59,22 @@ public class HandController : MonoBehaviour
     {
         // 订阅事件
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStart);
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnDraw);
+        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerDrawStart, OnPlayerTurnDraw);
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnPlayerTurnEnd);
 
         //
         InitLayout(true);
+    }
+
+    private void Update()
+    {
+        if(!isCorouting)
+        {
+            if(MoveHandCoroutines.Count>0)
+            {
+                StartCoroutine(MoveHand(MoveHandCoroutines[0]));
+            }
+        }
     }
 
     // 卡牌布局
@@ -152,6 +167,9 @@ public class HandController : MonoBehaviour
 
     public void OnPlayerTurnStart()
     {
+        //------------------hand显示--------------------//
+        MoveHandCoroutines.Add(new MoveHandInfo(ShowHandPos, true));
+
         //------------------激活/重置-------------------//
         foreach (var gb in CardObjects_list) gb.SetActive(false);
         foreach (var gb in ContainerObjects_list) gb.SetActive(false);
@@ -173,7 +191,7 @@ public class HandController : MonoBehaviour
             var gb = CardPool.GetTarget(CardsParent);
             gb.SetActive(true);
             gb.GetComponent<CardController>().Card = hand.list[i];  // 更新显示与数据的链接
-            gb.transform.position = GetCorrectCardPos(i);   // 确定位置
+            gb.transform.localPosition = GetCorrectCardPos(i);   // 确定位置
             gb.SendMessage("OnReset");
             CardObjects_list.Add(gb);
         }
@@ -193,9 +211,42 @@ public class HandController : MonoBehaviour
             gb.SendMessage("OnReset");
         }
 
-        BattleManager.instance.gameObject.SendMessage("OnTurnStartOver");
+        
     }
 
+    IEnumerator MoveHand(MoveHandInfo info)
+    {
+        isCorouting = true;
+        Vector3 startPos = transform.localPosition;
+        Vector3 newPos = transform.localPosition;
+        Vector3 pos = info.pos;
+        float timer = 0;
+        while (newPos != pos)
+        {
+            newPos = Vector3.Lerp(startPos, pos, timer / ShowHandTime);
+            transform.localPosition = newPos;
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        if(info.isStart)
+            BattleManager.instance.gameObject.SendMessage("OnTurnStartOver");
+        MoveHandCoroutines.RemoveAt(0);
+        isCorouting = false;
+    }
+    class MoveHandInfo { public Vector3 pos; public bool isStart; public MoveHandInfo(Vector3 _pos, bool _isStart) { pos = _pos;isStart = _isStart; } }
+
+    private List<MoveHandInfo> MoveHandCoroutines = new List<MoveHandInfo>();
+    
+    IEnumerator StartCoroutineDelay(string _name,object value,float time)
+    {
+        float timer = 0;
+        while(timer<time)
+        {
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        StartCoroutine(_name,value);
+    }
     private void OnEnemyTurnStart()
     {
         
@@ -208,6 +259,8 @@ public class HandController : MonoBehaviour
         {
             card.GetComponent<CardController>().SetInteractActive(false);
         }
+
+        MoveHandCoroutines.Add(new MoveHandInfo(HideHandPos, false));
     }
 
     public void OnPlayerTurnDraw()

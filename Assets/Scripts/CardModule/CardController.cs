@@ -64,6 +64,7 @@ public class CardController : MonoBehaviour,ITargetInPool
     }
     private IEnumerator MoveToTargetPos(Vector3 targetPos)
     {
+        Debug.Log("move");
         SetInteractActive(false);
         Vector3 curPos = transform.localPosition;
         while (curPos != targetPos)
@@ -107,7 +108,7 @@ public class CardController : MonoBehaviour,ITargetInPool
         {
             if (card.situation == CardSituation.Idle)
                 currentState.ChangeStateTo<CardIdle>();
-            if (card.situation == CardSituation.Focused)
+            if (card.situation == CardSituation.Focused && !(currentState is CardFocus))
                 currentState.ChangeStateTo<CardFocus>();
         }
         SpriteObject.GetComponent<CardViewController>().OnReset();
