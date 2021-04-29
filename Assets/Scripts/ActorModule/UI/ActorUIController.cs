@@ -14,11 +14,13 @@ public class ActorUIController : MonoBehaviour
     void Awake()
     {
         fitsPool = new TargetPool(FitUIPrefab);
+
+        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.ActorQueueCountChange, OnActorChanged);   // 添加监听
     }
 
     void Start()
     {
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.ActorQueueCountChange,OnActorChanged);   // 添加监听
+        
     }
 
 

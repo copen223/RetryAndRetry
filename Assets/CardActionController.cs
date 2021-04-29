@@ -10,6 +10,7 @@ public class CardActionController : MonoBehaviour
 {
     // 事件
     public event Action OnActionOverEvent;
+    public event Action OnActionCancleEvent;
     // 链接
     public CardController Controller;
     // 数据
@@ -99,7 +100,11 @@ public class CardActionController : MonoBehaviour
                     else if(hit.collider.tag == "Actor")  // 否则遇到对象
                     {
                         if (targets.Count < trail.TargetNum)
+                        {
                             targets.Add(hit.collider.gameObject);   // 选中对象+1
+                            if (targets.Count == trail.TargetNum)
+                                point2 = hits[i].point;
+                        }
                         else                                // 否则对象已满
                         {
                             point2 = hits[i - 1].point;
@@ -114,7 +119,8 @@ public class CardActionController : MonoBehaviour
             {
                 target.GetComponent<ActorController>().ShowAllFocusTrail(true);
             }
-
+                //-------------------检测射线碰撞的专注轨迹-------------//
+            dis = Vector2.Distance(point1, point2); 
             RaycastHit2D[] contactHits = Physics2D.RaycastAll(Controller.holder.transform.position, dir, dis); // 再射一次
             foreach(var con in contactHits)     // 完成contactPoints/Objects更新
             {
@@ -157,6 +163,8 @@ public class CardActionController : MonoBehaviour
                     {
                         combat.StartDoCombat();
                     }
+                    LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
+                    OnActionOverEvent?.Invoke();    //  结束Action返回消息
                     break;
                 }
             }
@@ -164,14 +172,12 @@ public class CardActionController : MonoBehaviour
             {
                 // 取消输入
                 LineDrawer.instance.FinishAllDrawing(this);
+                OnActionCancleEvent?.Invoke();    //  结束Action返回消息
                 break;
             }
 
             yield return new WaitForEndOfFrame();
         }
-
-        LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
-        OnActionOverEvent?.Invoke();    //  结束Action返回消息
     }
 
     IEnumerator DrawFocusTrail()
@@ -211,19 +217,23 @@ public class CardActionController : MonoBehaviour
                 focusTrailPool.RemoveFromPool(gb);
                 Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
                 Controller.Card.SetFocusTrail(gb);
+
+                OnActionOverEvent?.Invoke();    // 通知action结束
                 break;
             }
             if(IfInputMouse1)
             {
                 // 取消输入
                 gb.SetActive(false);
+
+                OnActionCancleEvent?.Invoke();    // 通知action结束
                 break;
             }
 
             yield return new WaitForEndOfFrame();
         }
 
-        OnActionOverEvent?.Invoke();    // 通知action结束
+        
 
     }
 

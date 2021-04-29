@@ -10,7 +10,7 @@ public class CardInfo : ScriptableObject
     public CardType Type;
     public string Effects;
     public CardActionType ActionType;
-    public List<float> ActionNum = new List<float>();
+    public List<float> ActionValues= new List<float>();
 }
 
-public enum CardActionType { None,BattleTrail,FocusTrail}
+public enum CardActionType { None,AttackTrail,FocusTrail}

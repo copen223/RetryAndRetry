@@ -50,6 +50,7 @@ namespace Assets.Scripts.CardModule.CardStates
             {
                 Controller.ActionController.StartAction(card.CardAction);
                 Controller.ActionController.OnActionOverEvent += OnCardActionOver;
+                Controller.ActionController.OnActionCancleEvent += OnCancleMake;
             }
         }
 
@@ -95,6 +96,9 @@ namespace Assets.Scripts.CardModule.CardStates
         }
         public void OnCancleMake()
         {
+            Controller.ActionController.OnActionOverEvent -= OnCardActionOver;
+            Controller.ActionController.OnActionCancleEvent -= OnCancleMake;
+
             bool ifMouseOver = false;
             List<RaycastResult> results = new List<RaycastResult>();
             PointerEventData eventData = new PointerEventData(EventSystem.current);
@@ -124,6 +128,7 @@ namespace Assets.Scripts.CardModule.CardStates
         public void OnCardActionOver()
         {
             Controller.ActionController.OnActionOverEvent -= OnCardActionOver;
+            Controller.ActionController.OnActionCancleEvent -= OnCancleMake;
             ChangeStateTo<CardDiscard>();
         }
 

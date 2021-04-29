@@ -14,6 +14,7 @@ namespace Assets.Scripts.CardModule.CardEffects
         {
             damage = _damage;
             Trigger = trigger;
+            CombatPriority = 1;
         }
 
         public override void DoEffect(ActorController user, List<ActorController> targets)

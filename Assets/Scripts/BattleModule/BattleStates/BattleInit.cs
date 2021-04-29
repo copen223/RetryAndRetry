@@ -8,6 +8,5 @@ namespace Assets.Scripts.BattleModule.BattleStates
 {
     class BattleInit:BattleState
     {
-        
     }
 }

@@ -64,7 +64,6 @@ public class CardController : MonoBehaviour,ITargetInPool
     }
     private IEnumerator MoveToTargetPos(Vector3 targetPos)
     {
-        Debug.Log("move");
         SetInteractActive(false);
         Vector3 curPos = transform.localPosition;
         while (curPos != targetPos)

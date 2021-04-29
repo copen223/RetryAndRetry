@@ -1686,6 +1686,7 @@ MonoBehaviour:
   advantage: 2
   HealPoint: 8
   HealPoint_Max: 10
+  DeckInfo: {fileID: 11400000, guid: fa61fff040b888041b53e1c7097fdf1e, type: 2}
   CardDrawNum: 3
 --- !u!4 &1400726138
 Transform:
@@ -2052,6 +2053,7 @@ MonoBehaviour:
   advantage: 0
   HealPoint: 8
   HealPoint_Max: 10
+  DeckInfo: {fileID: 11400000, guid: 9da4b95a8bdfe7a4f9092a0bd3be0fe3, type: 2}
   CardDrawNum: 3
 --- !u!4 &1703033472
 Transform:
@@ -2188,6 +2190,7 @@ MonoBehaviour:
   advantage: 0
   HealPoint: 8
   HealPoint_Max: 10
+  DeckInfo: {fileID: 11400000, guid: 76b283a7487d0e9418ecc9ad673c67b4, type: 2}
   CardDrawNum: 3
 --- !u!4 &1784193613
 Transform:

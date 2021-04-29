@@ -20,6 +20,7 @@ namespace Assets.Scripts.CardModule
 
     public enum EffectTrigger
     {
+        None,
         OnMake,
         OnFocus,
         OnCombatAtk,

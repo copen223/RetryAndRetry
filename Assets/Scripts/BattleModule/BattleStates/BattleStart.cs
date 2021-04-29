@@ -16,13 +16,22 @@ namespace Assets.Scripts.BattleModule.BattleStates
             Manager.ActorQueue.Sort(new ActorSortByAdvantage());
             Manager.EventInvokeByState(BattleManager.BattleEvent.ActorQueueCountChange);
             Manager.CurActorIndex = 0;
+            // 洗牌
+            foreach(var actor in Manager.ActorList)
+            {
+                if(actor.GetComponent<PlayerController>() != null)
+                {
+                    actor.GetComponent<PlayerController>().deck.Shuffle();
+                }
+            }
+            
             // 切换至战斗开始
             ChangeStateTo<BattleTurnStart>();
         }
 
         public override void StateUpdate()
         {
-            StateStart();
+            
         }
 
         // 排序方法

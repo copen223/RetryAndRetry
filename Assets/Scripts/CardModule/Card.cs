@@ -12,6 +12,7 @@ namespace Assets.Scripts.CardModule
     {
         public string name;
 
+        public Card() { }
         public Card(string _name,CardType _type,List<CardEffect> _effects)
         {
             name = _name;

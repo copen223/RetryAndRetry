@@ -8,7 +8,6 @@ public class BattleManager : MonoBehaviour
     //---------------------链接-------------------//
     public HandController HandController;
 
-
     static public BattleManager instance;
 
     private void Awake()
@@ -20,8 +19,9 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         BattleStates = new List<BattleState>(GetComponents<BattleState>());
-        currentState = BattleStates[2];
+        currentState = BattleStates[1];
         foreach (var state in BattleStates) state.Manager = this;
+        currentState.StateStart();
     }
 
     private void Update()
