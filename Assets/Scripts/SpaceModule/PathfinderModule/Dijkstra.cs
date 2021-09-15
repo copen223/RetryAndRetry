@@ -33,8 +33,9 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
 
             while (open_list.Count > 0)
             {
-                // openlist 根据费用排序，获得费用最小节点，说明该节点路径已被确定，加入close列表，后续的搜索不改变其cost和parent值
-                open_list.Sort((x, y) => x.cost < y.cost?1:0);
+                // openlist 根据费用升序排序，获得费用最小节点，说明该节点路径已被确定，加入close列表，后续的搜索不改变其cost和parent值
+                open_list.Sort((x, y) => x.cost.CompareTo(y.cost));
+                // compareTo方法在调用者大时返回1否则返回0 和 -1；Sort传入的委托参数x，y，返回1代表把x放右边。所以用x.compare函数作为委托的输出时，就是x大放右边,升序排序。
                 cur = open_list[0];
 
                 // 标记该节点，并检索相邻节点，更新他们的cost
@@ -61,10 +62,11 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
 
         private void UpdateCost(Node link,Node last)
         {
+            Edge edge = last.EdgeToNode(link);
             // 松弛函数
-            if(link.cost > link.EdgeWithNode(last).weight + last.cost)
+            if(link.cost > edge.weight + last.cost)
             {
-                link.cost = link.EdgeWithNode(last).weight + last.cost;
+                link.cost = edge.weight + last.cost;
                 // 费用降低，说明该路径目前费用最小，更新parent
                 link.parent = last;
             }

@@ -6,17 +6,17 @@ using Assets.Scripts.Tools;
 
 public class ActorController : MonoBehaviour
 {
-    private void Start()
-    {
-    }
-
-
     public int advantage;   // 先攻
     public ActorGroup group;
 
     // 属性
     public float HealPoint;
     public float HealPoint_Max;
+
+    public virtual void OnBattleStartInit()
+    { }
+
+    #region 卡牌战斗相关
 
     //-----------------FocusTrail---------------------//
     [Header("需要挂载")]
@@ -30,6 +30,9 @@ public class ActorController : MonoBehaviour
 
     //----------------FocusTrail-END------------------//
 
+    #endregion
+
+    #region 流程响应事件
     protected void OnTurnEnd()
     {
         if(BattleManager.instance.CurActorObject == gameObject)
@@ -41,8 +44,14 @@ public class ActorController : MonoBehaviour
             ShowAllFocusTrail(true);
     }
 
+    #endregion
 
+    #region 状态机与事件相关
+    public ActorState currentState;
+    public List<ActorState> ActorStates = new List<ActorState>();
+    #endregion
 
+    #region 事件相关
     // 事件响应
 
     private List<float> damageDatasList = new List<float>();
@@ -105,7 +114,7 @@ public class ActorController : MonoBehaviour
     public delegate void HealHandle(HealData healData);
     public class HealData { public HealData(GameObject atk, GameObject dfd) { atker = atk;dfder = dfd;} GameObject atker; GameObject dfder; }
 
-
+    #endregion
 }
 
 public class DamageData

@@ -5,6 +5,7 @@ using Assets.Scripts.CardModule;
 using Assets.Scripts.CardModule.CardActions;
 using Assets.Scripts.CardModule.CardEffects;
 using Assets.Scripts.ActorModule;
+using Assets.Scripts.ActorModule.ActorStates;
 
 public class PlayerController : ActorController
 {
@@ -19,10 +20,18 @@ public class PlayerController : ActorController
     [Header("属性")]
     public int CardDrawNum;
 
-    private void Start()
+    public override void OnBattleStartInit()
     {
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnTurnStart);
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnTurnEnd);
+    }
+
+
+    #region 生命周期
+    private void Start()
+    {
+        ActorStates = new List<ActorState>(transform.GetComponents<ActorState>());
+        currentState = ActorStates[0];
     }
 
     private void Awake()
@@ -35,4 +44,17 @@ public class PlayerController : ActorController
         //advantage = 3;
         group = new ActorGroup("主角", 0, ActorGroup.GroupType.Player);
     }
+
+    private void Update()
+    {
+        currentState.StateUpdate();
+    }
+    #endregion
+
+    #region 状态切换事件
+    public void OnSelectMoveTarget()
+    {
+        currentState.ChangeStateTo<ActorSelectMoveTarget>();
+    }
+    #endregion
 }

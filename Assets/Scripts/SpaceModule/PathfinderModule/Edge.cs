@@ -14,6 +14,8 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
             end = _end;
             weight = _weight;
             hasDir = 0;
+
+            origin.AddEdge(this);
         }
         public Edge(Node _origin, Node _end, int _weight,bool _hasDir)
         {
@@ -31,6 +33,19 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         public Node AnotherNode(Node _node)
         {
             return _node == origin ? end : origin;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Edge go = obj as Edge;
+            if (origin == go.origin && end == go.end && weight == go.weight)
+                return true;
+            else
+                return false;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

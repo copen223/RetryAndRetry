@@ -89,6 +89,8 @@ public class CardController : MonoBehaviour,ITargetInPool
         Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationOver"); 
     }
 
+
+    #region 状态切换事件
     private void OnCardReplaced(Card rep)
     {
         ToBeReplacedCard = rep;
@@ -112,7 +114,7 @@ public class CardController : MonoBehaviour,ITargetInPool
         }
         SpriteObject.GetComponent<CardViewController>().OnReset();
     }
-
+    #endregion
     public void OnEnable()
     {
         SetInteractActive(true);

@@ -13,6 +13,7 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
             x = _x;
             y = _y;
             cost = 9999f;
+            parent = this;
         }
 
         public int x;
@@ -24,12 +25,14 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         public List<Edge> Edges = new List<Edge>();
         public void AddEdge(Edge edge)
         {
+            // UnityEngine.Debug.Log(x + "," + y);
             if (Edges.Contains(edge))
                 return;
-            Edges.Add(edge);
+            else
+                Edges.Add(edge);
         }
 
-        public Edge EdgeWithNode(Node target)
+        public Edge EdgeToNode(Node target)
         {
             foreach(Edge edge in Edges)
             {
@@ -37,6 +40,20 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
                     return edge;
             }
             return null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ((obj as Node).x == x) && ((obj as Node).y == y);
+        }
+        public override int GetHashCode()
+        {
+            return x * 10000 + y;
+        }
+
+        public float Distance((int,int) pos)
+        {
+            return Math.Abs(pos.Item1 - x) + Math.Abs(pos.Item2 - y);
         }
     }
 }

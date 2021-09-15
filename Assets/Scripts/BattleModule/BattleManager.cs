@@ -19,7 +19,7 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         BattleStates = new List<BattleState>(GetComponents<BattleState>());
-        currentState = BattleStates[1];
+        currentState = BattleStates.Find(x => { return (x is BattleRest); });
         foreach (var state in BattleStates) state.Manager = this;
         currentState.StateStart();
     }

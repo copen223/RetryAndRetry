@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace Assets.Scripts.BattleModule.BattleStates
 {
-    class BattleInit:BattleState
+    // 闲置状态
+    class BattleRest:BattleState
     {
-        public List<GameObject> ActorsInBattle_list = new List<GameObject>();
-
         public override void StateStart()
         {
-            Manager.ActorList = ActorsInBattle_list;
-            ChangeStateTo<BattleStart>();
+            GameManager.instance.AddListener(GameManager.GameEvent.EnterBattle, OnEnterBattle);
+        }
+
+        private void OnEnterBattle()
+        {
+            ChangeStateTo<BattleInit>();
         }
     }
 }
