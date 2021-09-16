@@ -208,7 +208,7 @@ public class HandController : MonoBehaviour
             //    gb.GetComponent<ContainerController>().CardObject = CardObjects_list[i];
             //else
             //    gb.GetComponent<ContainerController>().CardObject = null;
-            gb.SendMessage("OnReset");
+             gb.SendMessage("OnReset");
         }
 
         

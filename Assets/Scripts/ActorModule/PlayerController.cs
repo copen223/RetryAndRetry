@@ -20,7 +20,8 @@ public class PlayerController : ActorController
     [Header("属性")]
     public int CardDrawNum;
 
-    public override void OnBattleStartInit()
+    // 进入战斗时，监听战斗管理器的回合开始与回合结束事件
+    public override void OnEnterBattle()
     {
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnTurnStart);
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnTurnEnd);
@@ -31,13 +32,15 @@ public class PlayerController : ActorController
     private void Start()
     {
         ActorStates = new List<ActorState>(transform.GetComponents<ActorState>());
-        currentState = ActorStates[0];
+        currentState = ActorStates.Find((x) => { return (x is ActorNoActionIdle); });
+
+        GameManager.instance.AddListener(GameManager.GameEvent.EnterBattle, OnEnterBattle);
     }
 
     private void Awake()
     {
         containers = new List<Container>() { new Container(CardType.Active), new Container(CardType.Active), new Container(CardType.Passive)};
-        // deck = new Deck(this, new List<Card> { new Card("打击", CardType.Active, new List<CardEffect>(){new NomalDamage(2f,EffectTrigger.OnCombatAtk)}, new AttackTrail(0, 5, 1)), new Card("闪躲", CardType.Passive, new List<CardEffect> { new NomalDodge() },new FocusTrail(1,1)), new Card("火焰冲击", CardType.Active, null), new Card("肉蛋葱鸡", CardType.Active, null), new Card("无视", CardType.Active, null), new Card("原声大碟", CardType.Active, null), new Card("嘿嘿嘿", CardType.Passive, null), new Card("不会吧", CardType.Passive, null) });
+        //deck = new Deck(this, new List<Card> { new Card("打击", CardType.Active, new List<CardEffect>(){new NomalDamage(2f,EffectTrigger.OnCombatAtk)}, new AttackTrail(0, 5, 1)), new Card("闪躲", CardType.Passive, new List<CardEffect> { new NomalDodge() },new FocusTrail(1,1)), new Card("火焰冲击", CardType.Active, null), new Card("肉蛋葱鸡", CardType.Active, null), new Card("无视", CardType.Active, null), new Card("原声大碟", CardType.Active, null), new Card("嘿嘿嘿", CardType.Passive, null), new Card("不会吧", CardType.Passive, null) });
         // BattleReady 决定Deck
         hand = new Hand(this, new List<Card>());
         discard = new DiscardPool(this, new List<Card>());

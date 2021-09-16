@@ -35,7 +35,7 @@ public class CardActionController : MonoBehaviour
     {
         IsAction = true;
         action = _action;
-        if(action is AttackTrail)
+        if (action is AttackTrail)
         {
             StartCoroutine(DrawAttackTrail());
         }
@@ -88,24 +88,31 @@ public class CardActionController : MonoBehaviour
 
             for(int i =0; i<hits.Length; i++)
             {
+                //-----------------------决定检测对象
                 var hit = hits[i];
-
-                if(hit.collider.gameObject != Controller.holder.gameObject)
+                var targetGo = hit.collider.gameObject;
+                if(hit.collider.tag == "Actor" && hit.collider.gameObject.name == "Sprite")
                 {
-                    if(hit.collider.tag == "Obstacle")  // 遇到障碍物，跳出遍历
+                    targetGo = hit.transform.parent.gameObject;    // 射中对象的sprite，则主要信息在于其父对象上
+                }
+
+                // 检测对象是否为自己
+                if(targetGo != Controller.holder.gameObject)
+                {
+                    if(hit.collider.tag == "Obstacle")  // 遇到障碍物，射线被阻断
                     {
                         point2 = hit.point;
                         break;
                     }
-                    else if(hit.collider.tag == "Actor")  // 否则遇到对象
+                    else if(hit.collider.tag == "Actor")  // 遇到对象
                     {
                         if (targets.Count < trail.TargetNum)
                         {
-                            targets.Add(hit.collider.gameObject);   // 选中对象+1
+                            targets.Add(targetGo);   // 选中对象+1
                             if (targets.Count == trail.TargetNum)
                                 point2 = hits[i].point;
                         }
-                        else                                // 否则对象已满
+                        else                                // 对象已满时
                         {
                             point2 = hits[i - 1].point;
                             break;
@@ -117,6 +124,7 @@ public class CardActionController : MonoBehaviour
             //------------更新contacts和combat-------------------//
             foreach(var target in targets)
             {
+                Debug.Log(target.gameObject);
                 target.GetComponent<ActorController>().ShowAllFocusTrail(true);
             }
                 //-------------------检测射线碰撞的专注轨迹-------------//
@@ -152,6 +160,7 @@ public class CardActionController : MonoBehaviour
 
             SetContactPointPos();                           // 显示接触点
             points = new List<Vector3> { point1, point2 };
+            Debug.Log("画攻击轨迹线");
             LineDrawer.instance.DrawLine(this, points, 0);  // 显示射线
 
             //-------------确认选择---------------------------------//

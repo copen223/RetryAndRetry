@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Assets.Scripts.ActorModule.ActorStates
 {
+
+    // 战斗中轮到该玩家行动时的idle状态
     public class ActorActionIdle:ActorState
     {
         public override void StateStart()
@@ -21,10 +23,10 @@ namespace Assets.Scripts.ActorModule.ActorStates
             {
                 var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 var hit = Physics2D.Raycast(mousePos_world, Vector2.zero);
-                Debug.LogError(hit.collider);
+                //Debug.LogError(hit.collider);
                 if (hit.collider == null)
                     return;
-                if (hit.collider.gameObject == Controller.gameObject || hit.transform.parent.gameObject == Controller.gameObject)
+                if (hit.collider.gameObject == Controller.gameObject || hit.transform.parent?.gameObject == Controller.gameObject)
                 {
                     ChangeStateTo<ActorSelectMoveTarget>();
                 }

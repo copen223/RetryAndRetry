@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5326665621080990232
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6375307661126261102, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_SortingOrder
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246656, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_Name
+      value: Actor2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246656, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_TagString
+      value: Actor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.359
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: advantage
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: HealPoint
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: HealPoint_Max
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: DeckInfo
+      value: 
+      objectReference: {fileID: 11400000, guid: 76b283a7487d0e9418ecc9ad673c67b4, type: 2}
+    - target: {fileID: 6375307661498246670, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: moveSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}

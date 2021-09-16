@@ -23,15 +23,17 @@ namespace Assets.Scripts.ActorModule.ActorStates
         {
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {
+                rayDrawer.EndDraw();
                 ChangeStateTo<ActorActionIdle>();
+                return;
             }
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 ChangeStateTo<ActorMoveByPath>();
-
-                
+                return;
             }
             var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //var path = pathfinderComponent.GetPathFromTo(gameObject.transform.position, mousePos_world);
             var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world);
 
             rayDrawer.DrawLine(path);

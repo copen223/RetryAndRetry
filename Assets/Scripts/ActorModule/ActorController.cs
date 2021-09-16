@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.ActorModule;
+using Assets.Scripts.ActorModule.ActorStates;
 using Assets.Scripts.Tools;
 
 public class ActorController : MonoBehaviour
@@ -13,7 +14,7 @@ public class ActorController : MonoBehaviour
     public float HealPoint;
     public float HealPoint_Max;
 
-    public virtual void OnBattleStartInit()
+    public virtual void OnEnterBattle()
     { }
 
     #region 卡牌战斗相关
@@ -35,13 +36,19 @@ public class ActorController : MonoBehaviour
     #region 流程响应事件
     protected void OnTurnEnd()
     {
-        if(BattleManager.instance.CurActorObject == gameObject)
+        if (BattleManager.instance.CurActorObject == gameObject)
+        {
             ShowAllFocusTrail(false);
+            currentState.ChangeStateTo<ActorNoActionIdle>();
+        }
     }
     protected void OnTurnStart()
     {
         if (BattleManager.instance.CurActorObject == gameObject)
+        {
             ShowAllFocusTrail(true);
+            currentState.ChangeStateTo<ActorActionIdle>();
+        }
     }
 
     #endregion

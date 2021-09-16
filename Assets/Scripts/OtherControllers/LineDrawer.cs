@@ -49,10 +49,11 @@ public class LineDrawer : MonoBehaviour
         var gb = DrawerObjects.GetTarget();
         gb.GetComponent<LineObjectController>().User = who;
         var line = gb.GetComponent<LineRenderer>();
-        line.SetPositions(points.ToArray());        // 更新线点
         line.positionCount = points.Count;
+        line.SetPositions(points.ToArray());        // 更新线点
         line.material = Materials[materialId];
         gb.SetActive(true);
+        //Debug.Log(line.gameObject + "<points:" + points[0] + "至" + points[1]);
     }
     //public void FinishDrawing(int id)
     //{

@@ -111,10 +111,10 @@ GameObject:
   - component: {fileID: 6375307661498246668}
   - component: {fileID: 6375307661498246671}
   - component: {fileID: 6375307661498246670}
+  - component: {fileID: 7666746912837725616}
   - component: {fileID: 6375307661498246664}
   - component: {fileID: 6375307661498246667}
   - component: {fileID: 6375307661498246666}
-  - component: {fileID: 6375307661498246669}
   - component: {fileID: 6375307661498246665}
   m_Layer: 0
   m_Name: Player
@@ -187,6 +187,19 @@ MonoBehaviour:
   isMoving: 0
   ifMoveNext: 0
   ifFinishMoving: 0
+--- !u!114 &7666746912837725616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375307661498246656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c035c493a3a99468ce1e006158f1e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Controller: {fileID: 0}
 --- !u!114 &6375307661498246664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,19 +236,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6addeb80344d85b4c894ae8dad3d5caf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Controller: {fileID: 0}
---- !u!114 &6375307661498246669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6375307661498246656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0538cf99809306f4f8daabb8e3246bec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Controller: {fileID: 0}
