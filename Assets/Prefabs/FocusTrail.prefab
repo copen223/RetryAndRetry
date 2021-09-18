@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1598705852944857731}
   - component: {fileID: 7290854812735006720}
   - component: {fileID: 8976750348624801098}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FocusTrail
   m_TagString: FocusTrail
   m_Icon: {fileID: 0}

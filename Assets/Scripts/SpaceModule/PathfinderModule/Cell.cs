@@ -8,15 +8,18 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
 {
     public enum MapCellType
     {
-        Empty,
-        Ground,
-        Ladder,
-        Actor
+        Empty = 0,
+        Ground = 1,
+        Platform = 2,
+        Ladder = 4,
+        Actor  = 8
     }
 
     public enum ObjectStayState
     {
         Stand,
+        CantStand,
+        Climb,
         Fall
     }
 

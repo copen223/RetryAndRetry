@@ -8,6 +8,8 @@ TagManager:
   - Actor
   - FocusTrail
   - Obstacle
+  - Platform
+  - Ladder
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - BattleTrail
+  - Terrain
   - 
   - 
   - 
