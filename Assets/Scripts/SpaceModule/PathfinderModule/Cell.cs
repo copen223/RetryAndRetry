@@ -19,6 +19,7 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
     {
         Stand,
         CantStand,
+        CantHold,
         Climb,
         Fall
     }

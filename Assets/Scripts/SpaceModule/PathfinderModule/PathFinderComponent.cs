@@ -18,8 +18,10 @@ public class PathFinderComponent : MonoBehaviour
     private Dijkstra dijkstra;
 
     //--------属性值配置--------//
-    public int CostPerUnit_Walk = 4;
-    public int CostPerUnit_Climb = 1;
+    private int CostPerUnit_Walk = 4;
+    private int CostPerUnit_Climb = 1;
+    private int CostPerUnit_JumpV = 1;
+    private int CostPerUnit_JumpH = 3;
 
 
     //--------------------------//
@@ -84,11 +86,6 @@ public class PathFinderComponent : MonoBehaviour
 
             if (cell.Type == MapCellType.Empty || cell.Type == MapCellType.Ladder)
             {
-                //if (pos.Item1 == 5 && pos.Item2 == 1)
-                //{ 
-                //    Debug.LogError(cell.Type + " " + cell.StayState); 
-                //}
-
                 // climb要弱于stand，所以先判断，若可站立，后续代码会覆盖该状态
                 if (cell.Type == MapCellType.Ladder)
                     cell.StayState = ObjectStayState.Climb;
@@ -97,10 +94,6 @@ public class PathFinderComponent : MonoBehaviour
                 {
                     // 下方为地面，自身为空，则为stand
                     var cellType = map.map_dic[(pos.Item1, pos.Item2 - 1)].Type;
-                    //if ((cellType & (MapCellType.Ground | MapCellType.Platform)) == cellType)
-                    //{
-                    //    cell.StayState = ObjectStayState.Stand;
-                    //}
                     if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
                     {
                         cell.StayState = ObjectStayState.Stand;
@@ -113,8 +106,26 @@ public class PathFinderComponent : MonoBehaviour
                             }
                         }
                     }
+                    else if(cellType == MapCellType.Empty)
+                    {
+                        //如果上方4格子内含有Ground，则表明空间不足，不可容纳
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 + i + 1)))
+                            {
+                                if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground)
+                                {
+                                    cell.StayState = ObjectStayState.CantHold;
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            //else if(cell.Type == MapCellType.Ground)
+            //{
+            //    cell.StayState = ObjectStayState.CantHold;
+            //}
             //if (pos.Item1 == 5 && pos.Item2 == 1) Debug.LogError(cell.Type+" " + cell.StayState);
         }
         
@@ -140,9 +151,15 @@ public class PathFinderComponent : MonoBehaviour
                 CreatEdgeByWalkCheck(x, y); // 行走带来的路径
                 CreatEdgeByClimbCheck(x, y);
             }
+            if(cell.StayState == ObjectStayState.Stand)
+            {
+                CreatEdgeByJumpHorizontalCheck(x, y);
+                CreatEdgeByJumpVerticalCheck(x, y);
+            }
+
         }
     }
-
+    #region 外部调用
     /// <summary>
     /// 进行一次搜索，获得所有路径，存储在图中
     /// </summary>
@@ -260,12 +277,6 @@ public class PathFinderComponent : MonoBehaviour
         {
             nearstNodes.Add(node.Value);
         }
-
-        //nearstNodes.Sort((n1, n2) => 
-        //n1.Distance((endPos_map.x,endPos_map.y)) /*+ n1.Distance((startPos_map.x, startPos_map.y))/2*/ <
-        //n2.Distance((endPos_map.x, endPos_map.y)) /*+ n2.Distance((startPos_map.x, startPos_map.y))/2*/ ? 1 : 0);
-
-        // nearstNodes.Sort((n1, n2) => (n1.x - endPos_map.x) < (n2.x - endPos_map.x) ? 1 : 0);
         nearstNodes.Sort((n1, n2) =>
         {
             float disN1 = Mathf.Abs(endPos_map.x - n1.x) + Mathf.Abs(endPos_map.y - n1.y) *0.25f;
@@ -293,6 +304,9 @@ public class PathFinderComponent : MonoBehaviour
         return null;
     }
 
+    #endregion
+
+    #region 边创建方法
     //--------------边和节点创造方法----------------//
     private void CreatEdgeByWalkCheck(int x,int y)
     {
@@ -411,4 +425,135 @@ public class PathFinderComponent : MonoBehaviour
         }
 
     }
+
+    private void CreatEdgeByJumpVerticalCheck(int x, int y)
+    {
+        // 当前节点的建立与读取
+        if (!map.map_dic.ContainsKey((x, y)))
+            return;
+        if (gragh.GetNode((x, y)) == null)
+        {
+            Node ne = new Node(x, y);
+            gragh.SetOrGetNode(ne);
+        }
+
+        Node curNode = gragh.GetNode((x, y));
+
+        if(x == -9 && y == -10)
+        {
+          //  Debug.LogError("d");
+        }
+
+        // 搜算上下节点
+        List<(int, int)> jumpPos_list = new List<(int, int)> { (0, 1), (0, -1) };
+        foreach (var offset_pos in jumpPos_list)
+        {
+            for (int i = 1; i < 5; i++)
+            {
+                bool canJump = true;
+                int offset_x = offset_pos.Item1; int offset_y = offset_pos.Item2;
+                (int, int) pos = (x + offset_x * i, y + offset_y * i);
+                int adjVal = offset_y == (-1) ? 0 : 1;  // 调整值，向下跳不消耗
+                if (map.map_dic.ContainsKey(pos))
+                {
+                    MapCell jump = map.map_dic[pos];
+                    if (jump.StayState == ObjectStayState.Stand)
+                    {
+                        for(int j = 1;j < i;j++)
+                        {
+                            (int, int) middlePos = (x + offset_x * j, y + offset_y * j);
+                            if (map.map_dic.ContainsKey(middlePos))
+                            {
+                                MapCell middle = map.map_dic[middlePos];
+                                // 移动路径中含有障碍或者本来就是可攀爬点则不创建跳跃点
+                                if(middle.Type == MapCellType.Ground || middle.StayState == ObjectStayState.Climb)
+                                {
+                                    canJump = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (canJump)
+                        {
+                            // 目标节点的建立与读取
+                            if (gragh.GetNode(pos) == null)
+                            {
+                                Node ne = new Node(pos.Item1, pos.Item2);
+                                gragh.SetOrGetNode(ne);
+                            }
+                            Node targetNode = gragh.GetNode((pos.Item1, pos.Item2));
+
+                            // 添加edge
+                            Edge edge = new Edge(curNode, targetNode, CostPerUnit_JumpV * i * adjVal);
+                            gragh.AddEdge(edge);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void CreatEdgeByJumpHorizontalCheck(int x,int y)
+    {
+        // 当前节点的建立与读取
+        if (!map.map_dic.ContainsKey((x, y)))
+            return;
+        if (gragh.GetNode((x, y)) == null)
+        {
+            Node ne = new Node(x, y);
+            gragh.SetOrGetNode(ne);
+        }
+
+        Node curNode = gragh.GetNode((x, y));
+
+        if (x == -11 && y == -6)
+        {
+            Debug.Log("1");
+        }
+        //  -13    -9
+
+        // 搜算左右节点
+        List<(int, int)> jumpPos_list = new List<(int, int)> { (1, 0), (-1, 0) };
+        foreach (var offset_pos in jumpPos_list)
+        {
+            int offset_x = offset_pos.Item1; int offset_y = offset_pos.Item2;
+            (int, int) pos = (x + offset_x * 2, y + offset_y * 2);
+
+            if (map.map_dic.ContainsKey(pos))
+            {
+                MapCell target = map.map_dic[pos];
+                if (target.StayState == ObjectStayState.Stand)
+                {
+                    bool canJump = true;
+                    (int, int) middlePos = (x + offset_x, y + offset_y);
+                    if (map.map_dic.ContainsKey(middlePos))
+                    {
+                        MapCell middle = map.map_dic[middlePos];
+                        // 轨迹中含有障碍或者不可容纳本来就是可行走路径，则不创建edge
+                        if(middle.Type == MapCellType.Ground || middle.StayState == ObjectStayState.Stand 
+                            || middle.StayState== ObjectStayState.CantHold)
+                        {
+                            canJump = false;
+                            continue;
+                        }
+                    }
+                    if (canJump)
+                    {
+                        // 周边节点的建立与读取
+                        if (gragh.GetNode(pos) == null)
+                        {
+                            Node ne = new Node(pos.Item1, pos.Item2);
+                            gragh.SetOrGetNode(ne);
+                        }
+                        Node targetNode = gragh.GetNode((pos.Item1, pos.Item2));
+
+                        // 添加edge
+                        Edge edge = new Edge(curNode, targetNode, CostPerUnit_JumpH);
+                        gragh.AddEdge(edge);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
 }

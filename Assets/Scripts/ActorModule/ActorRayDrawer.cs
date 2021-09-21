@@ -26,6 +26,7 @@ public class ActorRayDrawer : MonoBehaviour
         RayObject.SetActive(true);
         lineRenderer.positionCount = linePoints.Count;
         lineRenderer.SetPositions(linePoints.ToArray());
+        lineRenderer.Simplify(0);
     }
     public void EndDraw()
     {

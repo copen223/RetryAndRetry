@@ -7,6 +7,9 @@ using Assets.Scripts.Tools;
 
 public class ActorController : MonoBehaviour
 {
+    // 链接
+    public GameObject Sprite { get { return transform.Find("Sprite").gameObject; } }
+
     public int advantage;   // 先攻
     public ActorGroup group;
 
@@ -22,7 +25,7 @@ public class ActorController : MonoBehaviour
     //-----------------FocusTrail---------------------//
     [Header("需要挂载")]
     private List<GameObject> focusTrails = new List<GameObject>();  // 该单位存在的专注轨迹
-    public void AddFocusTrail(GameObject gb) { focusTrails.Add(gb); gb.GetComponent<FocusTrailController>().Actor = gameObject; }
+    public void AddFocusTrail(GameObject gb) { focusTrails.Add(gb); gb.GetComponent<FocusTrailController>().Actor = gameObject; gb.transform.parent = transform; }
     public void RemoveFocusTrail(GameObject gb) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; }
     public void ShowAllFocusTrail(bool isActive)
     {

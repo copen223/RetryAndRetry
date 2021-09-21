@@ -15,9 +15,7 @@ public class FocusTrailController : MonoBehaviour
 
     //------------------数据-----------------
     Vector3[] linePoints;
-
-    //------------------测试集---------------
-    public List<Vector3> points_test = new List<Vector3>();
+    Vector3[] lineOffsetPoints = new Vector3[0];
 
     //------------------标志参量---------------
     public bool IfOccupied;
@@ -34,11 +32,34 @@ public class FocusTrailController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if(lineOffsetPoints.Length > 1)
         {
-            Debug.Log("dddd");
-            SetPoints(points_test);
+            UpdateLineViewByPos();
         }
+    }
+
+    /// <summary>
+    /// 在确认设置专注轨迹时，存储offset变量，以确定移动后的线位置
+    /// </summary>
+    /// <param name="pos"></param>
+    public void SetOffsetPoints(params Vector3[] pos)
+    {
+        lineOffsetPoints = pos;
+    }
+    /// <summary>
+    /// 通过预设的位置偏移量来更新线的显示
+    /// </summary>
+    public void UpdateLineViewByPos()
+    {
+        var pos = (Vector2) transform.position;
+        Vector3[] linePoints_arry = new Vector3[lineOffsetPoints.Length];
+        for(int i =0;i<linePoints_arry.Length;i++)
+        {
+            //Debug.LogError(transform.position + "player" + Actor.transform.position + " sprite" + Actor.transform.Find("Sprite").transform.position);
+            linePoints_arry[i] = transform.position + lineOffsetPoints[i];
+        }
+        lineRenderer.positionCount = linePoints_arry.Length;
+        lineRenderer.SetPositions(linePoints_arry);
     }
 
     public void SetPoints(List<Vector3> points)
@@ -61,7 +82,7 @@ public class FocusTrailController : MonoBehaviour
     private void UpdateColliderByLinePoints()
     {
         List<Vector2> linePoints2 = new List<Vector2>();
-        transform.localPosition = new Vector3(0, 0, 0);
+        transform.position = Seter.transform.Find("Sprite").transform.position;
         foreach(var point in linePoints)
         {
             linePoints2.Add(point - transform.position);

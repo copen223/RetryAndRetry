@@ -209,20 +209,25 @@ public class CardActionController : MonoBehaviour
             float y = trail.Distance_Y * (dir.y < 0 ? (-1) : 1);
 
             // 获得世界坐标
-            Vector3 point1 = new Vector3(x, 0, 0) + Controller.holder.transform.position;
-            Vector3 point2 = new Vector3(x, y, 0) + Controller.holder.transform.position;
-            Vector3 point3 = new Vector3(0, y, 0) + Controller.holder.transform.position;
+            Vector3 point1_offset = new Vector3(x, 0);
+            Vector3 point2_offset = new Vector3(x, y);
+            Vector3 point3_offset = new Vector3(0, y);
+            Vector3 point1 = point1_offset + Controller.holder.transform.Find("Sprite").transform.position;
+            Vector3 point2 = point2_offset + Controller.holder.transform.Find("Sprite").transform.position;
+            Vector3 point3 = point3_offset + Controller.holder.transform.Find("Sprite").transform.position;
             points.Add(point1); points.Add(point2); points.Add(point3);
             //-------------------显示-------------------------
 
             var gb = focusTrailPool.GetTarget(Controller.holder.transform.Find("FocusTrails"));
             gb.GetComponent<FocusTrailController>().Seter = Controller.holder;
             gb.GetComponent<FocusTrailController>().SetPoints(points);
+            gb.GetComponent<FocusTrailController>().SetOffsetPoints();  // 清空offset点集 防止使用offsetpoint决定线
             gb.SetActive(true);
 
             //-------------------输入-------------------------
             if(IfInputMouse0 && !gb.GetComponent<FocusTrailController>().IfOccupied)
             {
+                gb.GetComponent<FocusTrailController>().SetOffsetPoints( point1_offset,point2_offset,point3_offset); 
                 focusTrailPool.RemoveFromPool(gb);
                 Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
                 Controller.Card.SetFocusTrail(gb);

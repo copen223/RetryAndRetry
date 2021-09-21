@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 using Assets.Scripts.Tools;
 
 public class LineDrawer : MonoBehaviour
@@ -51,6 +52,7 @@ public class LineDrawer : MonoBehaviour
         var line = gb.GetComponent<LineRenderer>();
         line.positionCount = points.Count;
         line.SetPositions(points.ToArray());        // 更新线点
+        line.Simplify(0);
         line.material = Materials[materialId];
         gb.SetActive(true);
         //Debug.Log(line.gameObject + "<points:" + points[0] + "至" + points[1]);
@@ -68,5 +70,11 @@ public class LineDrawer : MonoBehaviour
                 c.gameObject.SetActive(false);
         }
     }
+
+    //public SpriteShapeController shapeController;
+    //public void DrawLineBySpriteShape()
+    //{
+    //    shapeController.spriteShapeRenderer.
+    //}
 }
 

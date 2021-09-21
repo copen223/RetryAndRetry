@@ -22,7 +22,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                var hit = Physics2D.Raycast(mousePos_world, Vector2.zero);
+                var hit = Physics2D.Raycast(mousePos_world, Vector2.zero,4f,LayerMask.GetMask("Actor"));
                 //Debug.LogError(hit.collider);
                 if (hit.collider == null)
                     return;

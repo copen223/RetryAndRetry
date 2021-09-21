@@ -43,6 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5c182d2fc85664d99b676357905c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DrawerPrefab: {fileID: 0}
+  DrawerPrefab: {fileID: 8444149270197618257, guid: cf192cf0926f0b0478b12b8357d9def6, type: 3}
   Materials:
-  - {fileID: 2100000, guid: df1d2d4185954c84eaa4bec673f5adad, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
