@@ -54,8 +54,25 @@ namespace Assets.Scripts.CardModule.CardStates
             }
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                ChangeStateTo<CardPreMake>();
+                if (CheckIfCanMake())
+                    ChangeStateTo<CardPreMake>();
+                else
+                    Debug.Log("没有足够的行动点数");
             }
+        }
+
+        private bool CheckIfCanMake()
+        {
+            var actor = Controller.holder.GetComponent<ActorController>();
+            if(actor is PlayerController)
+            {
+                PlayerController player = actor as PlayerController;
+                if (player.ActionPoint >= 1)
+                    return true;
+                else
+                    return false;
+            }
+            return false;
         }
     }
 }

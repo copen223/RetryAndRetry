@@ -97,11 +97,12 @@ public class CardController : MonoBehaviour,ITargetInPool
         currentState.ChangeStateTo<CardPreReplaced>();
     }
 
-    private void OnDiscard()
+    public void OnDiscard()
     {
         currentState.ChangeStateTo<CardDiscard>();
     }
 
+    // 切换card数据时进行刷新,在handcontroller中以sendmessage调用
     public void OnReset()
     {
         SpriteObject.SetActive(true);
@@ -110,7 +111,10 @@ public class CardController : MonoBehaviour,ITargetInPool
             if (card.situation == CardSituation.Idle)
                 currentState.ChangeStateTo<CardIdle>();
             if (card.situation == CardSituation.Focused && !(currentState is CardFocus))
+            {
+                Debug.LogError("刷新时发现有专注状态卡牌，设为专注");
                 currentState.ChangeStateTo<CardFocus>();
+            }
         }
         SpriteObject.GetComponent<CardViewController>().OnReset();
     }

@@ -21,6 +21,7 @@ public class CardActionController : MonoBehaviour
     private List<GameObject> contactObjects = new List<GameObject>();   // 接触的battleTrail
     private List<GameObject> targets = new List<GameObject>();  // 选中的对象
     private List<Combat> combats = new List<Combat>();
+    private Vector3 attackPosOffset = new Vector3(0, 0.4f, 0);
 
     public GameObject FocusTrailPrefab;     // 专注轨迹预组
     private TargetPool focusTrailPool;      // 专注轨迹池
@@ -52,7 +53,7 @@ public class CardActionController : MonoBehaviour
         List<Vector3> points = new List<Vector3>(); // linerenderer用点集
 
         Vector3 holderPos = Controller.holder.transform.position;
-        holderPos = new Vector3(holderPos.x, holderPos.y, 1);
+        holderPos = new Vector3(holderPos.x, holderPos.y, 1) + attackPosOffset;
 
         Vector3 point1 = holderPos;                 // 获取第一个点
 
@@ -84,7 +85,7 @@ public class CardActionController : MonoBehaviour
             Vector3 point2 = point1 + dir * dis; //  point2确定
 
             //-----------------射线检测--------------//
-            RaycastHit2D[] hits = Physics2D.RaycastAll(Controller.holder.transform.position, dir, dis);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(point1, dir, dis);
 
             for(int i =0; i<hits.Length; i++)
             {
@@ -129,7 +130,7 @@ public class CardActionController : MonoBehaviour
             }
                 //-------------------检测射线碰撞的专注轨迹-------------//
             dis = Vector2.Distance(point1, point2); 
-            RaycastHit2D[] contactHits = Physics2D.RaycastAll(Controller.holder.transform.position, dir, dis); // 再射一次
+            RaycastHit2D[] contactHits = Physics2D.RaycastAll(point1, dir, dis); // 再射一次
             foreach(var con in contactHits)     // 完成contactPoints/Objects更新
             {
                 if (con.collider.tag == "FocusTrail")
@@ -164,6 +165,8 @@ public class CardActionController : MonoBehaviour
             LineDrawer.instance.DrawLine(this, points, 0);  // 显示射线
 
             //-------------确认选择---------------------------------//
+            //1.应用所有combat
+            //2.通知action结束
             if (IfInputMouse0)
             {
                 if (targets.Count > 0)

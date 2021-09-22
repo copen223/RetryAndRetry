@@ -10,6 +10,12 @@ namespace Assets.Scripts.CardModule
     {
         public DiscardPool(PlayerController holder, List<Card> cardList) : base(holder,cardList) { }
 
+        public override void AddCard(Card card)
+        {
+            base.AddCard(card);
+            card.situation = CardSituation.Idle;    // 弃掉的卡牌状态重置
+        }
+
         public void TranslateAllCardTo(CardPool pool)
         {
             int count = list.Count;

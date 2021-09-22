@@ -58,8 +58,8 @@ namespace Assets.Scripts.CardModule
 
     public enum CardType
     {
-        Active,
-        Passive
+        Active = 1,
+        Passive = 2
     }
 
     public enum CardSituation

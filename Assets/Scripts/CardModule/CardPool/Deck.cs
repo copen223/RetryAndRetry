@@ -25,7 +25,8 @@ namespace Assets.Scripts.CardModule
             for(int i =0;i<list.Count;i++)
             {
                 var card = list[i];
-                if (card.type == cardType)
+                var result = card.type & cardType;
+                if (result == card.type)
                     return card;
             }
             Holder.discard.TranslateAllCardTo(this);
@@ -33,7 +34,8 @@ namespace Assets.Scripts.CardModule
             for (int i = 0; i < list.Count; i++)
             {
                 var card = list[i];
-                if (card.type == cardType)
+                var result = card.type & cardType;
+                if (result == card.type)
                     return card;
             }
             return null;

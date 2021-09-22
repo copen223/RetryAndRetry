@@ -192,7 +192,8 @@ public class HandController : MonoBehaviour
             gb.SetActive(true);
             gb.GetComponent<CardController>().Card = hand.list[i];  // 更新显示与数据的链接
             gb.transform.localPosition = GetCorrectCardPos(i);   // 确定位置
-            gb.SendMessage("OnReset");
+            //gb.SendMessage("OnReset");
+            gb.GetComponent<CardController>().OnReset();        // 应用更新后的card数据
             CardObjects_list.Add(gb);
         }
         // 有多少卡槽就创建多少卡槽对象
@@ -208,7 +209,8 @@ public class HandController : MonoBehaviour
             //    gb.GetComponent<ContainerController>().CardObject = CardObjects_list[i];
             //else
             //    gb.GetComponent<ContainerController>().CardObject = null;
-             gb.SendMessage("OnReset");
+            // gb.SendMessage("OnReset");
+            gb.GetComponent<ContainerController>().OnReset();
         }
 
         
@@ -266,11 +268,12 @@ public class HandController : MonoBehaviour
     public void OnPlayerTurnDraw()
     {
         bool isChanging = false;
-        // 先弃卡
+        // 先弃掉不在卡槽中的卡
         for(int j = ContainerObjects_list.Count;j < CardObjects_list.Count;j++)
         {
             hand.TranslateCardTo(hand.list[j], discard);    // 数据层变动
-            CardObjects_list[j].SendMessage("OnDiscard");   // 显示层动画
+            //CardObjects_list[j].SendMessage("OnDiscard");   // 显示层动画
+            CardObjects_list[j].GetComponent<CardController>().OnDiscard();
             CardObjects_list.RemoveAt(j);                   // 移出显示对象
             j--;
         }
@@ -292,7 +295,8 @@ public class HandController : MonoBehaviour
                 CardObjects_list.Add(cardView);     // 更新显示层对象列表
                 cardView.GetComponent<CardController>().Card = hand.list[i];    // 更新显示层与数据链接
                 cardView.transform.localPosition = GetCorrectCardPos(i);    // 根据列表Index更新位置
-                cardView.SendMessage("OnReset");
+                //cardView.SendMessage("OnReset");
+                cardView.GetComponent<CardController>().OnReset();
             }
             // 有卡则换
             else

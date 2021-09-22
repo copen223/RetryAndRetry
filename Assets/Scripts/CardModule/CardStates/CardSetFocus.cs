@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardStates
 {
+    // 设置专注位置的状态
     class CardSetFocus : CardState
     {
         public override void StateStart()

@@ -68,6 +68,7 @@ namespace Assets.Scripts.CardModule.CardStates
             {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
+                    ReduceActionPoint();
                     ChangeStateTo<CardDiscard>();
                 }
             }
@@ -125,20 +126,30 @@ namespace Assets.Scripts.CardModule.CardStates
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);  //  告诉中央我打出了，其他的互动可进行。
         }
 
+        // 攻击选择结束时的操作
         public void OnCardActionOver()
         {
             Controller.ActionController.OnActionOverEvent -= OnCardActionOver;
             Controller.ActionController.OnActionCancleEvent -= OnCancleMake;
+            ReduceActionPoint();
             ChangeStateTo<CardDiscard>();
         }
 
-        // 正在进行的action结束时调用该函数
+        // 正在进行的action结束时调用该函数 攻击选择取消
         public void OnEffectActionOver()
         {
             isActing = false;
             effectIndex += 1;
         }
 
+        private void ReduceActionPoint()
+        {
+            var player = Controller.holder.GetComponent<PlayerController>();
+            if(player != null)
+            {
+                player.ActionPoint -= 1;
+            }
+        }
 
     }
 }

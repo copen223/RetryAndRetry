@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardStates
 {
+    // 取消专注时的动画表现，最后转到idle状态
     class CardAfterFocus: CardState
     {
         public override void StateStart()

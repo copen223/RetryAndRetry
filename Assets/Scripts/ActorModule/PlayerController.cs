@@ -18,12 +18,43 @@ public class PlayerController : ActorController
     public DeckInfo DeckInfo;
 
     [Header("属性")]
-    public int CardDrawNum;
+    private int CardDrawNum;
+    public int ActionPoint { set { ChangeActionPoint(value); }get { return actionPoint; } }
+    private int actionPoint;
+    private int ActionPoint_Resume;
+    public int MovePoint { set { ChangeMovePoint(value); } get { return movePoint; } }
+    private int movePoint;
+    private int MovePoint_Resume;
+
+    #region 属性改变方法
+    public void ChangeActionPoint(int value)
+    {
+        if(BattleManager.instance.CurActorObject == gameObject)
+        {
+            if (value < 0)
+                value = 0;
+            actionPoint = value;
+            var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("ActionPoint").GetComponent<TextUIController>();
+            ui.ChangeValue(value);
+        }
+    }
+    public void ChangeMovePoint(int value)
+    {
+        if (BattleManager.instance.CurActorObject == gameObject)
+        {
+            movePoint = value;
+            var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("MovePoint").GetComponent<TextUIController>();
+            ui.ChangeValue(value);
+        }
+    }
+    #endregion
+
 
     // 进入战斗时，监听战斗管理器的回合开始与回合结束事件
     public override void OnEnterBattle()
     {
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnTurnStart);
+        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStart);
         BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnTurnEnd);
     }
 
@@ -39,7 +70,7 @@ public class PlayerController : ActorController
 
     private void Awake()
     {
-        containers = new List<Container>() { new Container(CardType.Active), new Container(CardType.Active), new Container(CardType.Passive)};
+        containers = new List<Container>() { new Container(CardType.Active), new Container(CardType.Active | CardType.Passive), new Container(CardType.Active | CardType.Passive), new Container(CardType.Active | CardType.Passive) };
         //deck = new Deck(this, new List<Card> { new Card("打击", CardType.Active, new List<CardEffect>(){new NomalDamage(2f,EffectTrigger.OnCombatAtk)}, new AttackTrail(0, 5, 1)), new Card("闪躲", CardType.Passive, new List<CardEffect> { new NomalDodge() },new FocusTrail(1,1)), new Card("火焰冲击", CardType.Active, null), new Card("肉蛋葱鸡", CardType.Active, null), new Card("无视", CardType.Active, null), new Card("原声大碟", CardType.Active, null), new Card("嘿嘿嘿", CardType.Passive, null), new Card("不会吧", CardType.Passive, null) });
         // BattleReady 决定Deck
         hand = new Hand(this, new List<Card>());
@@ -58,6 +89,14 @@ public class PlayerController : ActorController
     public void OnSelectMoveTarget()
     {
         currentState.ChangeStateTo<ActorSelectMoveTarget>();
+    }
+    #endregion
+
+    #region 流程事件
+    public void OnPlayerTurnStart()
+    {
+        // 清空ActionPoint
+        ActionPoint = 0;
     }
     #endregion
 }

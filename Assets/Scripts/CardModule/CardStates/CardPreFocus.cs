@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardStates
 {
+    /// 专注动画状态1
     class CardPreFocus : CardState
     {
         public override void StateStart()

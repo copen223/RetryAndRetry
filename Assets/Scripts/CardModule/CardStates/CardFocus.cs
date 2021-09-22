@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardStates
 {
+    // 卡牌专注时的状态，点击右键可以取消还原
     class CardFocus : CardState, IPointerClickHandler
     {
         public override void StateStart()
@@ -15,7 +16,10 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateStart();
             Controller.Card.situation = CardSituation.Focused;
 
-            if(Controller.SpriteObject.transform.localRotation.z!=90)
+            // 为玩家增加1点行动点数
+            AddActionPointForPlayer();
+
+            if (Controller.SpriteObject.transform.localRotation.z!=90)
                 Controller.SpriteController.SetFocusRotation();
 
             SetEventProtect();
@@ -49,7 +53,18 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                ChangeStateTo<CardAfterFocus>();
+                // 禁止取消专注
+               // ChangeStateTo<CardAfterFocus>();
+            }
+        }
+
+        public void AddActionPointForPlayer()
+        {
+            var actor = Controller.holder.GetComponent<ActorController>();
+            if(actor is PlayerController)
+            {
+                var player = actor as PlayerController;
+                player.ActionPoint += 1;
             }
         }
     }

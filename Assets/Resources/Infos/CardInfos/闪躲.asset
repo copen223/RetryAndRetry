@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "\u95EA\u8EB2"
   m_EditorClassIdentifier: 
   CardName: "\u95EA\u8EB2"
-  Type: 1
+  Type: 2
   Effects: Dodge
   ActionType: 2
   ActionValues:

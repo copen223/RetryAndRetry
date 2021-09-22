@@ -16,7 +16,7 @@ namespace Assets.Scripts.BattleModule.BattleStates
 
             // 判断对象
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
-            if (actor.group.IsPlayer) Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);
+            if (actor.group.IsPlayer) { Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);/* Camera.main.GetComponent<CameraController>().Mode = CameraController.CameraMode.Freedom;*/ }
             else if (actor.group.IsEnemy) { Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerTurnStart); ChangeStateTo<BattleTurnAction>(); }
         }
 
