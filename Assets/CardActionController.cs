@@ -12,6 +12,9 @@ public class CardActionController : MonoBehaviour
     public event Action OnActionOverEvent;
     public event Action OnActionCancleEvent;
     // 链接
+    /// <summary>
+    /// 主控制器
+    /// </summary>
     public CardController Controller;
     // 数据
     private CardAction action;
@@ -111,7 +114,10 @@ public class CardActionController : MonoBehaviour
                         {
                             targets.Add(targetGo);   // 选中对象+1
                             if (targets.Count == trail.TargetNum)
+                            {
                                 point2 = hits[i].point;
+                                break;
+                            }
                         }
                         else                                // 对象已满时
                         {
@@ -125,16 +131,18 @@ public class CardActionController : MonoBehaviour
             //------------更新contacts和combat-------------------//
             foreach(var target in targets)
             {
-                Debug.Log(target.gameObject);
                 target.GetComponent<ActorController>().ShowAllFocusTrail(true);
             }
-                //-------------------检测射线碰撞的专注轨迹-------------//
+
+            //-------------------检测射线碰撞的专注轨迹-------------//
             dis = Vector2.Distance(point1, point2); 
-            RaycastHit2D[] contactHits = Physics2D.RaycastAll(point1, dir, dis); // 再射一次
+            RaycastHit2D[] contactHits = Physics2D.RaycastAll(point1, dir, dis,LayerMask.GetMask("BattleTrail")); // 再射一次
             foreach(var con in contactHits)     // 完成contactPoints/Objects更新
             {
                 if (con.collider.tag == "FocusTrail")
                 {
+                    if (con.collider.gameObject.GetComponent<FocusTrailController>().Actor == Controller.holder)
+                        continue;
                     contactPoints.Add(con.point);
                     contactObjects.Add(con.transform.gameObject);
                 }
@@ -159,7 +167,7 @@ public class CardActionController : MonoBehaviour
             //------------contacts和combats更新完毕-------------------//
             //----------------------显示------------------------------//
 
-            SetContactPointPos();                           // 显示接触点
+            SetContactPointPos(true);                           // 显示接触点
             points = new List<Vector3> { point1, point2 };
             Debug.Log("画攻击轨迹线");
             LineDrawer.instance.DrawLine(this, points, 0);  // 显示射线
@@ -175,6 +183,9 @@ public class CardActionController : MonoBehaviour
                     {
                         combat.StartDoCombat();
                     }
+                    foreach (var target in targets)
+                        target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                    SetContactPointPos(false);                      // 清除标记
                     LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
                     OnActionOverEvent?.Invoke();    //  结束Action返回消息
                     break;
@@ -183,6 +194,9 @@ public class CardActionController : MonoBehaviour
             if (IfInputMouse1)
             {
                 // 取消输入
+                foreach(var target in targets)
+                    target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                SetContactPointPos(false);                      // 清除标记
                 LineDrawer.instance.FinishAllDrawing(this);
                 OnActionCancleEvent?.Invoke();    //  结束Action返回消息
                 break;
@@ -254,14 +268,15 @@ public class CardActionController : MonoBehaviour
 
     }
 
-    private void SetContactPointPos()
+    private void SetContactPointPos(bool active)
     {
         contactPool.ReSet();
         foreach(var pos in contactPoints)
         {
             Vector3 screenPos = Camera.main.WorldToScreenPoint(pos);
             screenPos = new Vector3(screenPos.x, screenPos.y, 0);
-            var contactGb = contactPool.GetTarget();
+            var contactGb = contactPool.GetTarget(GameObject.Find("Canvas").transform);
+            contactGb.SetActive(active);
             contactGb.transform.position = screenPos;
         }
     }

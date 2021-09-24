@@ -21,7 +21,34 @@ namespace Assets.Scripts.ActorModule.ActorStates
         }
         public override void StateUpdate()
         {
-            if(Input.GetKeyDown(KeyCode.Mouse1))
+            // 1.路径获取
+            var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //var path = pathfinderComponent.GetPathFromTo(gameObject.transform.position, mousePos_world);
+            var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world);
+
+            // 2.移动点数消耗判断,修正path
+            int surplus = 0;
+            int point = (Controller as PlayerController).MovePoint;
+            while (true)
+            {
+                int cost = Mathf.FloorToInt(pathfinderComponent.GetPathCostToNode(path[path.Count - 1]));
+                surplus = point - cost;
+                if (surplus < 0)
+                {
+                    path.RemoveAt(path.Count - 1);
+                    continue;
+                }
+                else
+                    break;
+            }
+
+            // 3.点数消耗显示与路径显示
+            var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("MovePoint").GetComponent<TextUIController>();
+            ui.ChangeText(surplus + "", Color.red);
+            rayDrawer.DrawLine(path);
+
+            // 4.输入处理，左键确认，右键取消
+            if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 rayDrawer.EndDraw();
                 ChangeStateTo<ActorActionIdle>();
@@ -29,17 +56,17 @@ namespace Assets.Scripts.ActorModule.ActorStates
             }
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
-                ChangeStateTo<ActorMoveByPath>();
+                (Controller as PlayerController).MovePoint = surplus;    // 应用消耗值
+                Controller.gameObject.GetComponent<ActorMoveByPath>().SetPath(path); // 设置路径
+                ChangeStateTo<ActorMoveByPath>();   // 开始移动
                 return;
             }
-            var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //var path = pathfinderComponent.GetPathFromTo(gameObject.transform.position, mousePos_world);
-            var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world);
-
-            rayDrawer.DrawLine(path);
+            
         }
         public override void StateExit()
         {
+            var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("MovePoint").GetComponent<TextUIController>();
+            ui.ChangeText((Controller as PlayerController).MovePoint + "", Color.black);
             rayDrawer.EndDraw();
         }
     }

@@ -19,6 +19,9 @@ public class CardController : MonoBehaviour,ITargetInPool
     public CardViewController SpriteController;
     public GameObject ActionObject;
     public CardActionController ActionController;
+    /// <summary>
+    /// 卡牌的持有者
+    /// </summary>
     public GameObject holder
     {
         get { return Hand.GetComponent<HandController>().Holder; }

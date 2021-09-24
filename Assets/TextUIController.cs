@@ -26,4 +26,9 @@ public class TextUIController : MonoBehaviour
     {
         text.text = val + "";
     }
+
+    public void ChangeText(string txt,Color color)
+    {
+        text.text = txt; text.color = color;
+    }
 }

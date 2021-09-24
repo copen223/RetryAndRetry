@@ -11,11 +11,18 @@ namespace Assets.Scripts.ActorModule.ActorStates
     {
         ActorMoveComponent moveComponent;
         ActorRayDrawer rayDrawer;
+        private List<Vector3> path = new List<Vector3>();
+        
+        public void SetPath(List<Vector3> path_list)
+        {
+            path = path_list;
+        }
+
         public override void StateStart()
         {
             rayDrawer = gameObject.GetComponent<ActorRayDrawer>();
-            var pathfinder = gameObject.GetComponent<PathFinderComponent>();
-            var path = pathfinder.CurPath;
+            //var pathfinder = gameObject.GetComponent<PathFinderComponent>();
+            //var path = pathfinder.CurPath;
             moveComponent = gameObject.GetComponent<ActorMoveComponent>();
             moveComponent.StartMoveByPathList(path);
             

@@ -304,6 +304,13 @@ public class PathFinderComponent : MonoBehaviour
         return null;
     }
 
+    public float GetPathCostToNode(Vector3 targetPos_world)
+    {
+        var targetPos_map = grid.WorldToCell(targetPos_world);
+        Node node = gragh.GetNode((targetPos_map.x,targetPos_map.y));
+        return (float)node.cost;
+    }
+
     #endregion
 
     #region 边创建方法

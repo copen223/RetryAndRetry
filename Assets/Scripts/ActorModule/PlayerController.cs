@@ -21,27 +21,35 @@ public class PlayerController : ActorController
     private int CardDrawNum;
     public int ActionPoint { set { ChangeActionPoint(value); }get { return actionPoint; } }
     private int actionPoint;
-    private int ActionPoint_Resume;
+    public int ActionPoint_Max;
+    public int ActionPoint_Resume;
     public int MovePoint { set { ChangeMovePoint(value); } get { return movePoint; } }
     private int movePoint;
-    private int MovePoint_Resume;
+    public int MovePoint_Max;
+    public int MovePoint_Resume;
 
     #region 属性改变方法
-    public void ChangeActionPoint(int value)
+    private void ChangeActionPoint(int value)
     {
         if(BattleManager.instance.CurActorObject == gameObject)
         {
             if (value < 0)
                 value = 0;
+            if (value > ActionPoint_Max)
+                value = ActionPoint_Max;
             actionPoint = value;
             var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("ActionPoint").GetComponent<TextUIController>();
             ui.ChangeValue(value);
         }
     }
-    public void ChangeMovePoint(int value)
+    private void ChangeMovePoint(int value)
     {
         if (BattleManager.instance.CurActorObject == gameObject)
         {
+            if (value < 0)
+                value = 0;
+            if (value > MovePoint_Max)
+                value = MovePoint_Max;
             movePoint = value;
             var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("MovePoint").GetComponent<TextUIController>();
             ui.ChangeValue(value);
@@ -95,8 +103,9 @@ public class PlayerController : ActorController
     #region 流程事件
     public void OnPlayerTurnStart()
     {
-        // 清空ActionPoint
-        ActionPoint = 0;
+        // 恢复各点数
+        ActionPoint += ActionPoint_Resume;
+        MovePoint += MovePoint_Resume;
     }
     #endregion
 }
