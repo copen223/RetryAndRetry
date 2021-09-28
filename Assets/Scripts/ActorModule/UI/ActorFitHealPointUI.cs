@@ -3,28 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ActorFitHealPointUI : MonoBehaviour
+public class ActorFitHealPointUI : ActorFitUI
 {
-    [Header("血条相对位移")]
-    public Vector3 HealPointOffset;
-
     public Image HealPointImage;
     public Text HealPointText;
-
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void UpdatePosition()
-    {
-        transform.localPosition = HealPointOffset;
-    }
 
     public void OnHealPointChanged(GameObject gb)
     {

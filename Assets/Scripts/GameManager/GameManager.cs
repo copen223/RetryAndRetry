@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public GameState State;
 
+    public bool IfDebug;
+
     public enum GameState
     {
         Explore,

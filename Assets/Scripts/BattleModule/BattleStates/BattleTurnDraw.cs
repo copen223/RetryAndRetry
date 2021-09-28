@@ -11,10 +11,16 @@ namespace Assets.Scripts.BattleModule.BattleStates
         public override void StateStart()
         {
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
-            if (actor.group.IsPlayer)
+
+            if (GameManager.instance.IfDebug)
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerDrawStart);
-            else if (actor.group.IsEnemy)
-                ChangeStateTo<BattleTurnAction>();
+            else
+            {
+                if (actor.group.IsPlayer)
+                    Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerDrawStart);
+                else if (actor.group.IsEnemy)
+                    ChangeStateTo<BattleTurnAction>();
+            }
         }
 
         private void OnDrawOver()

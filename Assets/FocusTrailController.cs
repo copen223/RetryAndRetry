@@ -15,15 +15,19 @@ public class FocusTrailController : MonoBehaviour
 
     //------------------数据-----------------
     Vector3[] linePoints;
-    Vector3[] lineOffsetPoints = new Vector3[0];
+    // 专注轨迹物体与sprite物体的相对位移，用于确定画线位置而非物体位置，物体位置在生成后由Transform父子关系进行确定
+    Vector3[] lineOffsetPoints = new Vector3[0];    
 
     //------------------标志参量---------------
     public bool IfOccupied;
+    public bool IfShow;
 
     private void Awake()
     {
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         collider2d = gameObject.GetComponent<PolygonCollider2D>();
+
+        IfShow = true;
     }
 
     private void Start()
@@ -32,6 +36,11 @@ public class FocusTrailController : MonoBehaviour
 
     private void Update()
     {
+        if (!IfShow)
+        {
+            lineRenderer.positionCount = 0;
+            return;
+        }
         if(lineOffsetPoints.Length > 1)
         {
             UpdateLineViewByPos();
@@ -39,7 +48,7 @@ public class FocusTrailController : MonoBehaviour
     }
 
     /// <summary>
-    /// 在确认设置专注轨迹时，存储offset变量，以确定移动后的线位置
+    /// 在确认设置专注轨迹时，存储offset变量，以确定移动后的线位置。offset变量是相对sprite的位置变量
     /// </summary>
     /// <param name="pos"></param>
     public void SetOffsetPoints(params Vector3[] pos)
@@ -47,16 +56,18 @@ public class FocusTrailController : MonoBehaviour
         lineOffsetPoints = pos;
     }
     /// <summary>
-    /// 通过预设的位置偏移量来更新线的显示
+    /// 通过预设的位置偏移量、actor对象的scale，来更新线的显示。除使用卡牌设定位置外，轨迹线显示都由该方法实现
     /// </summary>
-    public void UpdateLineViewByPos()
+    private void UpdateLineViewByPos()
     {
-        var pos = (Vector2) transform.position;
+        var pos = Actor.transform.Find("Sprite").transform.position;
         Vector3[] linePoints_arry = new Vector3[lineOffsetPoints.Length];
         for(int i =0;i<linePoints_arry.Length;i++)
         {
             //Debug.LogError(transform.position + "player" + Actor.transform.position + " sprite" + Actor.transform.Find("Sprite").transform.position);
-            linePoints_arry[i] = transform.position + lineOffsetPoints[i];
+            //linePoints_arry[i] = (transform.position + lineOffsetPoints[i]);
+            var pos1 = pos; var pos2 = lineOffsetPoints[i]; var scale_x = Actor.transform.localScale.x;
+            linePoints_arry[i] = new Vector3((pos1.x + pos2.x * scale_x), pos1.y + pos2.y, pos1.z + pos2.z);
         }
         lineRenderer.positionCount = linePoints_arry.Length;
         lineRenderer.SetPositions(linePoints_arry);

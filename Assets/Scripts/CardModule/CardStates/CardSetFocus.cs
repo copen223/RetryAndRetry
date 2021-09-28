@@ -16,6 +16,7 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateStart();
             SetEventProtect();
 
+            // 在actioncontroller中执行设置专注位置的行动
             Controller.ActionController.StartAction(Controller.Card.CardAction);
             Controller.ActionController.OnActionOverEvent += OnActionOver;
         }

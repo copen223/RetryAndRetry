@@ -21,16 +21,27 @@ namespace Assets.Scripts.CardModule.CardEffects
         {
             foreach(var target in targets)
             {
-                target.GetComponent<ActorController>().OnBehit(damage);
+                var dir = (user.transform.position - target.transform.position);
+                target.GetComponent<ActorController>().OnBehit(new DamageData(damage,dir));
             }
         }
 
         public override void DoEffect(Combat combat)
         {
+            var dir = isAtking ? combat.Atker.transform.position - combat.Dfder.transform.position : combat.Dfder.transform.position - combat.Atker.transform.position;
             if (isAtking)
-                combat.Dfder.OnBehit(damage);
+            {
+                combat.Dfder.OnBehit(new DamageData(damage, dir));
+                var target = combat.Dfder;
+                var finder = target.GetComponent<PathFinderComponent>();
+                var path = finder.SearchAndGetPathByBeatBack(target.transform.position, -1 * dir, 2);
+                var move = target.GetComponent<ActorMoveComponent>();
+                move.StartForceMoveByPathList(path);
+            }
             else
-                combat.Atker.OnBehit(damage);
+            {
+                combat.Atker.OnBehit(new DamageData(damage, dir));
+            }
         }
     }
 }

@@ -3889,6 +3889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   State: 0
+  IfDebug: 1
 --- !u!1 &1807210961
 GameObject:
   m_ObjectHideFlags: 0
@@ -4830,6 +4831,10 @@ PrefabInstance:
       propertyPath: MovePoint_Resume
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 1267124080570303508, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
+      propertyPath: IfEnemy
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303512, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_Name
       value: Actor2
@@ -4840,11 +4845,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303513, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.44
+      value: 3.53
       objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303513, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.16
+      value: -0.68
       objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303513, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4899,6 +4904,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 6680674381075924749, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939744, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: ActionPoint_Max
       value: 4
@@ -4915,6 +4924,10 @@ PrefabInstance:
       propertyPath: MovePoint_Resume
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 6680674381782939744, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
+      propertyPath: IfEnemy
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_Name
       value: Actor1
@@ -4925,11 +4938,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.45
+      value: 1.47
       objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.62
+      value: -0.88
       objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4966,6 +4979,10 @@ PrefabInstance:
     - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}

@@ -11,10 +11,16 @@ namespace Assets.Scripts.BattleModule.BattleStates
         public override void StateStart()
         {
             base.StateStart();
-            if(Manager.CurActorObject.GetComponent<ActorController>().group.IsPlayer)
+
+            if (GameManager.instance.IfDebug)
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerActionStart);
             else
-                Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerActionStart);
+            {
+                if (Manager.CurActorObject.GetComponent<ActorController>().group.IsPlayer)
+                    Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerActionStart);
+                else
+                    Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerActionStart);
+            }
         }
 
 

@@ -10,7 +10,7 @@ namespace Assets.Scripts.ActorModule
     {
         string groupName;
         int groupId;
-        GroupType type;
+        public GroupType type;
 
         public ActorGroup(string _name, int _id, GroupType _type)
         {

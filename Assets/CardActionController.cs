@@ -65,7 +65,12 @@ public class CardActionController : MonoBehaviour
         while (true)
         {
             //---------------每帧重置数据-----------------//
-            foreach (var target in targets) target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+            foreach (var target in targets)
+            {
+
+                target.GetComponent<ActorController>().ActiveAllFocusTrail(false);
+                target.GetComponent<ActorController>().ShowFocusTrailCount(false);
+            }
             contactPoints.Clear();
             contactObjects.Clear();
             targets.Clear();
@@ -73,7 +78,7 @@ public class CardActionController : MonoBehaviour
             LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
             //--------------------------------------------//
 
-            //------------------画线--------------//
+            //------------------画攻击线--------------//
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePos = new Vector3(mousePos.x, mousePos.y, 1);
             Vector3 dir = (mousePos - point1).normalized;    //  方向确定
@@ -131,7 +136,10 @@ public class CardActionController : MonoBehaviour
             //------------更新contacts和combat-------------------//
             foreach(var target in targets)
             {
-                target.GetComponent<ActorController>().ShowAllFocusTrail(true);
+                // 射中的目标激活专注轨迹，显示专注个数。专注轨迹的具体显示视情况而定
+                target.GetComponent<ActorController>().ActiveAllFocusTrail(true);
+                target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                target.GetComponent<ActorController>().ShowFocusTrailCount(true);
             }
 
             //-------------------检测射线碰撞的专注轨迹-------------//
@@ -143,7 +151,8 @@ public class CardActionController : MonoBehaviour
                 {
                     if (con.collider.gameObject.GetComponent<FocusTrailController>().Actor == Controller.holder)
                         continue;
-                    contactPoints.Add(con.point);
+                    if(con.collider.gameObject.GetComponent<FocusTrailController>().IfShow) // 只有与显示的轨迹相交才显示相交点
+                        contactPoints.Add(con.point);
                     contactObjects.Add(con.transform.gameObject);
                 }
             }
@@ -169,7 +178,7 @@ public class CardActionController : MonoBehaviour
 
             SetContactPointPos(true);                           // 显示接触点
             points = new List<Vector3> { point1, point2 };
-            Debug.Log("画攻击轨迹线");
+            //Debug.Log("画攻击轨迹线");
             LineDrawer.instance.DrawLine(this, points, 0);  // 显示射线
 
             //-------------确认选择---------------------------------//
@@ -184,7 +193,11 @@ public class CardActionController : MonoBehaviour
                         combat.StartDoCombat();
                     }
                     foreach (var target in targets)
+                    {
+                        target.GetComponent<ActorController>().ActiveAllFocusTrail(false);
                         target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                        target.GetComponent<ActorController>().ShowFocusTrailCount(false);
+                    }
                     SetContactPointPos(false);                      // 清除标记
                     LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
                     OnActionOverEvent?.Invoke();    //  结束Action返回消息
@@ -194,8 +207,12 @@ public class CardActionController : MonoBehaviour
             if (IfInputMouse1)
             {
                 // 取消输入
-                foreach(var target in targets)
+                foreach (var target in targets)
+                {
+                    target.GetComponent<ActorController>().ActiveAllFocusTrail(false);
                     target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                    target.GetComponent<ActorController>().ShowFocusTrailCount(false);
+                }
                 SetContactPointPos(false);                      // 清除标记
                 LineDrawer.instance.FinishAllDrawing(this);
                 OnActionCancleEvent?.Invoke();    //  结束Action返回消息
@@ -244,7 +261,8 @@ public class CardActionController : MonoBehaviour
             //-------------------输入-------------------------
             if(IfInputMouse0 && !gb.GetComponent<FocusTrailController>().IfOccupied)
             {
-                gb.GetComponent<FocusTrailController>().SetOffsetPoints( point1_offset,point2_offset,point3_offset); 
+                Vector2 scale_x = Controller.holder.transform.localScale;
+                gb.GetComponent<FocusTrailController>().SetOffsetPoints( point1_offset * scale_x, point2_offset * scale_x, point3_offset); 
                 focusTrailPool.RemoveFromPool(gb);
                 Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
                 Controller.Card.SetFocusTrail(gb);

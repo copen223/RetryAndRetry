@@ -19,21 +19,35 @@ public class ActorMoveComponent : MonoBehaviour
     {
         ifFinishMoving = false;
         if (!isMoving)
-            StartCoroutine(MoveByPathListCouroutine(path));
+            StartCoroutine(MoveByPathListCouroutine(path,true));
     }
 
-    private IEnumerator MoveByPathListCouroutine(List<Vector3> path)
+    public void StartForceMoveByPathList(List<Vector3> path)
+    {
+        ifFinishMoving = false;
+        if (!isMoving)
+            StartCoroutine(MoveByPathListCouroutine(path,false));
+    }
+
+    private IEnumerator MoveByPathListCouroutine(List<Vector3> path,bool ifChangeFace)
     {
         int i = 0;
         ifMoveNext = true;
-        while(i < path.Count)
+        var last = transform.position;
+        while (i < path.Count)
         {
             if (ifMoveNext)
             {
                 ifMoveNext = false;
+
                 var point = path[i];
+                var dir = point - last;
+
+                if(ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
                 StartCoroutine(MoveToPointCouroutine(point));
+
                 i++;
+                last = point;
             }
             yield return new WaitForEndOfFrame();
         }

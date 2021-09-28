@@ -9,6 +9,12 @@ using Assets.Scripts.ActorModule.ActorStates;
 
 public class PlayerController : ActorController
 {
+    /// <summary>
+    /// 测试用标签，用于设定不同的阵营
+    /// </summary>
+    public bool IfEnemy; 
+
+
     public Hand hand;
     public DiscardPool discard;
     public Deck deck;
@@ -84,7 +90,10 @@ public class PlayerController : ActorController
         hand = new Hand(this, new List<Card>());
         discard = new DiscardPool(this, new List<Card>());
         //advantage = 3;
-        group = new ActorGroup("主角", 0, ActorGroup.GroupType.Player);
+        // 设定阵营
+        if (!IfEnemy)
+            group = new ActorGroup("主角", 0, ActorGroup.GroupType.Player);
+        else group = new ActorGroup("敌人", 0, ActorGroup.GroupType.Enemy);
     }
 
     private void Update()

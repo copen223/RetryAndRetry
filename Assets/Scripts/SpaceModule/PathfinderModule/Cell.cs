@@ -12,14 +12,13 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         Ground = 1,
         Platform = 2,
         Ladder = 4,
-        Actor  = 8
+        EnemyActor  = 8         // 被敌方单位占领，阻断移动
     }
 
     public enum ObjectStayState
     {
-        Stand,
-        CantStand,
-        CantHold,
+        Stand,          // 能够站立，能够进行walk行为的唯一cell
+        CantHold,       // 在空中，而且空间不足，不能容纳，作为横向跳跃的阻断信息之一
         Climb,
         Fall
     }
@@ -34,5 +33,6 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         public MapCellType Type;
         public ObjectStayState StayState;
         public (int, int) IntPos;
+        public int height;
     }
 }
