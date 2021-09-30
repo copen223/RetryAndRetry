@@ -710,7 +710,7 @@ public class PathFinderComponent : MonoBehaviour
 
 
 
-
+        // 后面是下落处理
         var targetNode = GetNode(targetPos);
         if (targetNode == curNode) return (x, y);
 

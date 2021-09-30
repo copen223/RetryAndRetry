@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4961986026492871042}
   - component: {fileID: 1598705852944857731}
+  - component: {fileID: 5214723390997666330}
   - component: {fileID: 7290854812735006720}
   - component: {fileID: 8976750348624801098}
   m_Layer: 8
@@ -48,6 +49,19 @@ MonoBehaviour:
   Seter: {fileID: 0}
   Actor: {fileID: 0}
   IfOccupied: 0
+  IfShow: 0
+--- !u!114 &5214723390997666330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4961986026492871041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d84070d8da6c72b4f878f2bbde48faf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!120 &7290854812735006720
 LineRenderer:
   m_ObjectHideFlags: 0

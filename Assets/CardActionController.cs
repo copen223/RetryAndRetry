@@ -84,6 +84,8 @@ public class CardActionController : MonoBehaviour
             Vector3 dir = (mousePos - point1).normalized;    //  方向确定
             float dis = Vector2.Distance(mousePos, point1);  // 距离确定
 
+            Controller.holder.GetComponent<ActorController>().ChangeFaceTo(dir);
+
             // 读action信息求射线点
             // point2 取min、max间的线；
             float trueDis = dis;
@@ -138,7 +140,8 @@ public class CardActionController : MonoBehaviour
             {
                 // 射中的目标激活专注轨迹，显示专注个数。专注轨迹的具体显示视情况而定
                 target.GetComponent<ActorController>().ActiveAllFocusTrail(true);
-                target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                // target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                target.GetComponent<ActorController>().ShowAllFocusTrail(true);
                 target.GetComponent<ActorController>().ShowFocusTrailCount(true);
             }
 
@@ -253,6 +256,7 @@ public class CardActionController : MonoBehaviour
             //-------------------显示-------------------------
 
             var gb = focusTrailPool.GetTarget(Controller.holder.transform.Find("FocusTrails"));
+            gb.transform.localScale = new Vector3(1, 1, 1);
             gb.GetComponent<FocusTrailController>().Seter = Controller.holder;
             gb.GetComponent<FocusTrailController>().SetPoints(points);
             gb.GetComponent<FocusTrailController>().SetOffsetPoints();  // 清空offset点集 防止使用offsetpoint决定线

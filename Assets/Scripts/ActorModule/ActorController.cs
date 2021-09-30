@@ -138,6 +138,15 @@ public class ActorController : MonoBehaviour
         // 转身
         ChangeFaceTo(data.dir);
 
+        // 伤害字符
+        Vector3 textOffset = new Vector3(0, 0.25f, 0);
+        Vector3 textRandomOffset = new Vector3(Random.Range(0,0.5f), Random.Range(0,0.5f), 0);
+        Vector3 textPos = Sprite.transform.position + textOffset + textRandomOffset;
+        Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
+        Vector3 textMove = new Vector3(-data.dir.x, 1f, 0);
+        float time = 0.5f;
+        UIManager.instance.CreatFloatUIAt(textPos, textMove, time, Color.red, data.damage + "");
+
         EventInvoke(ActorEvent.OnBehit);
     }
     public void OnHealUp(float heal)
