@@ -8,7 +8,7 @@ namespace Assets.Scripts.CardModule.CardEffects
 {
     public class NomalDamage:CardEffect
     {
-        float damage;
+        public float damage;
 
         public NomalDamage(float _damage, EffectTrigger trigger)
         {
@@ -17,14 +17,14 @@ namespace Assets.Scripts.CardModule.CardEffects
             CombatPriority = 1;
         }
 
-        public override void DoEffect(ActorController user, List<ActorController> targets)
-        {
-            foreach(var target in targets)
-            {
-                var dir = (user.transform.position - target.transform.position);
-                target.GetComponent<ActorController>().OnBehit(new DamageData(damage,dir));
-            }
-        }
+        //public override void DoEffect(ActorController user, List<ActorController> targets)
+        //{
+        //    foreach(var target in targets)
+        //    {
+        //        var dir = (user.transform.position - target.transform.position);
+        //        target.GetComponent<ActorController>().OnBehit(new DamageData(damage,dir));
+        //    }
+        //}
 
         public override void DoEffect(Combat combat)
         {
@@ -34,14 +34,16 @@ namespace Assets.Scripts.CardModule.CardEffects
                 combat.Dfder.OnBehit(new DamageData(damage, dir));
                 var target = combat.Dfder;
                 var finder = target.GetComponent<PathFinderComponent>();
-                var path = finder.SearchAndGetPathByBeatBack(target.transform.position, -1 * dir, 2);
+                var path = finder.SearchAndGetPathByEnforcedMove(target.transform.position, -1 * dir, 2,false);
                 var move = target.GetComponent<ActorMoveComponent>();
-                move.StartForceMoveByPathList(path);
+                // move.StartForceMoveByPathList(path);
             }
             else
             {
                 combat.Atker.OnBehit(new DamageData(damage, dir));
             }
+
+            base.DoEffect(combat);
         }
     }
 }

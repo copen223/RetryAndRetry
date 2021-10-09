@@ -343,13 +343,13 @@ public class PathFinderComponent : MonoBehaviour
     /// <param name="dir"></param>
     /// <param name="dis"></param>
     /// <returns></returns>
-    public List<Vector3> SearchAndGetPathByBeatBack(Vector3 startPos_world,Vector2 dir,int dis)
+    public List<Vector3> SearchAndGetPathByEnforcedMove(Vector3 startPos_world,Vector2 dir,int dis,bool ifIgnoreActor)
     {
         GenerateMapByRaycast();
 
         Vector3Int startPos_map = grid.WorldToCell(startPos_world);
         gragh = new Gragh();
-        var targetPos = CreatEdgeByBeatBack(startPos_map.x,startPos_map.y,dir,dis);
+        var targetPos = CreatEdgeByBeatBack(startPos_map.x,startPos_map.y,dir,dis, ifIgnoreActor);
 
         dijkstra = new Dijkstra(gragh);
         dijkstra.SearchShortPathFrom(GetNode((startPos_map.x, startPos_map.y)));
@@ -681,7 +681,7 @@ public class PathFinderComponent : MonoBehaviour
     /// <param name="y"></param>
     /// <param name="方向"></param>
     /// <param name="距离"></param>
-    private (int, int) CreatEdgeByBeatBack(int x, int y, Vector2 dir, int dis)
+    private (int, int) CreatEdgeByBeatBack(int x, int y, Vector2 dir, int dis, bool ifIgnoreActor)
     {
         // 当前节点的建立与读取
         var curNode = GetNode((x, y));
@@ -690,21 +690,33 @@ public class PathFinderComponent : MonoBehaviour
         // 求终点位置
         var nDir = dir.normalized;
         (int, int) targetPos = (x, y);
+        (int, int) searchPos = (x, y);
 
         for (int i = 1; i < dis + 1; i++)
         {
-            int tx = targetPos.Item1 + Mathf.RoundToInt(nDir.x), ty = targetPos.Item2 + Mathf.RoundToInt(nDir.y); // 目标位置
+            int tx = searchPos.Item1 + Mathf.RoundToInt(nDir.x), ty = searchPos.Item2 + Mathf.RoundToInt(nDir.y); // 目标位置
             var middle = map.map_dic[(tx, ty)];
+
+            if(ifIgnoreActor)
+            {
+                if (middle.Type == MapCellType.EnemyActor)  // 如果中间块是敌方单位，则先跳过这个块
+                {
+                    searchPos = (tx, ty);
+                    continue;
+                }
+            }
+
             if (middle.StayState == ObjectStayState.CantHold)
             {
                 ty = ty + 1;
                 var middle2 = map.map_dic[(tx, ty)];
                 if (middle2.StayState == ObjectStayState.CantHold)
-                    break;
+                    break;  // 通路全部被堵，跳过它们
             }
-                
+
 
             targetPos = (tx, ty);
+            searchPos = (tx, ty);
         }
         
 

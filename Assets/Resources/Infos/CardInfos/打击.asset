@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: "\u6253\u51FB"
   Type: 1
-  Effects: "\u653B\u51FB\uFF1A\u4F24\u5BB3\uFF1A3\uFF1B"
+  Effects: "\u653B\u51FB\uFF1A\u4F24\u5BB3\uFF1A3-\u65E0\uFF1A\u51B2\u523A\uFF1A2\uFF1B"
   ActionType: 1
   ActionValues:
   - 1

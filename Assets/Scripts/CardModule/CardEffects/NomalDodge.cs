@@ -22,8 +22,12 @@ namespace Assets.Scripts.CardModule.CardEffects
                 {
                     if (effect.isAtking && !isAtking)
                     {
+                        // 攻击方的攻击效果 防守方的该效果
                         combat.CombatEffects.Remove(effect);
                         i--;
+
+                        NomalDamage damage = effect as NomalDamage;
+                        combat.Dfder.OnDodge(new DamageData(damage.damage,-combat.Dfder.transform.position + combat.Atker.transform.position));
                     }
                     else if (!effect.isAtking && isAtking)
                     {
@@ -32,6 +36,8 @@ namespace Assets.Scripts.CardModule.CardEffects
                     }
                 }
             }
+
+            base.DoEffect(combat);  //  附加effect进行
         }
     }
 }

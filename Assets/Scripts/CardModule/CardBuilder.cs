@@ -73,9 +73,35 @@ namespace Assets.Scripts.CardModule
         {
             CardEffect effect = null;
 
-            char[] para_chars = para.ToArray();         // 待处理字段
+            //  对于拥有附加效果的词条处理
+            string[] split_string_add = para.Split('-');
+            
+            if(split_string_add.Length>1)
+            {
+                para = split_string_add[0];
+
+                var mainEffect = CreatEffectByText(para);
+
+                for(int i=1;i<split_string_add.Length;i++)
+                {
+                    var addEffect = CreatEffectByText(split_string_add[i]);
+                    mainEffect.AddAdditionalEffect(addEffect);
+                }
+
+                return mainEffect;
+            }
+
             string[] split_strings = para.Split(new char[] { ':','：'});
-            string trigger_string = "";
+
+            //字段格式：
+            //效果名;
+            //触发: 效果名;
+            //触发: 效果名: 效果参数;
+
+            //-附带效果;
+
+
+            string trigger_string = "";   // 效果触发
             string name_string = "";      // 效果名
             string value_string = "0";     // 效果参量
 
@@ -95,6 +121,7 @@ namespace Assets.Scripts.CardModule
                 {
                     case "攻击":trigger = EffectTrigger.OnCombatAtk;break;
                     case "反应":trigger = EffectTrigger.OnCombatDfd;break;
+                    case "无":trigger = EffectTrigger.None;break;
                 }
 
             }
@@ -106,6 +133,8 @@ namespace Assets.Scripts.CardModule
                     effect = new CardEffects.NomalDamage(int.Parse(value_string),trigger);break;
                 case "闪避": case "普通闪避": case "NomalDodge": case "Dodge":
                     effect = new CardEffects.NomalDodge();break;
+                case "冲刺":
+                    effect = new CardEffects.NomalDash(int.Parse(value_string));break;
                 default: effect = null;break;
             }
 
