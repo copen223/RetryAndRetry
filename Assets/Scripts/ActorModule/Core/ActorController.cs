@@ -4,6 +4,7 @@ using UnityEngine;
 using Assets.Scripts.ActorModule;
 using Assets.Scripts.ActorModule.ActorStates;
 using Assets.Scripts.Tools;
+using ActorModule.AI;
 
 public class ActorController : MonoBehaviour
 {
@@ -57,6 +58,21 @@ public class ActorController : MonoBehaviour
 
     public virtual void OnEnterBattle()
     { }
+    
+    /// <summary>
+    /// 开始执行战斗回合的ai
+    /// </summary>
+    public  void StartDoBattleAI()
+    {
+        var ai_go = transform.Find("AI").gameObject;
+        if(ai_go==null)
+        {
+            Debug.Log(gameObject + "该对象不存在战斗AI");
+            return;
+        }
+        ActionModeInBattle am = ai_go.GetComponent<ActionModeInBattle>();
+        am.StartDoBattleAI();
+    }
 
     #region 卡牌战斗相关
 

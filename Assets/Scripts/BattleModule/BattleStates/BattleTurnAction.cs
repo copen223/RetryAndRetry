@@ -19,7 +19,10 @@ namespace Assets.Scripts.BattleModule.BattleStates
                 if (Manager.CurActorObject.GetComponent<ActorController>().group.IsPlayer)
                     Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerActionStart);
                 else
+                {
                     Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerActionStart);
+                    Manager.CurActorObject.GetComponent<ActorController>().StartDoBattleAI();
+                }
             }
         }
 
