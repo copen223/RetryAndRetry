@@ -1,13 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace ActorModule.AI
 {
     // 行动方案父类，具体的行动方案都派生自该类
     public class ActionPlan : MonoBehaviour
     {
-        protected Dictionary<GameObject, int> heatLevelOfEnemies_list;  // 威胁度字典
+        // 链接
+        public ActionModeInBattle ActionMode { get { return transform.parent.GetComponent<ActionModeInBattle>(); } }
+        public GameObject Actor { get { return ActionMode.Actor; } }
 
+        [HideInInspector]
+        public bool IfPlanOver = false;
+
+        public virtual void DoPlan()
+        {
+
+        }
+
+        /// <summary>
+        /// 计划执行结束时触发的事件，通常用于通知ActionMode行动完毕可以结束回合了。
+        /// </summary>
+        public event Action ActionPlanOverEvent;
+
+        /// <summary>
+        /// 派生的子类发布行动结束通知时应调用的方法
+        /// </summary>
+        protected void InvokeActionPlanOverEvent()
+        {
+            ActionPlanOverEvent.Invoke();
+        }
     }
 }

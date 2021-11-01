@@ -23,7 +23,10 @@ namespace Assets.Scripts.BattleModule.BattleStates
             }
         }
 
-        private void OnDrawOver()
+        /// <summary>
+        /// handController处理完毕抽卡后调用
+        /// </summary>
+        public void OnDrawOver()
         {
             if (Manager.currentState != this) return;
             ChangeStateTo<BattleTurnAction>();

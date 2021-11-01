@@ -4,6 +4,7 @@ using UnityEngine;
 using Assets.Scripts.CardModule.CardStates;
 using Assets.Scripts.CardModule;
 using Assets.Scripts.Tools;
+using Assets.Scripts.BattleModule.BattleStates;
 
 // 手卡控制器，同时是卡牌UI界面的控制者
 public class HandController : MonoBehaviour
@@ -230,8 +231,8 @@ public class HandController : MonoBehaviour
             timer += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-        if(info.isStart)
-            BattleManager.instance.gameObject.SendMessage("OnTurnStartOver");
+        if (info.isStart)
+            BattleManager.instance.GetComponent<BattleTurnStart>().OnTurnStartOver(true);
         MoveHandCoroutines.RemoveAt(0);
         isCorouting = false;
     }
@@ -330,6 +331,6 @@ public class HandController : MonoBehaviour
 
         // 返回信息
         if (!isChanging)
-            BattleManager.instance.SendMessage("OnDrawOver");
+            BattleManager.instance.GetComponent<BattleTurnDraw>().OnDrawOver();
     }
 }

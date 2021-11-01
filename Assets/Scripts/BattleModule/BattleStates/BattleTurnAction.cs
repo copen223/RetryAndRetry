@@ -26,7 +26,9 @@ namespace Assets.Scripts.BattleModule.BattleStates
             }
         }
 
-
+        /// <summary>
+        /// 结束回合调用该函数
+        /// </summary>
         public void OnTurnEnd()
         {
             if (Manager.currentState != this)

@@ -17,8 +17,8 @@ public class CardActionController : MonoBehaviour
     /// </summary>
     public CardController Controller;
     // 数据
-    private CardAction action;
-    public GameObject ContactPrefab;    // 接触点贴图
+    private CardAction action;  // 当前的行动数据
+    [SerializeField]private GameObject ContactPrefab;    // 接触点贴图
     private TargetPool contactPool;  //  接触点贴图对象池
     private List<Vector3> contactPoints = new List<Vector3>();  // 接触点位置
     private List<GameObject> contactObjects = new List<GameObject>();   // 接触的battleTrail
@@ -26,7 +26,7 @@ public class CardActionController : MonoBehaviour
     private List<Combat> combats = new List<Combat>();
     private Vector3 attackPosOffset = new Vector3(0, 0.4f, 0);
 
-    public GameObject FocusTrailPrefab;     // 专注轨迹预组
+    [SerializeField]private GameObject FocusTrailPrefab;     // 专注轨迹预组
     private TargetPool focusTrailPool;      // 专注轨迹池
 
     public void AddNewTrailToPool(GameObject gb) { focusTrailPool.AddToPool(gb); }
@@ -88,9 +88,9 @@ public class CardActionController : MonoBehaviour
 
             // 读action信息求射线点
             // point2 取min、max间的线；
-            float trueDis = dis;
-            if (dis > trail.Distance_max) trueDis = trail.Distance_max;
-            else if (dis < trail.Distance_min) trueDis = trail.Distance_min;
+
+            if (dis > trail.Distance_max) dis = trail.Distance_max;
+            else if (dis < trail.Distance_min) dis = trail.Distance_min;
 
             Vector3 point2 = point1 + dir * dis; //  point2确定
 

@@ -804,7 +804,7 @@ MonoBehaviour:
   Manager: {fileID: 0}
   IsEventProtecting: 0
   ActorsInBattle_list:
-  - {fileID: 459287907}
+  - {fileID: 1306795452}
   - {fileID: 2006686215}
 --- !u!114 &395489678
 MonoBehaviour:
@@ -2322,11 +2322,6 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
---- !u!1 &459287907 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
-  m_PrefabInstance: {fileID: 6680674381694172890}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2545,6 +2540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9594e7d1fa207944cbca96c7ae094519, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IfPlanOver: 0
 --- !u!1 &745153191
 GameObject:
   m_ObjectHideFlags: 0
@@ -3389,6 +3385,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207ea1e640181774387b4c78db967263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1306795452 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
+  m_PrefabInstance: {fileID: 6680674381694172890}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1328688331
 GameObject:
   m_ObjectHideFlags: 0
@@ -4943,8 +4944,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   advantage: 0
   SpriteFaceToRight: 0
-  HealPoint: 0
-  HealPoint_Max: 0
+  HealPoint: 10
+  HealPoint_Max: 10
   FocusCountUI_GO: {fileID: 0}
   currentState: {fileID: 0}
   ActorStates: []
@@ -5312,6 +5313,10 @@ PrefabInstance:
     - target: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_LocalPosition.x

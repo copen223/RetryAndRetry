@@ -26,9 +26,12 @@ namespace Assets.Scripts.BattleModule.BattleStates
             }
         }
 
-        private void OnTurnStartOver()
+        public void OnTurnStartOver(bool ifPlayer)
         {
-            ChangeStateTo<BattleTurnDraw>();
+            if (ifPlayer)
+                ChangeStateTo<BattleTurnDraw>();
+            else
+                ChangeStateTo<BattleTurnAction>();
         }
     }
 }
