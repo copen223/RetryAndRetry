@@ -67,9 +67,24 @@ public class PlayerController : ActorController
     // 进入战斗时，监听战斗管理器的回合开始与回合结束事件
     public override void OnEnterBattle()
     {
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnTurnStart);
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStart);
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnTurnEnd);
+        //BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnTurnStart);
+        //BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStart);
+        //BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnTurnEnd);
+    }
+
+    public override void OnTurnEnd()
+    {
+        base.OnTurnEnd();
+        ShowAllFocusTrail(false);
+    }
+
+    public override void OnTurnStart()
+    {
+        base.OnTurnStart();
+        ShowAllFocusTrail(true); 
+        // 恢复各项数值
+        ActionPoint += ActionPoint_Resume;
+        MovePoint += MovePoint_Resume;
     }
 
 
@@ -110,11 +125,11 @@ public class PlayerController : ActorController
     #endregion
 
     #region 流程事件
-    public void OnPlayerTurnStart()
-    {
-        // 恢复各点数
-        ActionPoint += ActionPoint_Resume;
-        MovePoint += MovePoint_Resume;
-    }
+    //public void OnPlayerTurnStart()
+    //{
+    //    // 恢复各点数
+    //    ActionPoint += ActionPoint_Resume;
+    //    MovePoint += MovePoint_Resume;
+    //}
     #endregion
 }

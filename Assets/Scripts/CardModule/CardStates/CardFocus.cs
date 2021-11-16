@@ -30,6 +30,7 @@ namespace Assets.Scripts.CardModule.CardStates
           
         }
 
+        // 在换牌的时候将专注的卡状态换成了idle所以触发了exit，exit中进行了RemoveFocusTrail
         public override void StateExit()
         {
             base.StateExit();

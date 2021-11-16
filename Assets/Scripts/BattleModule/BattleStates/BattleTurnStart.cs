@@ -21,8 +21,18 @@ namespace Assets.Scripts.BattleModule.BattleStates
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);
             else
             {
-                if (actor.group.IsPlayer) { Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);/* Camera.main.GetComponent<CameraController>().Mode = CameraController.CameraMode.Freedom;*/ }
-                else if (actor.group.IsEnemy) { Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerTurnStart); ChangeStateTo<BattleTurnAction>(); }
+                if (actor.group.IsPlayer) 
+                { 
+                    Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);
+                    actor.OnTurnStart();
+                    /* Camera.main.GetComponent<CameraController>().Mode = CameraController.CameraMode.Freedom;*/ 
+                }
+                else if (actor.group.IsEnemy) 
+                {
+                    Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerTurnStart); 
+                    actor.OnTurnStart(); 
+                    ChangeStateTo<BattleTurnAction>(); 
+                }
             }
         }
 

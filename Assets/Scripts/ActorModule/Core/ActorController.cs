@@ -10,6 +10,8 @@ public class ActorController : MonoBehaviour
 {
     // 链接
     public GameObject Sprite { get { return transform.Find("Sprite").gameObject; } }
+    public Vector3 CenterOffset { get { return Sprite.transform.localPosition; } }
+    public Vector3 CenterPos { get { return transform.position + CenterOffset; } }
 
     public int advantage;   // 先攻
     public ActorGroup group;
@@ -78,11 +80,41 @@ public class ActorController : MonoBehaviour
 
     //-----------------FocusTrail---------------------//
     [Header("需要挂载")]
+    [SerializeField]
     private List<GameObject> focusTrails = new List<GameObject>();  // 该单位存在的专注轨迹
-    public void AddFocusTrail(GameObject gb) { focusTrails.Add(gb); gb.GetComponent<FocusTrailController>().Actor = gameObject; gb.transform.parent = transform; EventInvoke(ActorEvent.OnFoucusTrailChange); }
-    public void RemoveFocusTrail(GameObject gb) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); }
+
     /// <summary>
-    /// 显示并激活该单位的所有专注轨迹
+    /// 给该对象添加专注轨迹，但是轨迹的卡牌尚未设定
+    /// </summary>
+    /// <param name="gb"></param>
+    public void AddFocusTrail(GameObject gb) { focusTrails.Add(gb); gb.GetComponent<FocusTrailController>().Actor = gameObject; gb.transform.parent = transform; EventInvoke(ActorEvent.OnFoucusTrailChange); }
+    /// <summary>
+    /// 将专注轨迹与自己解绑
+    /// </summary>
+    /// <param name="gb"></param>
+    public void RemoveFocusTrail(GameObject gb) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); }
+    
+    /// <summary>
+    /// 该方法一般由AI调用
+    /// 玩家专注轨迹的变化和卡牌变化绑定，卡牌在从专注状态退出时会调用上方的Remove方法
+    /// 而AI不会，所以提供该方法在回合开始时清空AI的专注轨迹,
+    /// 相比之下会把卡牌与专注轨迹解绑 并且destroy轨迹
+    /// </summary>
+    public void RemoveAllFocusTrail() 
+    {
+        foreach (var gb in focusTrails) 
+        { 
+            gb.GetComponent<FocusTrailController>().Actor = null;
+            gb.GetComponent<FocusTrailController>().Card?.CancleFocusTrail();
+            Destroy(gb);
+            EventInvoke(ActorEvent.OnFoucusTrailChange); 
+        } 
+        
+        focusTrails.Clear(); 
+    }
+    
+    /// <summary>
+    /// 显示该单位的所有专注轨迹
     /// </summary>
     /// <param name="isActive"></param>
     public void ShowAllFocusTrail(bool isActive)
@@ -127,21 +159,25 @@ public class ActorController : MonoBehaviour
     #endregion
 
     #region 流程响应事件
-    protected void OnTurnEnd()
+    /// <summary>
+    /// 回合结束时触发
+    /// </summary>
+    public virtual void OnTurnEnd()
     {
-        if (BattleManager.instance.CurActorObject == gameObject)
-        {
-            ShowAllFocusTrail(false);
-            currentState.ChangeStateTo<ActorNoActionIdle>();
-        }
+        //if (BattleManager.instance.CurActorObject == gameObject)
+        //{
+        currentState.ChangeStateTo<ActorNoActionIdle>();
+        //}
     }
-    protected void OnTurnStart()
+    /// <summary>
+    /// 回合开始时触发
+    /// </summary>
+    public virtual void OnTurnStart()
     {
-        if (BattleManager.instance.CurActorObject == gameObject)
-        {
-            ShowAllFocusTrail(true);
-            currentState.ChangeStateTo<ActorActionIdle>();
-        }
+        //if (BattleManager.instance.CurActorObject == gameObject)
+        //{
+        currentState.ChangeStateTo<ActorActionIdle>();
+        //}
     }
 
     #endregion

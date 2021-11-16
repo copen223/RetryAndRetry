@@ -11,6 +11,9 @@ namespace Assets.Scripts.BattleModule.BattleStates
         public override void StateStart()
         {
             Manager.EventInvokeByState(BattleManager.BattleEvent.TurnEnd);
+            var actor = Manager.CurActorObject.GetComponent<ActorController>();
+            actor.OnTurnEnd();
+
             Manager.CurActorIndex += 1;
             if (Manager.CurActorIndex >= Manager.ActorQueue.Count) Manager.CurActorIndex = 0;
             ChangeStateTo<BattleTurnStart>();

@@ -87,6 +87,9 @@ namespace Assets.Scripts.Tools
             return gb;
         }
 
+        /// <summary>
+        /// 将对象池中的所有对象失活。
+        /// </summary>
         public void ReSet()
         {
             foreach(var gb in list)

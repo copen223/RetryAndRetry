@@ -123,6 +123,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &10443469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 10443471}
+  - component: {fileID: 10443470}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &10443470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10443469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90fb7be226abf734ab5ff5c48cf78978, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dir: {x: 0, y: 0, z: 0}
+  angle: 0
+  newDir: {x: 0, y: 0, z: 0}
+--- !u!4 &10443471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10443469}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.4886277, y: -3.0117705, z: -5.5862064}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &480903377
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,10 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d3adf9957b5d3c40b15b23c148af339, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemap: {fileID: 1534588601}
-  grid: {fileID: 0}
   CurPath: []
-  CostPerUnit_Walk: 2
 --- !u!114 &1053701532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,7 +328,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a4d144f942a5469481fa4dbbdcd38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Actor: {fileID: 1053701528}
   moveSpeed: 5
   isMoving: 0
   ifMoveNext: 0
@@ -303,12 +345,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   advantage: 0
+  SpriteFaceToRight: 0
   HealPoint: 0
   HealPoint_Max: 0
+  FocusCountUI_GO: {fileID: 0}
   currentState: {fileID: 0}
   ActorStates: []
+  IfEnemy: 0
   DeckInfo: {fileID: 0}
-  CardDrawNum: 0
+  ActionPoint_Max: 0
+  ActionPoint_Resume: 0
+  MovePoint_Max: 0
+  MovePoint_Resume: 0
 --- !u!114 &1053701534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,7 +435,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RayPrefab: {fileID: 638173110612221380, guid: bb3d2e28ec197ff49bb310a5bfaaf7c8, type: 3}
-  RayObject: {fileID: 0}
 --- !u!1 &1277950136
 GameObject:
   m_ObjectHideFlags: 0

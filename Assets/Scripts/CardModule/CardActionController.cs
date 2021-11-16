@@ -24,7 +24,6 @@ public class CardActionController : MonoBehaviour
     private List<GameObject> contactObjects = new List<GameObject>();   // 接触的battleTrail
     private List<GameObject> targets = new List<GameObject>();  // 选中的对象
     private List<Combat> combats = new List<Combat>();
-    private Vector3 attackPosOffset = new Vector3(0, 0.4f, 0);
 
     [SerializeField]private GameObject FocusTrailPrefab;     // 专注轨迹预组
     private TargetPool focusTrailPool;      // 专注轨迹池
@@ -56,7 +55,7 @@ public class CardActionController : MonoBehaviour
         List<Vector3> points = new List<Vector3>(); // linerenderer用点集
 
         Vector3 holderPos = Controller.holder.transform.position;
-        holderPos = new Vector3(holderPos.x, holderPos.y, 1) + attackPosOffset;
+        holderPos = new Vector3(holderPos.x, holderPos.y, 1) + Controller.holder.GetComponent<ActorController>().CenterOffset;
 
         Vector3 point1 = holderPos;                 // 获取第一个点
 
@@ -285,9 +284,6 @@ public class CardActionController : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
-
-        
-
     }
 
     private void SetContactPointPos(bool active)

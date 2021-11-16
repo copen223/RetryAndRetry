@@ -698,8 +698,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 395489668}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 961.0376, y: 280.1095, z: -43.627968}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 972902862}
@@ -804,7 +804,7 @@ MonoBehaviour:
   Manager: {fileID: 0}
   IsEventProtecting: 0
   ActorsInBattle_list:
-  - {fileID: 1306795452}
+  - {fileID: 1410951151306243751}
   - {fileID: 2006686215}
 --- !u!114 &395489678
 MonoBehaviour:
@@ -2541,6 +2541,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IfPlanOver: 0
+  debugLine: {fileID: 1270667292}
+  attackCardInfo: "\u6253\u51FB"
+  focusCardInfo: "\u95EA\u8EB2"
 --- !u!1 &745153191
 GameObject:
   m_ObjectHideFlags: 0
@@ -3341,6 +3344,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267650651}
   m_CullTransparentMesh: 0
+--- !u!1 &1270667292
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1270667294}
+  - component: {fileID: 1270667293}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1270667293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270667292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acfb5a072a0737d4abad7610e1160922, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1270667294
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270667292}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.7031497, y: -2.0583327, z: -5.734027}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1291001299
 GameObject:
   m_ObjectHideFlags: 0
@@ -3351,6 +3397,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1291001300}
   - component: {fileID: 1291001301}
+  - component: {fileID: 1291001302}
+  - component: {fileID: 1291001303}
   m_Layer: 10
   m_Name: AI
   m_TagString: Untagged
@@ -3385,11 +3433,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207ea1e640181774387b4c78db967263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1306795452 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
-  m_PrefabInstance: {fileID: 6680674381694172890}
+--- !u!114 &1291001302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291001299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1f09e2869ca76c4d8f05afe23a56368, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ContactPrefab: {fileID: 107345557026001997, guid: 8e379d82bd8268b438facae121d0f607, type: 3}
+--- !u!114 &1291001303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291001299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c96a61dba09802b4081ba615f19e6c4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  focusTrailPrefab: {fileID: 4961986026492871041, guid: 01f7ba6c2b4bf384da02035d22f25b4e, type: 3}
 --- !u!1 &1328688331
 GameObject:
   m_ObjectHideFlags: 0
@@ -4015,7 +4084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   State: 0
-  IfDebug: 1
+  IfDebug: 0
 --- !u!1 &1807210961
 GameObject:
   m_ObjectHideFlags: 0
@@ -4947,7 +5016,7 @@ MonoBehaviour:
   HealPoint: 10
   HealPoint_Max: 10
   FocusCountUI_GO: {fileID: 0}
-  currentState: {fileID: 0}
+  currentState: {fileID: 2416411687808103703}
   ActorStates: []
 --- !u!114 &1410951151306243756
 MonoBehaviour:
@@ -5223,11 +5292,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303513, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.6
+      value: -4.46
       objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303513, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.14
+      value: -0.92
       objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303513, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5316,7 +5385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939756, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6680674381782939757, guid: a17272c39e27aa24eb86aabacecb7cbe, type: 3}
       propertyPath: m_LocalPosition.x

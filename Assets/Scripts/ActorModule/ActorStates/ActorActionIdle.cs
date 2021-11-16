@@ -19,7 +19,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
         {
             if (Controller.currentState != this)
                 return;
-            if(Input.GetKeyDown(KeyCode.Mouse0))
+            if(Input.GetKeyDown(KeyCode.Mouse0) && Controller.group.IsPlayer)
             {
                 var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 var hit = Physics2D.Raycast(mousePos_world, Vector2.zero,4f,LayerMask.GetMask("Actor"));

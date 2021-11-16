@@ -27,6 +27,8 @@ public class FocusTrailController : MonoBehaviour
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         collider2d = gameObject.GetComponent<PolygonCollider2D>();
 
+        gameObject.SetActive(true);
+
         IfShow = true;
     }
 

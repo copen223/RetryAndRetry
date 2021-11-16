@@ -34,19 +34,21 @@ public class ActorMoveComponent : MonoBehaviour
         int i = 0;
         ifMoveNext = true;
         var last = transform.position;
-        while (i < path.Count)
+        while (true)
         {
             if (ifMoveNext)
             {
+                i++;
+                if (i > path.Count) break;
+
                 ifMoveNext = false;
 
-                var point = path[i];
+                var point = path[i-1];
                 var dir = point - last;
 
                 if(ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
                 StartCoroutine(MoveToPointCouroutine(point));
 
-                i++;
                 last = point;
             }
             yield return new WaitForEndOfFrame();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using Assets.Scripts.SpaceModule.PathfinderModule;
+using System;
 
 public class PathFinderComponent : MonoBehaviour
 {
@@ -180,22 +181,22 @@ public class PathFinderComponent : MonoBehaviour
     }
 
     #region 外部调用
-    /// <summary>
-    /// 进行一次搜索，获得所有路径，存储在图中
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    public void SearchPathFrom(int x,int y)
-    {
-        // 读图
-        GenerateMapByRaycast();
-        GenerateGraghByMap();
+    ///// <summary>
+    ///// 进行一次搜索，获得所有路径，存储在图中
+    ///// </summary>
+    ///// <param name="x"></param>
+    ///// <param name="y"></param>
+    //public void SearchPathFrom(int x,int y)
+    //{
+    //    // 读图
+    //    GenerateMapByRaycast();
+    //    GenerateGraghByMap();
 
-        // 寻路 
-        dijkstra = new Dijkstra(gragh);
-        Node start = gragh.GetNode((x, y));
-        dijkstra.SearchShortPathFrom(start);
-    }
+    //    // 寻路 
+    //    dijkstra = new Dijkstra(gragh);
+    //    Node start = gragh.GetNode((x, y));
+    //    dijkstra.SearchShortPathFrom(start);
+    //}
 
     /// <summary>
     /// 进行一次搜索，获得所有路径，存储在图中
@@ -214,6 +215,26 @@ public class PathFinderComponent : MonoBehaviour
         int x = mapPos.x;int y = mapPos.y;
         Node start = gragh.GetNode((x, y));
         dijkstra.SearchShortPathFrom(start);
+    }
+
+    /// <summary>
+    /// 建图的同时，根据checkfunc进行检测，返回满足条件的节点
+    /// </summary>
+    /// <param name="worldPos"></param>
+    /// <param name="_checkFunc"></param>
+    /// <returns></returns>
+    public List<Node> SearchPathForm(Vector2 worldPos, Predicate<Node> _checkFunc)
+    {
+        // 读图
+        GenerateMapByRaycast();
+        GenerateGraghByMap();
+
+        // 寻路 
+        dijkstra = new Dijkstra(gragh);
+        var mapPos = grid.WorldToCell(worldPos);
+        int x = mapPos.x; int y = mapPos.y;
+        Node start = gragh.GetNode((x, y));
+        return dijkstra.SearchShortPathFromAndGetMoveTargets(start,_checkFunc);
     }
 
     /// <summary>
@@ -253,12 +274,12 @@ public class PathFinderComponent : MonoBehaviour
     }
 
     /// <summary>
-    /// 搜索后调用，获得指定路径,确保已使用dijkstra调用searchpathfrom
+    /// 搜索后调用，获得指定路径,确保已使用dijkstra，即调用searchpathfrom
     /// </summary>
     /// <param name="startPos_world"></param>
     /// <param name="endPos_world"></param>
     /// <returns></returns>
-    private List<Vector3> GetPathFromTo(Vector3 startPos_world, Vector3 endPos_world)
+    public List<Vector3> GetPathFromTo(Vector3 startPos_world, Vector3 endPos_world)
     {
         List<Vector3> path_world = new List<Vector3>();
         Vector3Int startPos_map = grid.WorldToCell(startPos_world);
@@ -280,7 +301,7 @@ public class PathFinderComponent : MonoBehaviour
     }
 
     /// <summary>
-    /// 该方法用于确定离目标点最近的可用点的路径
+    /// 该方法用于确定离目标点最近的可用点的路径,确保已使用dijkstra，即调用searchpathfrom
     /// </summary>
     /// <param name="startPos_world"></param>
     /// <param name="endPos_world"></param>
@@ -775,6 +796,16 @@ public class PathFinderComponent : MonoBehaviour
 
         Node curNode = gragh.GetNode((x, y));
         return curNode;
+    }
+
+    /// <summary>
+    /// 使用gird.GetCellCenter将节点坐标转成世界坐标
+    /// </summary>
+    /// <param name="cellPos"></param>
+    /// <returns></returns>
+    public Vector3 CellToWorld((int,int)cellPos)
+    {
+        return grid.GetCellCenterWorld(new Vector3Int(cellPos.Item1, cellPos.Item2, 0));
     }
 
     #endregion

@@ -11,6 +11,7 @@ namespace ActorModule.AI
         // 链接
         public ActionModeInBattle ActionMode { get { return transform.parent.GetComponent<ActionModeInBattle>(); } }
         public GameObject Actor { get { return ActionMode.Actor; } }
+        public GameObject AI { get { return ActionMode.gameObject; } }
 
         [HideInInspector]
         public bool IfPlanOver = false;
@@ -30,7 +31,7 @@ namespace ActorModule.AI
         /// </summary>
         protected void InvokeActionPlanOverEvent()
         {
-            ActionPlanOverEvent.Invoke();
+            ActionPlanOverEvent?.Invoke();
         }
     }
 }

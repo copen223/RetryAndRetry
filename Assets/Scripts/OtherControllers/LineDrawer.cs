@@ -45,15 +45,23 @@ public class LineDrawer : MonoBehaviour
     //    }
     //}
 
+    /// <summary>
+    /// 开始画线，实际是创建一个画线物体，所以不需要每帧调用
+    /// </summary>
+    /// <param name="who"></param>
+    /// <param name="points"></param>
+    /// <param name="materialId"></param>
     public void DrawLine(Object who,List<Vector3> points, int materialId)
     {
         var gb = DrawerObjects.GetTarget();
         gb.GetComponent<LineObjectController>().User = who;
+
         var line = gb.GetComponent<LineRenderer>();
         line.positionCount = points.Count;
         line.SetPositions(points.ToArray());        // 更新线点
         line.Simplify(0);
         line.material = Materials[materialId];
+
         gb.SetActive(true);
         //Debug.Log(line.gameObject + "<points:" + points[0] + "至" + points[1]);
     }
@@ -61,6 +69,10 @@ public class LineDrawer : MonoBehaviour
     //{
     //    DrawerObjects.list[id].SetActive(false);
     //}
+    /// <summary>
+    /// 取消画线
+    /// </summary>
+    /// <param name="who"></param>
     public void FinishAllDrawing(Object who)
     {
         foreach (var g in DrawerObjects.list)

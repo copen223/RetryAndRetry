@@ -31,12 +31,22 @@ namespace Assets.Scripts.CardModule
 
         public CardType type;               // 卡牌类型 主动型/被动型 主动型打出时会生效，被动型专注时会生效
         public CardSituation situation;     // 表明卡牌在手牌中的状态，刷新时根据该项来决定显示层状态
-        private GameObject focusTrail;       // 卡牌专注轨迹
+        private GameObject focusTrail;       // 卡牌专注轨迹，用途只有判断该卡牌是否有专注轨迹 不影响使用
+
+        /// <summary>
+        /// 设置专注轨迹，同时把专注轨迹的卡牌设置为该卡牌
+        /// 即链接彼此
+        /// </summary>
+        /// <param name="gb"></param>
         public void SetFocusTrail(GameObject gb)
         {
             focusTrail = gb;
             gb.GetComponent<FocusTrailController>().Card = this;
         }
+        /// <summary>
+        /// 取消专注轨迹，即把两者的链接全部设为null,解绑
+        /// </summary>
+        /// <returns></returns>
         public GameObject CancleFocusTrail()
         {
             var gb = focusTrail;
