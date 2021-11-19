@@ -139,8 +139,8 @@ public class CardActionController : MonoBehaviour
             {
                 // 射中的目标激活专注轨迹，显示专注个数。专注轨迹的具体显示视情况而定
                 target.GetComponent<ActorController>().ActiveAllFocusTrail(true);
-                // target.GetComponent<ActorController>().ShowAllFocusTrail(false);
-                target.GetComponent<ActorController>().ShowAllFocusTrail(true);
+                target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                // target.GetComponent<ActorController>().ShowAllFocusTrail(true);
                 target.GetComponent<ActorController>().ShowFocusTrailCount(true);
             }
 

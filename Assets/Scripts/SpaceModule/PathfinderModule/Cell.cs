@@ -12,7 +12,8 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         Ground = 1,
         Platform = 2,
         Ladder = 4,
-        EnemyActor  = 8         // 被敌方单位占领，阻断移动
+        EnemyActor  = 8,         // 被敌方单位占领，阻断移动
+        FriendActor = 16         // 被友方单位占领，不可停留
     }
 
     public enum ObjectStayState

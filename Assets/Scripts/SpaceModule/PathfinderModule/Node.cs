@@ -6,6 +6,16 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.SpaceModule.PathfinderModule
 {
+    public enum ActorActionToNode
+    {
+        None,
+        Walk,
+        Climb,
+        JumpV,
+        JumpH,
+        Fall
+    }
+
     public class Node
     {
         public Node(int _x,int _y)
@@ -16,8 +26,23 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
             parent = this;
         }
 
-        public int x;
-        public int y;
+        public Node(int _x,int _y,float _worldX,float _worldY)
+        {
+            x = _x; y = _y;
+            worldX = _worldX; worldY = _worldY;
+            cost = 9999f;parent = this;
+        }
+
+        /// <summary>
+        /// 建图时修改此项以储存人物在节点上移动的信息，确定动画等事件
+        /// </summary>
+        public ActorActionToNode ActionToNode = ActorActionToNode.None;
+
+        readonly public float worldX;
+        readonly public float worldY;
+
+        readonly public int x;
+        readonly public int y;
         public float cost;  // 寻路算法中的费用，代表起点到该节点的距离费用
 
         public Node parent;

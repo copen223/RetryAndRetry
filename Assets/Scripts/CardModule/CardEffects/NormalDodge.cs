@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
-    public class NomalDodge:CardEffect
+    public class NormalDodge:CardEffect
     {
-        public NomalDodge()
+        public NormalDodge()
         {
             CombatPriority = 2;
         }
@@ -18,7 +18,7 @@ namespace Assets.Scripts.CardModule.CardEffects
             {
                 var effect = combat.CombatEffects[i];
 
-                if (effect is NomalDamage)
+                if (effect is NormalDamage)
                 {
                     if (effect.isAtking && !isAtking)
                     {
@@ -26,7 +26,7 @@ namespace Assets.Scripts.CardModule.CardEffects
                         combat.CombatEffects.Remove(effect);
                         i--;
 
-                        NomalDamage damage = effect as NomalDamage;
+                        NormalDamage damage = effect as NormalDamage;
                         combat.Dfder.OnDodge(new DamageData(damage.damage,-combat.Dfder.transform.position + combat.Atker.transform.position));
                     }
                     else if (!effect.isAtking && isAtking)

@@ -12,6 +12,7 @@ public class PlayerController : ActorController
     /// <summary>
     /// 测试用标签，用于设定不同的阵营
     /// </summary>
+    [Header("测试用标签，用于设定不同的阵营")]
     public bool IfEnemy; 
 
 
@@ -27,6 +28,7 @@ public class PlayerController : ActorController
     private int CardDrawNum;
     public int ActionPoint { set { ChangeActionPoint(value); }get { return actionPoint; } }
     private int actionPoint;
+    [Header("属性设置")]
     public int ActionPoint_Max;
     public int ActionPoint_Resume;
     public int MovePoint { set { ChangeMovePoint(value); } get { return movePoint; } }

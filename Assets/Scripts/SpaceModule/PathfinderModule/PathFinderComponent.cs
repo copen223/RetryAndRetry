@@ -13,6 +13,7 @@ public class PathFinderComponent : MonoBehaviour
     private Grid grid;
     private int mapMargin = 5;
     public List<Vector3> CurPath;
+    public List<Node> CurNodePath;
 
     private Map map; // 扫描场景获得的地图数据
     private Gragh gragh; // 根据map生成的图
@@ -23,7 +24,8 @@ public class PathFinderComponent : MonoBehaviour
     private int CostPerUnit_Climb = 1;
     private int CostPerUnit_JumpV = 1;
     private int CostPerUnit_JumpH = 3;
-    private int CostPerUnit_PassE = 20;
+    private int CostPerUnit_PassE = 24;
+    private int CostPerUnit_PassF = 8;
 
 
     //--------------------------//
@@ -83,10 +85,12 @@ public class PathFinderComponent : MonoBehaviour
                 GameObject gb = hit_actor.transform.parent.gameObject;
                 var actor = gb.GetComponent<ActorController>();
                 var self = gameObject.GetComponent<ActorController>();
-                if(actor.group.type != self.group.type)
+                if (actor.group.type != self.group.type)
                 {
                     cell.Type = MapCellType.EnemyActor;
                 }
+                else if(actor != self)
+                    cell.Type = MapCellType.FriendActor;
             }
 
             map.map_dic[(pos.x, pos.y)] = cell;
@@ -101,7 +105,7 @@ public class PathFinderComponent : MonoBehaviour
 
             cell.StayState = ObjectStayState.Fall;
 
-            if (cell.Type == MapCellType.EnemyActor || cell.Type == MapCellType.Ground)
+            if (cell.Type == MapCellType.EnemyActor || cell.Type == MapCellType.Ground ||cell.Type == MapCellType.FriendActor)
                 cell.StayState = ObjectStayState.CantHold;
 
             if (cell.Type == MapCellType.Empty || cell.Type == MapCellType.Ladder)
@@ -117,14 +121,6 @@ public class PathFinderComponent : MonoBehaviour
                     if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
                     {
                         cell.StayState = ObjectStayState.Stand;
-                        ////如果上方4格子内含有Ground，则表明空间不足，不可容纳
-                        //for (int i = 0; i < 4; i++)
-                        //{
-                        //    if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground)
-                        //    {
-                        //        cell.StayState = ObjectStayState.CantStand;
-                        //    }
-                        //}
                     }
 
                     //如果上方4格子内含有Ground，则表明空间不足，不可容纳
@@ -141,11 +137,6 @@ public class PathFinderComponent : MonoBehaviour
 
                 }
             }
-            //else if(cell.Type == MapCellType.Ground)
-            //{
-            //    cell.StayState = ObjectStayState.CantHold;
-            //}
-            //if (pos.Item1 == 5 && pos.Item2 == 1) Debug.LogError(cell.Type+" " + cell.StayState);
         }
         
 
@@ -169,7 +160,7 @@ public class PathFinderComponent : MonoBehaviour
             {
                 CreatEdgeByWalkCheck(x, y); // 行走带来的路径
                 CreatEdgeByClimbCheck(x, y);
-                CreatEdgeByPassEnemyCheck(x, y);
+                CreatEdgeByPassActorCheck(x, y);
             }
             if(cell.StayState == ObjectStayState.Stand)
             {
@@ -346,6 +337,33 @@ public class PathFinderComponent : MonoBehaviour
     }
 
     /// <summary>
+    /// GetPathFromTo的Node版本,可以获得更多信息
+    /// </summary>
+    /// <param name="startPos_world"></param>
+    /// <param name="endPos_world"></param>
+    /// <returns></returns>
+    public List<Node> GetNodePathFromTo(Vector3 startPos_world, Vector3 endPos_world)
+    {
+        List<Vector3> pathList = GetPathFromTo(startPos_world, endPos_world);
+        List<Node> nodePathList = new List<Node>();
+
+        foreach(var pos in pathList)
+        {
+            var cellPos = grid.WorldToCell(pos);
+            Node node = GetNode((cellPos.x, cellPos.y));
+            nodePathList.Add(node);
+        }
+
+        CurNodePath = nodePathList;
+        return nodePathList;
+    }
+
+
+
+
+
+
+    /// <summary>
     /// 获取当前节点的费用，用于资源消耗
     /// </summary>
     /// <param name="targetPos_world"></param>
@@ -384,16 +402,10 @@ public class PathFinderComponent : MonoBehaviour
     //--------------边和节点创造方法----------------//
     private void CreatEdgeByWalkCheck(int x,int y)
     {
-        // 当前节点的建立与读取
-        if (!map.map_dic.ContainsKey((x, y)))
-            return;
-        if(gragh.GetNode((x,y)) == null)
-        {
-            Node ne = new Node(x, y);
-            gragh.SetOrGetNode(ne);
-        }
+        //// 当前节点的建立与读取
 
-        Node curNode = gragh.GetNode((x, y));
+        Node curNode = GetNode((x, y));
+        if (curNode == null) return;
 
         // 搜算周边节点
         List<(int, int)> linkPos_list = new List<(int, int)> { (-1, 0),(1, 0),(-1, 1),(1 , 1),(-1,-1),( 1 , -1) };
@@ -407,12 +419,8 @@ public class PathFinderComponent : MonoBehaviour
                 if (link.StayState == ObjectStayState.Stand)
                 {
                     // 周边节点的建立与读取
-                    if (gragh.GetNode(pos) == null)
-                    {
-                        Node ne = new Node(pos.Item1, pos.Item2);
-                        gragh.SetOrGetNode(ne);
-                    }
-                    Node linkNode = gragh.GetNode((pos.Item1, pos.Item2));
+                    Node linkNode = GetNode((pos.Item1, pos.Item2));
+                    linkNode.ActionToNode = ActorActionToNode.Walk;
 
                     // 添加edge
                     Edge edge = new Edge(curNode, linkNode, CostPerUnit_Walk);
@@ -430,15 +438,8 @@ public class PathFinderComponent : MonoBehaviour
     private void CreatEdgeByClimbCheck(int x, int y)
     {
         // 当前节点的建立与读取
-        if (!map.map_dic.ContainsKey((x, y)))
-            return;
-        if (gragh.GetNode((x, y)) == null)
-        {
-            Node ne = new Node(x, y);
-            gragh.SetOrGetNode(ne);
-        }
-
-        Node curNode = gragh.GetNode((x, y));
+        Node curNode = GetNode((x, y));
+        if (curNode == null) return;
 
         // 搜算上下节点
         List<(int, int)> linkPos_list = new List<(int, int)> {(0, 1), (0, -1)};
@@ -451,13 +452,8 @@ public class PathFinderComponent : MonoBehaviour
                 MapCell link = map.map_dic[pos];
                 if ((link.StayState == ObjectStayState.Climb || link.StayState == ObjectStayState.Stand )&& link.StayState!= ObjectStayState.CantHold)
                 {
-                    // 周边节点的建立与读取
-                    if (gragh.GetNode(pos) == null)
-                    {
-                        Node ne = new Node(pos.Item1, pos.Item2);
-                        gragh.SetOrGetNode(ne);
-                    }
-                    Node linkNode = gragh.GetNode((pos.Item1, pos.Item2));
+                    Node linkNode = GetNode((pos.Item1, pos.Item2));
+                    linkNode.ActionToNode = ActorActionToNode.Climb;
 
                     // 添加edge
                     Edge edge = new Edge(curNode, linkNode, CostPerUnit_Climb);
@@ -483,12 +479,8 @@ public class PathFinderComponent : MonoBehaviour
                     (jump.StayState == ObjectStayState.Stand || jump.StayState == ObjectStayState.Climb))
                 {
                     // 跳跃节点的建立与读取
-                    if (gragh.GetNode(pos) == null)
-                    {
-                        Node ne = new Node(pos.Item1, pos.Item2);
-                        gragh.SetOrGetNode(ne);
-                    }
-                    Node linkNode = gragh.GetNode((pos.Item1, pos.Item2));
+                    Node linkNode = GetNode((pos.Item1, pos.Item2));
+                    linkNode.ActionToNode = ActorActionToNode.Climb;
 
                     // 添加edge
                     Edge edge = new Edge(curNode, linkNode, CostPerUnit_Climb);
@@ -507,20 +499,8 @@ public class PathFinderComponent : MonoBehaviour
     private void CreatEdgeByJumpVerticalCheck(int x, int y)
     {
         // 当前节点的建立与读取
-        if (!map.map_dic.ContainsKey((x, y)))
-            return;
-        if (gragh.GetNode((x, y)) == null)
-        {
-            Node ne = new Node(x, y);
-            gragh.SetOrGetNode(ne);
-        }
-
-        Node curNode = gragh.GetNode((x, y));
-
-        if(x == -9 && y == -10)
-        {
-          //  Debug.LogError("d");
-        }
+        Node curNode = GetNode((x, y));
+        if (curNode == null) return;
 
         // 搜算上下节点
         List<(int, int)> jumpPos_list = new List<(int, int)> { (0, 1), (0, -1) };
@@ -554,12 +534,8 @@ public class PathFinderComponent : MonoBehaviour
                         if (canJump)
                         {
                             // 目标节点的建立与读取
-                            if (gragh.GetNode(pos) == null)
-                            {
-                                Node ne = new Node(pos.Item1, pos.Item2);
-                                gragh.SetOrGetNode(ne);
-                            }
-                            Node targetNode = gragh.GetNode((pos.Item1, pos.Item2));
+                            Node targetNode = GetNode((pos.Item1, pos.Item2));
+                            targetNode.ActionToNode = ActorActionToNode.JumpV;
 
                             // 添加edge
                             Edge edge = new Edge(curNode, targetNode, CostPerUnit_JumpV * i * adjVal);
@@ -579,15 +555,8 @@ public class PathFinderComponent : MonoBehaviour
     private void CreatEdgeByJumpHorizontalCheck(int x,int y)
     {
         // 当前节点的建立与读取
-        if (!map.map_dic.ContainsKey((x, y)))
-            return;
-        if (gragh.GetNode((x, y)) == null)
-        {
-            Node ne = new Node(x, y);
-            gragh.SetOrGetNode(ne);
-        }
-
-        Node curNode = gragh.GetNode((x, y));
+        Node curNode = GetNode((x, y));
+        if (curNode == null) return;
 
         // 搜算左右节点
         List<(int, int)> jumpPos_list = new List<(int, int)> { (1, 0), (-1, 0) };
@@ -616,13 +585,8 @@ public class PathFinderComponent : MonoBehaviour
                     }
                     if (canJump)
                     {
-                        // 周边节点的建立与读取
-                        if (gragh.GetNode(pos) == null)
-                        {
-                            Node ne = new Node(pos.Item1, pos.Item2);
-                            gragh.SetOrGetNode(ne);
-                        }
-                        Node targetNode = gragh.GetNode((pos.Item1, pos.Item2));
+                        Node targetNode = GetNode((pos.Item1, pos.Item2));
+                        targetNode.ActionToNode = ActorActionToNode.JumpH;
 
                         // 添加edge
                         Edge edge = new Edge(curNode, targetNode, CostPerUnit_JumpH);
@@ -638,23 +602,17 @@ public class PathFinderComponent : MonoBehaviour
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void CreatEdgeByPassEnemyCheck(int x,int y)
+    private void CreatEdgeByPassActorCheck(int x,int y)
     {
-        // 当前节点的建立与读取
-        if (!map.map_dic.ContainsKey((x, y)))
-            return;
-        if (gragh.GetNode((x, y)) == null)
-        {
-            Node ne = new Node(x, y);
-            gragh.SetOrGetNode(ne);
-        }
-
-        Node curNode = gragh.GetNode((x, y));
+        Node curNode = GetNode((x, y));
+        if (curNode == null) return;
 
         // 搜算左右节点
         List<(int, int)> jumpPos_list = new List<(int, int)> { (1, 0), (-1, 0) };
         foreach (var offset_pos in jumpPos_list)
         {
+            int passCost = 0;
+
             int offset_x = offset_pos.Item1; int offset_y = offset_pos.Item2;
             (int, int) pos = (x + offset_x * 2, y + offset_y * 2);
 
@@ -672,20 +630,21 @@ public class PathFinderComponent : MonoBehaviour
                         if (middle.Type == MapCellType.EnemyActor)
                         {
                             canPass = true;
+                            passCost = CostPerUnit_PassE;
+                        }
+                        else if(middle.Type == MapCellType.FriendActor)
+                        {
+                            canPass = true;
+                            passCost = CostPerUnit_PassF;
                         }
                     }
                     if (canPass)
                     {
-                        // 周边节点的建立与读取
-                        if (gragh.GetNode(pos) == null)
-                        {
-                            Node ne = new Node(pos.Item1, pos.Item2);
-                            gragh.SetOrGetNode(ne);
-                        }
-                        Node targetNode = gragh.GetNode((pos.Item1, pos.Item2));
+                        Node targetNode = GetNode((pos.Item1, pos.Item2));
+                        targetNode.ActionToNode = ActorActionToNode.JumpH;
 
                         // 添加edge
-                        Edge edge = new Edge(curNode, targetNode, CostPerUnit_PassE);
+                        Edge edge = new Edge(curNode, targetNode, passCost);
                         gragh.AddEdge(edge);
                     }
                 }
@@ -739,9 +698,6 @@ public class PathFinderComponent : MonoBehaviour
             targetPos = (tx, ty);
             searchPos = (tx, ty);
         }
-        
-
-
 
         // 后面是下落处理
         var targetNode = GetNode(targetPos);
@@ -757,7 +713,13 @@ public class PathFinderComponent : MonoBehaviour
         return (targetPos.Item1, targetPos.Item2);
     }
 
-    // 下落创建路径
+
+    /// <summary>
+    /// 从(x,y)开始创建下落路径
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     private (int,int) CreatEdgeByFall(int x, int y)
     {
         // 当前节点的建立与读取
@@ -766,6 +728,8 @@ public class PathFinderComponent : MonoBehaviour
 
         var cell = map.map_dic[(x, y)];
         var targetNode = GetNode((x, y - cell.height));
+        targetNode.ActionToNode = ActorActionToNode.Fall;
+
         if (targetNode == curNode) return (x, y);
 
         Edge edge = new Edge(curNode, targetNode, 0);
@@ -790,7 +754,8 @@ public class PathFinderComponent : MonoBehaviour
             return null;
         if (gragh.GetNode((x, y)) == null)
         {
-            Node ne = new Node(x, y);
+            var worldPos = grid.GetCellCenterWorld(new Vector3Int(x, y, 0));
+            Node ne = new Node(x, y, worldPos.x, worldPos.y);
             gragh.SetOrGetNode(ne);
         }
 

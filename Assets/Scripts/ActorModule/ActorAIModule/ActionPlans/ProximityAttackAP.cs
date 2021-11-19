@@ -102,6 +102,8 @@ namespace ActorModule.AI
             int point = selfController.MovePoint;
             while (true)
             {
+                if (path.Count <= 0)
+                    break;
                 int cost = Mathf.FloorToInt(pathFinder.GetPathCostToNode(path[path.Count - 1]));
                 surplus = point - cost;
                 if (surplus < 0)

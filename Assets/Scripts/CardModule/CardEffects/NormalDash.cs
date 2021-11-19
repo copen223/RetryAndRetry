@@ -10,7 +10,7 @@ namespace Assets.Scripts.CardModule.CardEffects
     /// <summary>
     /// 冲刺效果
     /// </summary>
-    public class NomalDash : CardEffect
+    public class NormalDash : CardEffect
     {
         Vector2 dir;    // 冲刺方向
         int dis;        // 冲刺距离
@@ -20,7 +20,7 @@ namespace Assets.Scripts.CardModule.CardEffects
         /// </summary>
         /// <param name="_dis"></param>
         /// <param name="effect"></param>
-        public NomalDash(int _dis)
+        public NormalDash(int _dis)
         {
             dis = _dis;
         }

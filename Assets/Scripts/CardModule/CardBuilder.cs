@@ -129,14 +129,19 @@ namespace Assets.Scripts.CardModule
 
             switch (name_string)
             {
-                case "伤害":case "普通伤害":case "NomalDamage":case "Damage":
-                    effect = new CardEffects.NomalDamage(int.Parse(value_string),trigger);break;
+                case "伤害": case "普通伤害":case "NomalDamage":case "Damage":
+                    effect = new CardEffects.NormalDamage(int.Parse(value_string),trigger);break;
                 case "闪避": case "普通闪避": case "NomalDodge": case "Dodge":
-                    effect = new CardEffects.NomalDodge();break;
+                    effect = new CardEffects.NormalDodge();break;
                 case "冲刺":
-                    effect = new CardEffects.NomalDash(int.Parse(value_string));break;
+                    effect = new CardEffects.NormalDash(int.Parse(value_string));break;
+                case "击退":
+                    effect = new CardEffects.NormalBeatBack(int.Parse(value_string));break;
                 default: effect = null;break;
             }
+
+            if (effect == null && name_string != "")
+                Debug.LogError("该效果生成出错，请检查编写或代码：" + name_string);
 
             return effect;
 

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
-    public class NomalDamage:CardEffect
+    public class NormalDamage:CardEffect
     {
         public float damage;
 
-        public NomalDamage(float _damage, EffectTrigger trigger)
+        public NormalDamage(float _damage, EffectTrigger trigger)
         {
             damage = _damage;
             Trigger = trigger;

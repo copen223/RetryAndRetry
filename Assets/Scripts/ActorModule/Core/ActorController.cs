@@ -18,7 +18,9 @@ public class ActorController : MonoBehaviour
     /// <summary>
     /// sprite在scale为1时面朝方向是否为右边，用于移动时切换朝向判断
     /// </summary>
-    public bool SpriteFaceToRight = false;
+    [Header("设置标签")]
+    [SerializeField]
+    private bool SpriteFaceToRight = false;
     public Vector2 FaceDir 
     { 
         get 
@@ -32,6 +34,7 @@ public class ActorController : MonoBehaviour
 
 
     // 属性
+    [Header("属性设置")]
     public float HealPoint;
     public float HealPoint_Max;
 
@@ -79,8 +82,8 @@ public class ActorController : MonoBehaviour
     #region 卡牌战斗相关
 
     //-----------------FocusTrail---------------------//
-    [Header("需要挂载")]
     [SerializeField]
+    [Header("专注轨迹相关，不需要设置")]
     private List<GameObject> focusTrails = new List<GameObject>();  // 该单位存在的专注轨迹
 
     /// <summary>
@@ -183,6 +186,7 @@ public class ActorController : MonoBehaviour
     #endregion
 
     #region 状态机与事件相关
+    [Header("状态机与事件相关，脚本中进行初始化")]
     public ActorState currentState;
     public List<ActorState> ActorStates = new List<ActorState>();
     #endregion
