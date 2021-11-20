@@ -32,10 +32,10 @@ namespace Assets.Scripts.CardModule.CardEffects
             if (isAtking)
             {
                 combat.Dfder.OnBehit(new DamageData(damage, dir));
-                var target = combat.Dfder;
-                var finder = target.GetComponent<PathFinderComponent>();
-                var path = finder.SearchAndGetPathByEnforcedMove(target.transform.position, -1 * dir, 2,false);
-                var move = target.GetComponent<ActorMoveComponent>();
+                // var target = combat.Dfder;
+                // var finder = target.GetComponent<PathFinderComponent>();
+                // var path = finder.SearchAndGetPathByEnforcedMove(target.transform.position, -1 * dir, 2,false);
+                // var move = target.GetComponent<ActorMoveComponent>();
                 // move.StartForceMoveByPathList(path);
             }
             else

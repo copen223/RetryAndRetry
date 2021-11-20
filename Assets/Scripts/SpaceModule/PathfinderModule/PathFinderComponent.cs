@@ -23,7 +23,7 @@ public class PathFinderComponent : MonoBehaviour
     private int CostPerUnit_Walk = 4;
     private int CostPerUnit_Climb = 1;
     private int CostPerUnit_JumpV = 1;
-    private int CostPerUnit_JumpH = 3;
+    private int CostPerUnit_JumpH = 8;
     private int CostPerUnit_PassE = 24;
     private int CostPerUnit_PassF = 8;
 
@@ -128,7 +128,9 @@ public class PathFinderComponent : MonoBehaviour
                     {
                         if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 + i + 1)))
                         {
-                            if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground || map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.EnemyActor)
+                            if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground ||
+                                map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.EnemyActor ||
+                                map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.FriendActor)
                             {
                                 cell.StayState = ObjectStayState.CantHold;
                             }
@@ -679,7 +681,7 @@ public class PathFinderComponent : MonoBehaviour
 
             if(ifIgnoreActor)
             {
-                if (middle.Type == MapCellType.EnemyActor)  // 如果中间块是敌方单位，则先跳过这个块
+                if (middle.Type == MapCellType.EnemyActor || middle.Type == MapCellType.FriendActor)  // 如果中间块是敌方单位，则先跳过这个块
                 {
                     searchPos = (tx, ty);
                     continue;
@@ -726,9 +728,11 @@ public class PathFinderComponent : MonoBehaviour
         var curNode = GetNode((x, y));
         if (curNode == null) return (x, y);
 
+        // 下落到达节点的建立与读取
         var cell = map.map_dic[(x, y)];
         var targetNode = GetNode((x, y - cell.height));
         targetNode.ActionToNode = ActorActionToNode.Fall;
+        targetNode.FallCount = cell.height;
 
         if (targetNode == curNode) return (x, y);
 
@@ -772,6 +776,20 @@ public class PathFinderComponent : MonoBehaviour
     {
         return grid.GetCellCenterWorld(new Vector3Int(cellPos.Item1, cellPos.Item2, 0));
     }
+
+    public List<Node> VectorPath2NodePath(List<Vector3> path)
+    {
+        List<Node> nodes = new List<Node>();
+
+        foreach (var pos in path)
+        {
+            var cellPos = grid.WorldToCell(pos);
+            nodes.Add(GetNode((cellPos.x, cellPos.y)));
+        }
+
+        return nodes;
+    }
+    
 
     #endregion
 }

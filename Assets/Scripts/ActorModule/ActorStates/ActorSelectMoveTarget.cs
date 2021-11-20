@@ -57,7 +57,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 (Controller as PlayerController).MovePoint = surplus;    // 应用消耗值
-                Controller.gameObject.GetComponent<ActorMoveByPath>().SetPath(path); // 设置路径
+                Controller.gameObject.GetComponent<ActorMoveByPath>().SetNodePath(pathfinderComponent.VectorPath2NodePath(path)); // 设置路径
                 ChangeStateTo<ActorMoveByPath>();   // 开始移动
                 return;
             }

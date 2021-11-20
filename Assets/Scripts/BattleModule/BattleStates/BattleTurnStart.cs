@@ -18,20 +18,23 @@ namespace Assets.Scripts.BattleModule.BattleStates
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
 
             if (GameManager.instance.IfDebug)
+            {
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);
+                actor.OnTurnStart();
+            }
             else
             {
-                if (actor.group.IsPlayer) 
-                { 
+                if (actor.group.IsPlayer)
+                {
                     Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);
                     actor.OnTurnStart();
-                    /* Camera.main.GetComponent<CameraController>().Mode = CameraController.CameraMode.Freedom;*/ 
+                    /* Camera.main.GetComponent<CameraController>().Mode = CameraController.CameraMode.Freedom;*/
                 }
-                else if (actor.group.IsEnemy) 
+                else if (actor.group.IsEnemy)
                 {
-                    Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerTurnStart); 
-                    actor.OnTurnStart(); 
-                    ChangeStateTo<BattleTurnAction>(); 
+                    Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerTurnStart);
+                    actor.OnTurnStart();
+                    ChangeStateTo<BattleTurnAction>();
                 }
             }
         }

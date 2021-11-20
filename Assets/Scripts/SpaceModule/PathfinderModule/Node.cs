@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.SpaceModule.PathfinderModule
 {
+    /// <summary>
+    /// 人物通过什么方式到达该节点
+    /// </summary>
     public enum ActorActionToNode
     {
         None,
@@ -37,6 +40,12 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         /// 建图时修改此项以储存人物在节点上移动的信息，确定动画等事件
         /// </summary>
         public ActorActionToNode ActionToNode = ActorActionToNode.None;
+
+        /// <summary>
+        /// 下落到该节点，下落了多少格
+        /// </summary>
+        public int FallCount = 0;
+
 
         readonly public float worldX;
         readonly public float worldY;

@@ -42,7 +42,7 @@ namespace Assets.Scripts.CardModule.CardEffects
             var finder = user.GetComponent<PathFinderComponent>();
             var path = finder.SearchAndGetPathByEnforcedMove(user.transform.position, dir, dis, true);
             var move = user.GetComponent<ActorMoveComponent>();
-            move.StartForceMoveByPathList(path);
+            move.StartForceMoveByPathList(finder.VectorPath2NodePath(path));
 
             base.DoEffect(combat);  // 附加combat进行
         }
