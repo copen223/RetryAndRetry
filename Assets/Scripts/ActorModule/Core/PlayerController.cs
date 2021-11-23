@@ -37,6 +37,8 @@ public class PlayerController : ActorController
     public int MovePoint_Resume;
 
     #region 属性改变方法
+
+
     private void ChangeActionPoint(int value)
     {
         if(BattleManager.instance.CurActorObject == gameObject)
@@ -77,12 +79,14 @@ public class PlayerController : ActorController
     public override void OnTurnEnd()
     {
         base.OnTurnEnd();
+        currentState.ChangeStateTo<ActorNoActionIdle>();
         ShowAllFocusTrail(false);
     }
 
     public override void OnTurnStart()
     {
-        base.OnTurnStart();
+        base.OnTurnStart(); 
+        currentState.ChangeStateTo<ActorActionIdle>();
         ShowAllFocusTrail(true); 
         // 恢复各项数值
         ActionPoint += ActionPoint_Resume;

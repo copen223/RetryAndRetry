@@ -65,7 +65,7 @@ public class PathFinderComponent : MonoBehaviour
         {
             MapCell cell = new MapCell((pos.x,pos.y));
             var rayPos = gridLayout.GetCellCenterWorld(pos);
-            var hit = Physics2D.Raycast(rayPos,Vector2.zero,4f,LayerMask.GetMask("Terrain"));
+            var hit = Physics2D.Raycast(rayPos,Vector2.zero,4f,LayerMask.GetMask("Terrain")|LayerMask.GetMask("EnvirObject"));
             var hit_actor = Physics2D.Raycast(rayPos, Vector2.zero, 4f, LayerMask.GetMask("Actor"));    // 对象检测用hit
             // 判定cell类型
             cell.height = -200;
@@ -108,7 +108,7 @@ public class PathFinderComponent : MonoBehaviour
             if (cell.Type == MapCellType.EnemyActor || cell.Type == MapCellType.Ground ||cell.Type == MapCellType.FriendActor)
                 cell.StayState = ObjectStayState.CantHold;
 
-            if (cell.Type == MapCellType.Empty || cell.Type == MapCellType.Ladder)
+            if (cell.Type == MapCellType.Empty || cell.Type == MapCellType.Ladder || cell.Type == MapCellType.Platform)
             {
                 // climb要弱于stand，所以先判断，若可站立，后续代码会覆盖该状态
                 if (cell.Type == MapCellType.Ladder)

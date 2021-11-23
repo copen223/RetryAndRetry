@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - BattleTrail
   - Actor
   - FocusTrail
   - Obstacle
@@ -22,7 +21,7 @@ TagManager:
   - BattleTrail
   - Terrain
   - Actor
-  - 
+  - EnvirObject
   - 
   - 
   - 

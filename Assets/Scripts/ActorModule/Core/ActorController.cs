@@ -6,7 +6,10 @@ using Assets.Scripts.ActorModule.ActorStates;
 using Assets.Scripts.Tools;
 using ActorModule.AI;
 
-public class ActorController : MonoBehaviour
+/// <summary>
+/// 人物对象控制器，player和enemy控制器都继承自它，都实现了可交互对象接口
+/// </summary>
+public class ActorController : MonoBehaviour,IInteractiveObject
 {
     // 链接
     public GameObject Sprite { get { return transform.Find("Sprite").gameObject; } }
@@ -154,6 +157,7 @@ public class ActorController : MonoBehaviour
     /// </summary>
     public void ShowFocusTrailCount(bool isActive)
     {
+        if (FocusCountUI_GO == null) return;
         FocusCountUI_GO.SetActive(isActive);
     }
 
@@ -167,20 +171,14 @@ public class ActorController : MonoBehaviour
     /// </summary>
     public virtual void OnTurnEnd()
     {
-        //if (BattleManager.instance.CurActorObject == gameObject)
-        //{
-        currentState.ChangeStateTo<ActorNoActionIdle>();
-        //}
+        
     }
     /// <summary>
     /// 回合开始时触发
     /// </summary>
     public virtual void OnTurnStart()
     {
-        //if (BattleManager.instance.CurActorObject == gameObject)
-        //{
-        currentState.ChangeStateTo<ActorActionIdle>();
-        //}
+        
     }
 
     #endregion
@@ -195,7 +193,7 @@ public class ActorController : MonoBehaviour
     // 事件响应
 
     private List<float> damageDatasList = new List<float>();
-    public void OnBehit(DamageData data)
+    public virtual void OnBehit(DamageData data)
     {
         var damage = data.damage;
         if (HealPoint - damage <= 0)

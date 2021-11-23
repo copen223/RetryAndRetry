@@ -101,7 +101,8 @@ public class CardActionController : MonoBehaviour
                 //-----------------------决定检测对象
                 var hit = hits[i];
                 var targetGo = hit.collider.gameObject;
-                if(hit.collider.tag == "Actor" && hit.collider.gameObject.name == "Sprite")
+                if(CheckLayerIfCanAttack(hit.transform.gameObject.layer)
+                    && hit.collider.gameObject.name == "Sprite")
                 {
                     targetGo = hit.transform.parent.gameObject;    // 射中对象的sprite，则主要信息在于其父对象上
                 }
@@ -109,12 +110,13 @@ public class CardActionController : MonoBehaviour
                 // 检测对象是否为自己
                 if(targetGo != Controller.holder.gameObject)
                 {
-                    if(hit.collider.tag == "Obstacle")  // 遇到障碍物，射线被阻断
+                    if(hit.collider.tag == "Obstacle" && 
+                        !CheckLayerIfCanAttack(hit.transform.gameObject.layer))  // 遇到障碍物，射线被阻断
                     {
                         point2 = hit.point;
                         break;
                     }
-                    else if(hit.collider.tag == "Actor")  // 遇到对象
+                    else if(CheckLayerIfCanAttack(hit.transform.gameObject.layer))  // 遇到可攻击对象
                     {
                         if (targets.Count < trail.TargetNum)
                         {
@@ -311,5 +313,16 @@ public class CardActionController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0)) IfInputMouse0 = true; else IfInputMouse0 = false;
         if (Input.GetKeyDown(KeyCode.Mouse1)) IfInputMouse1 = true; else IfInputMouse1 = false;
+    }
+    
+    // 工具
+    private bool CheckLayerIfCanAttack(int layer)
+    {
+        int bitmask = 1 << layer;
+        int layerCheck1 = LayerMask.GetMask("Actor");
+        int layerCheck2 = LayerMask.GetMask("EnvirObject");
+        int layerCheck = layerCheck1 | layerCheck2;
+        int layerCheckEnd = bitmask & layerCheck;
+        return 0 != (bitmask & layerCheckEnd);
     }
 }

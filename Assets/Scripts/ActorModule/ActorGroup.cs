@@ -22,7 +22,8 @@ namespace Assets.Scripts.ActorModule
         public enum GroupType
         {
             Player,
-            Enemy
+            Enemy,
+            EnvirObject
         }
 
         public bool IsPlayer { get { return type == GroupType.Player; } }

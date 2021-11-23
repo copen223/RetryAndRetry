@@ -64,8 +64,8 @@ namespace Assets.Scripts.CardModule
             foreach(var hit in hits)
             {
                 if (hit.collider == null) continue;
-                if (hit.collider.tag == "Obstacle") { rayEndPoint = hit.point; break; }
-                if (hit.collider.tag == "Actor")
+                if (hit.collider.tag == "Obstacle" && !CheckLayerIfCanAttack(hit.collider.gameObject.layer)) { rayEndPoint = hit.point; break; }
+                if (CheckLayerIfCanAttack(hit.collider.gameObject.layer))
                 {
                     var targetCon = hit.collider.transform.parent.GetComponent<ActorController>();
                     if (!(targetCon.group.IsPlayer ^ atkerCon.group.IsPlayer)) continue;    // 对象为友军，跳过
@@ -165,6 +165,16 @@ namespace Assets.Scripts.CardModule
                 contactGb.SetActive(active);
                 contactGb.transform.position = screenPos;
             }
+        }
+
+        private bool CheckLayerIfCanAttack(int layer)
+        {
+            int bitmask = 1 << layer;
+            int layerCheck1 = LayerMask.GetMask("Actor");
+            int layerCheck2 = LayerMask.GetMask("EnvirObject");
+            int layerCheck = layerCheck1 | layerCheck2;
+            int layerCheckEnd = bitmask & layerCheck;
+            return 0 != (bitmask & layerCheckEnd);
         }
 
     }
