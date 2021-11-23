@@ -249,15 +249,14 @@ public class PathFinderComponent : MonoBehaviour
         while(true)
         {
             var pos = (cur.x, cur.y);
-            if ((cur.x, cur.y) == start)
+            if ((cur.x, cur.y) == start) // 目标节点是开始节点，则完成路径搜索，返回一个带有开始节点的路径
             {
                 path.Push(pos);
-               // Debug.Log("世界" + tilemap.GetCellCenterWorld(new Vector3Int(pos.x, pos.y, 0)) + "Cell" + pos.x + "," + pos.y);
                 return path;
             }
-            if (cur.parent == cur)
+            if (cur.parent == cur)  // 目标节点的parent是自己，代表没有路径，直接返回一个空的path
             {
-                //Debug.Log("世界" + tilemap.GetCellCenterWorld(new Vector3Int(pos.x, pos.y, 0)) + "Cell" + pos.x + "," + pos.y);
+                
                 return path;
             }
             path.Push(pos);
@@ -268,6 +267,8 @@ public class PathFinderComponent : MonoBehaviour
 
     /// <summary>
     /// 搜索后调用，获得指定路径,确保已使用dijkstra，即调用searchpathfrom
+    /// 其获得的是一个带有开始节点的路径，长度至少为1
+    /// 如果没有路径，则长度为0
     /// </summary>
     /// <param name="startPos_world"></param>
     /// <param name="endPos_world"></param>
@@ -379,6 +380,8 @@ public class PathFinderComponent : MonoBehaviour
 
     /// <summary>
     /// 获取击退的路径
+    /// 包含了GenerateMap等操作，请直接调用
+    /// 如果没有路径则返回0
     /// </summary>
     /// <param name="startPos_world"></param>
     /// <param name="dir"></param>
@@ -386,6 +389,10 @@ public class PathFinderComponent : MonoBehaviour
     /// <returns></returns>
     public List<Vector3> SearchAndGetPathByEnforcedMove(Vector3 startPos_world,Vector2 dir,int dis,bool ifIgnoreActor)
     {
+        if( dir == Vector2.right)
+        {
+            Debug.Log("");
+        }
         GenerateMapByRaycast();
 
         Vector3Int startPos_map = grid.WorldToCell(startPos_world);
@@ -665,6 +672,9 @@ public class PathFinderComponent : MonoBehaviour
     /// <param name="距离"></param>
     private (int, int) CreatEdgeByBeatBack(int x, int y, Vector2 dir, int dis, bool ifIgnoreActor)
     {
+        Stack<(int, int)> targetPos_stack = new Stack<(int, int)>();
+        targetPos_stack.Push((x, y));   // 初始节点可作为最终击退至位置
+
         // 当前节点的建立与读取
         var curNode = GetNode((x, y));
         if (curNode == null) return (x, y);
@@ -673,46 +683,76 @@ public class PathFinderComponent : MonoBehaviour
         var nDir = dir.normalized;
         (int, int) targetPos = (x, y);
         (int, int) searchPos = (x, y);
+        (int, int) endPos = (x, y); // 最终结束点
 
         for (int i = 1; i < dis + 1; i++)
-        {
-            int tx = searchPos.Item1 + Mathf.RoundToInt(nDir.x), ty = searchPos.Item2 + Mathf.RoundToInt(nDir.y); // 目标位置
-            var middle = map.map_dic[(tx, ty)];
-
+        { 
+            // 现在检测的位置是(tx,ty）
+            int tx = searchPos.Item1 + Mathf.RoundToInt(nDir.x), ty = searchPos.Item2 + Mathf.RoundToInt(nDir.y);
+            
+            var curCell = map.map_dic[(tx, ty)];
             if(ifIgnoreActor)
             {
-                if (middle.Type == MapCellType.EnemyActor || middle.Type == MapCellType.FriendActor)  // 如果中间块是敌方单位，则先跳过这个块
+                if (curCell.Type == MapCellType.EnemyActor || curCell.Type == MapCellType.FriendActor)  // 如果中间块是敌方单位，则先跳过这个块
                 {
-                    searchPos = (tx, ty);
+                    searchPos = (tx, ty);   // 可穿过节点 作为下次搜索的基点，但不可作为targetPos
                     continue;
                 }
             }
 
-            if (middle.StayState == ObjectStayState.CantHold)
+            // 如果该节点不可容纳对象，则选取其上方的节点
+            if (curCell.StayState == ObjectStayState.CantHold)
             {
                 ty = ty + 1;
-                var middle2 = map.map_dic[(tx, ty)];
-                if (middle2.StayState == ObjectStayState.CantHold)
-                    break;  // 通路全部被堵，跳过它们
+                var curCell2 = map.map_dic[(tx, ty)];
+                if (curCell2.StayState == ObjectStayState.CantHold)
+                    break;  // 上方的节点也不可通过，通路全部被堵，结束搜索
             }
 
-
-            targetPos = (tx, ty);
+            // 使用现在搜索的位置进行searchPos 和 targetPos的更新
             searchPos = (tx, ty);
+            targetPos = (tx, ty);
+            targetPos_stack.Push((tx, ty));
         }
 
-        // 后面是下落处理
-        var targetNode = GetNode(targetPos);
-        if (targetNode == curNode) return (x, y);
-
-        Edge edge = new Edge(curNode, targetNode, 0);
-        gragh.AddEdge(edge);
-        if (map.map_dic[targetPos].StayState == ObjectStayState.Fall)
+        #region 建立下落边，并修正击退位置
+        bool ifMoveToRight = (targetPos.Item1 - x) > 0 ? true : false;
+        (int, int) fallPos;
+        while (true)
         {
-           targetPos = CreatEdgeByFall(targetPos.Item1, targetPos.Item2);
+            targetPos = targetPos_stack.Pop();
+
+            if (map.map_dic[targetPos].StayState == ObjectStayState.Fall)
+            {
+                // fallPos = CreatEdgeByFall(targetPos.Item1, targetPos.Item2);
+                fallPos = CreatEdgeByFall(targetPos.Item1, targetPos.Item2, ifMoveToRight); // 添加下落路径
+
+                if (fallPos == targetPos) // 如果无法下落
+                {
+                    continue;
+                }
+                else
+                {
+                    endPos = fallPos;
+                    break;  // 否则targetPos就是最终击退位置
+                }
+            }
+            else if (map.map_dic[targetPos].StayState == ObjectStayState.Stand || targetPos == (x, y))
+            {
+                endPos = targetPos;
+                break;
+            }
         }
-            
-        return (targetPos.Item1, targetPos.Item2);
+        #endregion
+
+        // 建立击退edge
+        var beatBackNode = GetNode(targetPos);
+        if (beatBackNode == curNode) return (x, y);   // 如果没有移动，则不创建edge
+
+        Edge edge = new Edge(curNode, beatBackNode, 0);   // 否则创建击退edge
+        gragh.AddEdge(edge);
+
+        return (endPos.Item1, endPos.Item2);
     }
 
 
@@ -730,6 +770,12 @@ public class PathFinderComponent : MonoBehaviour
 
         // 下落到达节点的建立与读取
         var cell = map.map_dic[(x, y)];
+        var targetCell = map.map_dic[(x, y - cell.height)];
+
+        // 下落处理1 位置被占用 取消下落
+        if (targetCell.StayState == ObjectStayState.CantHold)
+            return (x, y);
+
         var targetNode = GetNode((x, y - cell.height));
         targetNode.ActionToNode = ActorActionToNode.Fall;
         targetNode.FallCount = cell.height;
@@ -741,6 +787,74 @@ public class PathFinderComponent : MonoBehaviour
 
         return (x, y - cell.height);
     }
+    /// <summary>
+    /// 从(x,y)开始创建下落路径，并用ifToRight记录前置移动方向用于决定碰撞
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="ifToRight"></param>
+    /// <returns></returns>
+    private (int, int) CreatEdgeByFall(int x, int y,bool ifToRight)
+    {
+        // 当前节点的建立与读取
+        var curNode = GetNode((x, y));
+        if (curNode == null) return (x, y);
+
+        // 下落到达节点的建立与读取
+        var cell = map.map_dic[(x, y)];
+        var targetCell = map.map_dic[(x, y - cell.height)];
+
+        // 下落到达Node的建立
+        var targetNode = GetNode((x, y - cell.height));
+        targetNode.ActionToNode = ActorActionToNode.Fall;
+        targetNode.FallCount = cell.height;
+
+        //下落处理1 位置被占用 取消下落
+        //if (targetCell.StayState == ObjectStayState.CantHold)
+        //    return (x, y);
+
+        // 下落处理2 位置被占用 检测对方是否能被弹开
+        if (targetCell.StayState == ObjectStayState.CantHold)
+        {
+            if (targetCell.Type == MapCellType.FriendActor || targetCell.Type == MapCellType.EnemyActor)
+            {
+                Vector2 targetWorldPos = grid.GetCellCenterWorld(new Vector3Int(targetCell.IntPos.Item1, targetCell.IntPos.Item2, 0));
+                var hit = Physics2D.Raycast(targetWorldPos, Vector2.zero, 4f, LayerMask.GetMask("Actor"));
+                PathFinderComponent targetPathFinder = hit.collider.transform.parent.GetComponent<PathFinderComponent>();
+                
+                var targetBeHitLeftPath = targetPathFinder.SearchAndGetPathByEnforcedMove(hit.collider.transform.parent.position, Vector2.left, 1, true);
+                var targetBeHitRightPath = targetPathFinder.SearchAndGetPathByEnforcedMove(hit.collider.transform.parent.position, Vector2.right, 1, true);
+
+                Vector2 dir = Vector2.zero;
+
+                List<Vector3> targetBeHitPath = new List<Vector3>();
+                if (ifToRight) { targetBeHitPath = targetBeHitRightPath; dir = Vector2.right; }
+                else { targetBeHitPath = targetBeHitLeftPath; dir = Vector2.left; }
+
+                if (targetBeHitPath.Count <= 1) // 原地不动含有一个开始节点，长度为1，没有路径长度为0所以用1作为判据
+                {
+                    targetBeHitPath = ifToRight ? targetBeHitLeftPath : targetBeHitRightPath;
+                    dir = ifToRight ? Vector2.left : Vector2.right;
+                }
+
+                if (targetBeHitPath.Count <= 1) return (x, y);  // 两个方向都不能弹开，取消下落
+
+                // 添加碰撞信息
+                BeatBackInfomation beatBackInfomation = new BeatBackInfomation(hit.transform.parent.gameObject, dir, 1);
+
+                targetNode.BeatBackInfomation = beatBackInfomation;
+            }
+        }
+
+        if (targetNode == curNode) return (x, y);
+
+        Edge edge = new Edge(curNode, targetNode, 0);
+        gragh.AddEdge(edge);
+
+        return (x, y - cell.height);
+    }
+
+    void Onddd() { }
     #endregion
 
     #region 工具方法

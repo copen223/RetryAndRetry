@@ -239,6 +239,15 @@ public class ActorController : MonoBehaviour
         UIManager.instance.CreatFloatUIAt(textPos, Vector3.zero, time, Color.green, "闪避");
     }
 
+    public void OnBeatBack(Vector2 dir,int dis)
+    {
+        var finder = GetComponent<PathFinderComponent>();
+        var move = GetComponent<ActorMoveComponent>();
+
+        var path = finder.SearchAndGetPathByEnforcedMove(transform.position, dir, dis, true);
+        move.StartForceMoveByPathList(finder.VectorPath2NodePath(path));
+    }
+
     //-------------------事件订阅-------------------//
     public enum ActorEvent
     {

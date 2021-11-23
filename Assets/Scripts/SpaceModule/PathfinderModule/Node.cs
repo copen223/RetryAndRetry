@@ -6,6 +6,19 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.SpaceModule.PathfinderModule
 {
+    public class BeatBackInfomation
+    {
+        public UnityEngine.GameObject target;
+        public UnityEngine.Vector2 dir;
+        public int dis;
+        public BeatBackInfomation(UnityEngine.GameObject _target, UnityEngine.Vector2 _dir,int _dis)
+        {
+            target = _target; dir = _dir; dis = _dis;
+        }
+    }
+
+
+
     /// <summary>
     /// 人物通过什么方式到达该节点
     /// </summary>
@@ -40,6 +53,19 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         /// 建图时修改此项以储存人物在节点上移动的信息，确定动画等事件
         /// </summary>
         public ActorActionToNode ActionToNode = ActorActionToNode.None;
+        /// <summary>
+        /// 一般在寻路时处理事件时使用
+        /// </summary>
+        public event Action ArriveThisNodeEvent;
+        /// <summary>
+        /// 由ActorMoveComponent调用
+        /// </summary>
+        public void InvokeAriiveThisNodeEvent() { ArriveThisNodeEvent?.Invoke(); }
+
+        /// <summary>
+        /// 达到改节点时引发的碰撞信息
+        /// </summary>
+        public BeatBackInfomation BeatBackInfomation;
 
         /// <summary>
         /// 下落到该节点，下落了多少格

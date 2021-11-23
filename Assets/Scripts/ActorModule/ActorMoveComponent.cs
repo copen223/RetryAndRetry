@@ -179,9 +179,11 @@ public class ActorMoveComponent : MonoBehaviour
         {
             case ActorActionToNode.Fall:
                 HandleFallDamage(node);
+                HandleBeatBack(node);
                 break;
             default: break;
         }
+        node.InvokeAriiveThisNodeEvent();   // 触发到达事件
     }
 
     private void HandleFallDamage(Node node)
@@ -189,5 +191,14 @@ public class ActorMoveComponent : MonoBehaviour
         if (node.FallCount <= 6) return;    // 6格即1.5格下落不受伤
         float fallDamge = Mathf.FloorToInt(node.FallCount * FallDamagePerUnit);
         Actor.GetComponent<ActorController>().OnBehit(new DamageData(fallDamge, Vector2.zero));
+    }
+    private void HandleBeatBack(Node node)
+    {
+        if (node.BeatBackInfomation == null) return;
+
+        BeatBackInfomation information = node.BeatBackInfomation;
+        information.target.GetComponent<ActorController>().OnBeatBack(information.dir, information.dis);
+
+        node.BeatBackInfomation = null;
     }
 }
