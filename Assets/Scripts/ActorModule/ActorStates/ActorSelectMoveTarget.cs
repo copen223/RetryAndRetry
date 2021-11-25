@@ -24,7 +24,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             // 1.路径获取
             var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //var path = pathfinderComponent.GetPathFromTo(gameObject.transform.position, mousePos_world);
-            var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world);
+            var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world, (Controller as PlayerController).MovePoint);
 
             // 2.移动点数消耗判断,修正path
             int surplus = 0;

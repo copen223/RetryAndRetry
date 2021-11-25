@@ -23,6 +23,7 @@ public class ActorRayDrawer : MonoBehaviour
 
     public void DrawLine( List<Vector3> linePoints)
     {
+        //for (int i = 0; i < linePoints.Count; i++) { linePoints[i] += new Vector3(0, 0, 0); }
         RayObject.SetActive(true);
         lineRenderer.positionCount = linePoints.Count;
         lineRenderer.SetPositions(linePoints.ToArray());

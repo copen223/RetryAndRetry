@@ -9,7 +9,7 @@ using ActorModule.AI;
 /// <summary>
 /// 人物对象控制器，player和enemy控制器都继承自它，都实现了可交互对象接口
 /// </summary>
-public class ActorController : MonoBehaviour,IInteractiveObject
+public class ActorController : MonoBehaviour,ICanBeHitObject
 {
     // 链接
     public GameObject Sprite { get { return transform.Find("Sprite").gameObject; } }
@@ -208,9 +208,9 @@ public class ActorController : MonoBehaviour,IInteractiveObject
         Vector3 textRandomOffset = new Vector3(Random.Range(0,0.5f), Random.Range(0,0.5f), 0);
         Vector3 textPos = Sprite.transform.position + textOffset + textRandomOffset;
         Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
-        Vector3 textMove = new Vector3(-data.dir.x, 1f, 0);
-        float time = 0.5f;
-        UIManager.instance.CreatFloatUIAt(textPos, Vector3.zero, time, Color.red, data.damage + "");
+        Vector3 textMove = new Vector3(-data.dir.x + textRandomOffset.y, 1f, 0);
+        float time = 1f;
+        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, data.damage + "");
 
         EventInvoke(ActorEvent.OnBehit);
     }
@@ -233,8 +233,8 @@ public class ActorController : MonoBehaviour,IInteractiveObject
         Vector3 textPos = Sprite.transform.position + textOffset + textRandomOffset;
         Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
         Vector3 textMove = new Vector3(-data.dir.x/2, 1f, 0);
-        float time = 0.5f;
-        UIManager.instance.CreatFloatUIAt(textPos, Vector3.zero, time, Color.green, "闪避");
+        float time = 1f;
+        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.green, "闪避");
     }
 
     public void OnBeatBack(Vector2 dir,int dis)
@@ -301,15 +301,5 @@ public class ActorController : MonoBehaviour,IInteractiveObject
     #endregion
 }
 
-public class DamageData
-{
-    public float damage;
-    public Vector2 dir;
-    public DamageData(float _damage,Vector2 _dir)
-    {
-        damage = _damage;
-        dir = _dir;
-    }
-}
 
 

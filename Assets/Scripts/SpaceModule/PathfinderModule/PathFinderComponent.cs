@@ -27,6 +27,9 @@ public class PathFinderComponent : MonoBehaviour
     private int CostPerUnit_PassE = 24;
     private int CostPerUnit_PassF = 8;
 
+    [SerializeField]
+    [Header("体积高度，用于判断是否可容纳")]
+    private int SpaceHigh = 4; 
 
     //--------------------------//
 
@@ -124,7 +127,7 @@ public class PathFinderComponent : MonoBehaviour
                     }
 
                     //如果上方4格子内含有Ground，则表明空间不足，不可容纳
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < SpaceHigh; i++)
                     {
                         if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 + i + 1)))
                         {
@@ -331,6 +334,56 @@ public class PathFinderComponent : MonoBehaviour
             var path = GetPathFromTo(startPos_world,grid.GetCellCenterWorld(new Vector3Int(n.x,n.y,0)));
             if (path.Count >= 1)
             {
+                CurPath = path;
+                return path;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 获取离目标点最近的在thersholdOfCost消耗内的节点的路径
+    /// </summary>
+    /// <param name="startPos_world"></param>
+    /// <param name="endPos_world"></param>
+    /// <param name="thresholdOfCost"></param>
+    /// <returns></returns>
+    public List<Vector3> GetPathFromToNearst(Vector3 startPos_world, Vector3 endPos_world, float thresholdOfCost)
+    {
+        List<Vector3> path_world = new List<Vector3>();
+        Vector3Int startPos_map = grid.WorldToCell(startPos_world);
+        Vector3Int endPos_map = grid.WorldToCell(endPos_world);
+
+        List<Node> nearstNodes = new List<Node>();
+
+        foreach (var node in gragh.Nodes_dir)
+        {
+            nearstNodes.Add(node.Value);
+        }
+        nearstNodes.Sort((n1, n2) =>
+        {
+            float disN1 = Mathf.Abs(endPos_map.x - n1.x) + Mathf.Abs(endPos_map.y - n1.y) * 0.25f;
+            float disN2 = Mathf.Abs(endPos_map.x - n2.x) + Mathf.Abs(endPos_map.y - n2.y) * 0.25f;
+            if (disN1 > disN2)
+                return 1;
+            else if (disN1 == disN2)
+                return 0;
+            else
+                return -1;
+        }
+        );
+
+
+        foreach (var n in nearstNodes)
+        {
+            var path = GetPathFromTo(startPos_world, grid.GetCellCenterWorld(new Vector3Int(n.x, n.y, 0)));
+            if (path.Count >= 1)
+            {
+                var cellPos = grid.WorldToCell(new Vector3(path[path.Count - 1].x, path[path.Count - 1].y, 0));
+                Node node = GetNode((cellPos.x, cellPos.y));
+                if (node.cost > thresholdOfCost)
+                    continue;
                 CurPath = path;
                 return path;
             }

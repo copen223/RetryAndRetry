@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.SpaceModule.PathfinderModule;
 using System;
+using Assets.Scripts.ActorModule;
 
 public class ActorMoveComponent : MonoBehaviour
 {

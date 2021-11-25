@@ -1,5 +1,26 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!50 &1451630181
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267124080198335352}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &5326665621080990232
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7,25 +28,37 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6375307661126261088, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661126261089, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.466
+      objectReference: {fileID: 0}
     - target: {fileID: 6375307661126261102, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_SortingOrder
-      value: -5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246656, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_Name
-      value: Actor2
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246656, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_TagString
       value: Actor
       objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246656, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.41
+      value: 1.56
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.359
+      value: -2.12
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -69,19 +102,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: HealPoint
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: HealPoint_Max
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: DeckInfo
       value: 
-      objectReference: {fileID: 11400000, guid: 76b283a7487d0e9418ecc9ad673c67b4, type: 2}
+      objectReference: {fileID: 11400000, guid: 1f09982b55295f64486d75ab19f627f1, type: 2}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: ActionPoint_Max
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: MovePoint_Max
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: MovePoint_Resume
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246670, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: moveSpeed
       value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+--- !u!1 &1267124080198335352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6375307661126261088, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+  m_PrefabInstance: {fileID: 5326665621080990232}
+  m_PrefabAsset: {fileID: 0}

@@ -22,7 +22,7 @@ TagManager:
   - Terrain
   - Actor
   - EnvirObject
-  - 
+  - EnvirElements
   - 
   - 
   - 
@@ -43,9 +43,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Ray
-    uniqueID: 3090015919
-    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ray
+    uniqueID: 3090015919
     locked: 0

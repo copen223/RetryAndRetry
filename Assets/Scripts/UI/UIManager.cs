@@ -38,9 +38,22 @@ public class UIManager : MonoBehaviour
         var gb = floatUIPool.GetInstance();
         var screenPos = Camera.main.WorldToScreenPoint(worldPos);
         gb.transform.position = screenPos;
+        gb.transform.GetComponent<FloatUIController>().BaseWorldPos = worldPos;
         gb.transform.GetComponent<FloatUIController>().text.color = color;
         gb.transform.GetComponent<FloatUIController>().text.text = text;
         gb.GetComponent<FloatUIController>().StartMoveToDir(dir, time);
+
+        return gb;
+    }
+
+    public GameObject CreatFloatUIAt(GameObject target, Vector2 dir, float time, Color color, string text)
+    {
+        var gb = floatUIPool.GetInstance();
+        var screenPos = Camera.main.WorldToScreenPoint(target.transform.position);
+        gb.transform.position = screenPos;
+        gb.transform.GetComponent<FloatUIController>().text.color = color;
+        gb.transform.GetComponent<FloatUIController>().text.text = text;
+        gb.GetComponent<FloatUIController>().StartMoveToDir(target, dir, time);
 
         return gb;
     }
