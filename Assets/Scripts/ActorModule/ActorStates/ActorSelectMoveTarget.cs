@@ -25,6 +25,13 @@ namespace Assets.Scripts.ActorModule.ActorStates
             var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //var path = pathfinderComponent.GetPathFromTo(gameObject.transform.position, mousePos_world);
             var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world, (Controller as PlayerController).MovePoint);
+            var nodePath = pathfinderComponent.VectorPath2NodePath(path);
+            List<Vector3> linePath = new List<Vector3>();
+            foreach(var node in nodePath)
+            {
+                foreach (var passPos in node.PrePassWorldPositions) linePath.Add(new Vector3(passPos.Item1,passPos.Item2,0));
+                linePath.Add(new Vector3(node.worldX, node.worldY, 0));
+            }
 
             // 2.移动点数消耗判断,修正path
             int surplus = 0;
@@ -45,7 +52,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             // 3.点数消耗显示与路径显示
             var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("MovePoint").GetComponent<TextUIController>();
             ui.ChangeText(surplus + "", Color.red);
-            rayDrawer.DrawLine(path);
+            rayDrawer.DrawLine(linePath);
 
             // 4.输入处理，左键确认，右键取消
             if (Input.GetKeyDown(KeyCode.Mouse1))
@@ -57,7 +64,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 (Controller as PlayerController).MovePoint = surplus;    // 应用消耗值
-                Controller.gameObject.GetComponent<ActorMoveByPath>().SetNodePath(pathfinderComponent.VectorPath2NodePath(path)); // 设置路径
+                Controller.gameObject.GetComponent<ActorMoveByPath>().SetNodePath(nodePath); // 设置路径
                 ChangeStateTo<ActorMoveByPath>();   // 开始移动
                 return;
             }

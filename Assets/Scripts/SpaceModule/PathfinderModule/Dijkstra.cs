@@ -114,6 +114,8 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
                 link.cost = edge.weight + last.cost;
                 // 费用降低，说明该路径目前费用最小，更新parent
                 link.parent = last;
+                // 应用中间经过位置
+                link.SetPrePassWorldPositions(edge.PassWorldPositions);
             }
         }
 

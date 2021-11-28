@@ -82,6 +82,8 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
 
         public Node parent;
 
+        public List<(float, float)> PrePassWorldPositions = new List<(float, float)>();
+
         public List<Edge> Edges = new List<Edge>();
         public void AddEdge(Edge edge)
         {
@@ -100,6 +102,15 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
                     return edge;
             }
             return null;
+        }
+
+        /// <summary>
+        /// 设置前置位点，移动到该位点时，会先移动完前置位点
+        /// </summary>
+        /// <param name="list"></param>
+        public void SetPrePassWorldPositions(List<(float, float)> list)
+        {
+            PrePassWorldPositions = list;
         }
 
         public override bool Equals(object obj)

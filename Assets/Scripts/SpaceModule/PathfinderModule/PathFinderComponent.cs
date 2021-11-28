@@ -28,7 +28,7 @@ public class PathFinderComponent : MonoBehaviour
     private int CostPerUnit_PassF = 8;
 
     [SerializeField]
-    [Header("体积高度，用于判断是否可容纳")]
+    [Header("该单位体积高度，用于判断是否可容纳")]
     private int SpaceHigh = 4; 
 
     //--------------------------//
@@ -107,6 +107,7 @@ public class PathFinderComponent : MonoBehaviour
             (int, int) pos = mapCell.Key;
 
             cell.StayState = ObjectStayState.Fall;
+            cell.PassState = ObjectPassState.None;
 
             if (cell.Type == MapCellType.EnemyActor || cell.Type == MapCellType.Ground ||cell.Type == MapCellType.FriendActor)
                 cell.StayState = ObjectStayState.CantHold;
@@ -124,6 +125,7 @@ public class PathFinderComponent : MonoBehaviour
                     if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
                     {
                         cell.StayState = ObjectStayState.Stand;
+                        cell.PassState = ObjectPassState.WalkPass;
                     }
 
                     //如果上方4格子内含有Ground，则表明空间不足，不可容纳
@@ -137,6 +139,8 @@ public class PathFinderComponent : MonoBehaviour
                             {
                                 cell.StayState = ObjectStayState.CantHold;
                             }
+                            if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground)
+                                cell.PassState = ObjectPassState.CantPass;
                         }
                     }
 
@@ -670,44 +674,64 @@ public class PathFinderComponent : MonoBehaviour
         if (curNode == null) return;
 
         // 搜算左右节点
-        List<(int, int)> jumpPos_list = new List<(int, int)> { (1, 0), (-1, 0) };
-        foreach (var offset_pos in jumpPos_list)
+        List<(int, int)> jumpPos_list = new List<(int, int)> { (-1, 0), (1, 0), (-1, 1), (1, 1), (-1, -1), (1, -1) };
+        List<(int, int)> linkPos_list = new List<(int, int)> { (-1, 0), (1, 0), (-1, 1), (1, 1), (-1, -1), (1, -1) };
+        foreach (var offset_pos in linkPos_list)
         {
             int passCost = 0;
 
             int offset_x = offset_pos.Item1; int offset_y = offset_pos.Item2;
-            (int, int) pos = (x + offset_x * 2, y + offset_y * 2);
+            (int, int) pos = (x + offset_x, y + offset_y);
 
             if (map.map_dic.ContainsKey(pos))
             {
                 MapCell target = map.map_dic[pos];
-                if (target.StayState == ObjectStayState.Stand)
+                bool isMiddleActor = false;
+                bool canPass = true;
+                if (target.PassState == ObjectPassState.CantPass)
+                    canPass = false;
+                if(target.Type == MapCellType.EnemyActor)
                 {
-                    bool canPass = false;
-                    (int, int) middlePos = (x + offset_x, y + offset_y);
-                    if (map.map_dic.ContainsKey(middlePos))
-                    {
-                        MapCell middle = map.map_dic[middlePos];
-                        // 隔着一个敌人单位，可以pass
-                        if (middle.Type == MapCellType.EnemyActor)
-                        {
-                            canPass = true;
-                            passCost = CostPerUnit_PassE;
-                        }
-                        else if(middle.Type == MapCellType.FriendActor)
-                        {
-                            canPass = true;
-                            passCost = CostPerUnit_PassF;
-                        }
-                    }
-                    if (canPass)
-                    {
-                        Node targetNode = GetNode((pos.Item1, pos.Item2));
-                        targetNode.ActionToNode = ActorActionToNode.JumpH;
+                    isMiddleActor = true;
+                    passCost = CostPerUnit_PassE;
+                }
+                if(target.Type == MapCellType.FriendActor)
+                {
+                    isMiddleActor = true;
+                    passCost = CostPerUnit_PassF;
+                }
 
-                        // 添加edge
-                        Edge edge = new Edge(curNode, targetNode, passCost);
-                        gragh.AddEdge(edge);
+                if(canPass && isMiddleActor)
+                {
+                    foreach(var offset_pos2 in jumpPos_list)
+                    {
+                        int offset_x2 = offset_pos2.Item1; int offset_y2 = offset_pos2.Item2;
+                        (int, int) endPos = (pos.Item1 + offset_x2, pos.Item2 + offset_y2);
+                        
+                        if (endPos == (x, y))
+                            continue;
+
+                        if(map.map_dic.ContainsKey(endPos))
+                        {
+                            MapCell end = map.map_dic[endPos];
+                            if (end.StayState == ObjectStayState.Stand)
+                            {
+                                Node endNode = GetNode(endPos);
+                                endNode.ActionToNode = ActorActionToNode.JumpH;
+
+                                if(curNode.EdgeToNode(endNode) != null) // 已有edge则跳过
+                                {
+                                    if (curNode.EdgeToNode(endNode).weight <= passCost)
+                                        continue;
+                                }
+
+                                var worldPassPos = CellToWorld(pos);
+
+                                Edge edge = new Edge(curNode, endNode, passCost);
+                                edge.SetPassWorldPositions(new List<(float, float)> { (worldPassPos.x, worldPassPos.y) });
+                                gragh.AddEdge(edge);
+                            }
+                        }
                     }
                 }
             }

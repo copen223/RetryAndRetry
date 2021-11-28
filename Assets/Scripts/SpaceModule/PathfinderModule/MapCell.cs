@@ -24,6 +24,16 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         Fall
     }
 
+    public enum ObjectPassState
+    {
+        None,
+        /// <summary>
+        /// 可行走通过
+        /// </summary>
+        WalkPass,
+        CantPass
+    }
+
     public class MapCell
     {
         public MapCell((int,int)intPos)
@@ -33,6 +43,7 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
 
         public MapCellType Type;
         public ObjectStayState StayState;
+        public ObjectPassState PassState;
         public (int, int) IntPos;
         public int height;
     }

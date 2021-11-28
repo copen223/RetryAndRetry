@@ -7,7 +7,7 @@ using Assets.Scripts.ActorModule;
 
 public class ActorMoveComponent : MonoBehaviour
 {
-    public GameObject Actor { get { return gameObject; }  }
+    public GameObject Actor { get { return gameObject; } }
 
     //-----------属性-----------
     public float moveSpeed;
@@ -30,7 +30,7 @@ public class ActorMoveComponent : MonoBehaviour
     {
         ifFinishMoving = false;
         if (!isMoving)
-            StartCoroutine(MoveByPathListCouroutine(path,true));
+            StartCoroutine(MoveByPathListCouroutine(path, true));
     }
     /// <summary>
     /// 按路径移动的Node版本
@@ -40,7 +40,7 @@ public class ActorMoveComponent : MonoBehaviour
     {
         ifFinishMoving = false;
         if (!isMoving)
-            StartCoroutine(MoveByPathListCouroutine(path,true));
+            StartCoroutine(MoveByPathListCouroutine(path, true));
     }
     /// <summary>
     /// 强制性移动，特点就是不改变朝向
@@ -50,7 +50,7 @@ public class ActorMoveComponent : MonoBehaviour
     {
         ifFinishMoving = false;
         if (!isMoving)
-            StartCoroutine(MoveByPathListCouroutine(path,false));
+            StartCoroutine(MoveByPathListCouroutine(path, false));
     }
     /// <summary>
     /// 强制性移动的node版本
@@ -68,7 +68,7 @@ public class ActorMoveComponent : MonoBehaviour
     /// <param name="path"></param>
     /// <param name="ifChangeFace"></param>
     /// <returns></returns>
-    private IEnumerator MoveByPathListCouroutine(List<Vector3> path,bool ifChangeFace)
+    private IEnumerator MoveByPathListCouroutine(List<Vector3> path, bool ifChangeFace)
     {
         int i = 0;
         ifMoveNext = true;
@@ -82,10 +82,10 @@ public class ActorMoveComponent : MonoBehaviour
 
                 ifMoveNext = false;
 
-                var point = path[i-1];
+                var point = path[i - 1];
                 var dir = point - last;
 
-                if(ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
+                if (ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
                 StartCoroutine(MoveToPointCouroutine(point));
 
                 last = point;
@@ -107,30 +107,30 @@ public class ActorMoveComponent : MonoBehaviour
         var last = transform.position;
         while (true)
         {
-            if (ifMoveNext)
+            //if (ifMoveNext)
+            //{
+            if (i >= 1) ArrivalTheNode(path[i - 1]);   // 到达上一个节点，进行结果处理
+
+            i++;
+            if (i > path.Count) // 路径完成退出协程
             {
-                if(i>=1) ArrivalTheNode(path[i - 1]);   // 到达上一个节点，进行结果处理
-
-                i++;
-                if (i > path.Count) // 路径完成退出协程
-                {
-                    break; 
-                }
-
-                ifMoveNext = false;
-
-                var curTargetNode = path[i - 1];
-                Vector3 curTargetPos = new Vector3(curTargetNode.worldX, curTargetNode.worldY, 0);
-                // 方向改变
-                var dir = curTargetPos - last;
-                if (ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
-                // 改变动画，开始移动到该节点
-                HandleActionToNode(curTargetNode);
-                StartCoroutine(MoveToPointCouroutine(curTargetPos));
-
-                last = curTargetPos;
+                break;
             }
-            yield return new WaitForEndOfFrame();
+
+            ifMoveNext = false;
+
+            var curTargetNode = path[i - 1];
+            Vector3 curTargetPos = new Vector3(curTargetNode.worldX, curTargetNode.worldY, 0);
+            // 方向改变
+            var dir = curTargetPos - last;
+            if (ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
+            // 改变动画，开始移动到该节点
+            HandleActionToNode(curTargetNode);
+            yield return StartCoroutine(MoveToNodeCouroutine(curTargetNode));
+
+            //    last = curTargetPos;
+            //}
+            //yield return new WaitForEndOfFrame();
         }
         ifFinishMoving = true;
     }
@@ -148,8 +148,8 @@ public class ActorMoveComponent : MonoBehaviour
         {
             timer += Time.deltaTime;
             if (timer >= time) timer = time;
-            float x = Mathf.Lerp( start_pos.x, target_pos.x, timer / time);
-            float y = Mathf.Lerp( start_pos.y, target_pos.y, timer / time);
+            float x = Mathf.Lerp(start_pos.x, target_pos.x, timer / time);
+            float y = Mathf.Lerp(start_pos.y, target_pos.y, timer / time);
             Vector3 curPos = new Vector3(x, y, 0);
             Actor.transform.position = curPos;
             yield return new WaitForEndOfFrame();
@@ -159,24 +159,33 @@ public class ActorMoveComponent : MonoBehaviour
         ifMoveNext = true;
     }
 
+    private IEnumerator MoveToNodeCouroutine(Node node)
+    {
+        foreach (var pos in node.PrePassWorldPositions)
+        {
+            yield return StartCoroutine(MoveToPointCouroutine(new Vector3(pos.Item1, pos.Item2, 0)));
+        }
+        yield return StartCoroutine(MoveToPointCouroutine(new Vector3(node.worldX, node.worldY, 0)));
+    }
+
     //-------------------路径上上人物行为处理----------------
     private ActorActionToNode lastAction = ActorActionToNode.None;
     private void HandleActionToNode(Node node)
     {
         if (node.ActionToNode == lastAction) return; // 相同的节点行为类型，不用做出动画变更
 
-        switch(node.ActionToNode)
+        switch (node.ActionToNode)
         {
             case ActorActionToNode.Fall:
                 // 切换下落动画
                 break;
-            default:break;
+            default: break;
         }
     }
 
     private void ArrivalTheNode(Node node)
     {
-        switch(node.ActionToNode)
+        switch (node.ActionToNode)
         {
             case ActorActionToNode.Fall:
                 HandleFallDamage(node);
