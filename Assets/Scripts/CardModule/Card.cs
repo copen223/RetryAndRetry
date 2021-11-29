@@ -13,25 +13,43 @@ namespace Assets.Scripts.CardModule
         public string name;
 
         public Card() { }
-        public Card(string _name,CardType _type,List<CardEffect> _effects)
+        public Card(string _name,CardUseType _type,List<CardEffect> _effects)
         {
             name = _name;
             type = _type;
             effects = _effects;
             situation = CardSituation.Idle;
+            upChangeType = CardUpChangeType.Normal;
+            cardLevel = 0;
         }
-        public Card(string _name, CardType _type, List<CardEffect> _effects,CardAction action)
+        public Card(string _name, CardUseType _type, List<CardEffect> _effects,CardAction action)
         {
             name = _name;
             type = _type;
             effects = _effects;
             situation = CardSituation.Idle;
+            upChangeType = CardUpChangeType.Normal;
+            cardLevel = 0;
             CardAction = action;
         }
 
-        public CardType type;               // 卡牌类型 主动型/被动型 主动型打出时会生效，被动型专注时会生效
+        public Card(string _name, CardUseType _type, List<CardEffect> _effects, CardAction action,int upChangeLevel)
+        {
+            name = _name;
+            type = _type;
+            effects = _effects;
+            situation = CardSituation.Idle;
+            upChangeType = CardUpChangeType.Normal;
+            cardLevel = upChangeLevel;
+            CardAction = action;
+        }
+
+
+        public CardUseType type;               // 卡牌类型 主动型/被动型 主动型打出时会生效，被动型专注时会生效
         public CardSituation situation;     // 表明卡牌在手牌中的状态，刷新时根据该项来决定显示层状态
         private GameObject focusTrail;       // 卡牌专注轨迹，用途只有判断该卡牌是否有专注轨迹 不影响使用
+        public CardUpChangeType upChangeType;
+        public int cardLevel;
 
         /// <summary>
         /// 设置专注轨迹，同时把专注轨迹的卡牌设置为该卡牌
@@ -66,7 +84,7 @@ namespace Assets.Scripts.CardModule
         
     }
 
-    public enum CardType
+    public enum CardUseType
     {
         Active = 1,
         Passive = 2
@@ -76,6 +94,12 @@ namespace Assets.Scripts.CardModule
     {
         Idle,
         Focused
+    }
+
+    public enum CardUpChangeType
+    {
+        Normal,
+        UpChange
     }
 
     public enum FoucsPos

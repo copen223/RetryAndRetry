@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6375307661126261089}
   - component: {fileID: 6375307661126261102}
   - component: {fileID: 6375307661126261103}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Actor
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 6375307661498246667}
   - component: {fileID: 6375307661498246666}
   - component: {fileID: 6375307661498246665}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,12 +151,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   advantage: 0
+  SpriteFaceToRight: 0
   HealPoint: 0
   HealPoint_Max: 0
+  FocusCountUI_GO: {fileID: 0}
+  focusTrails: []
   currentState: {fileID: 0}
   ActorStates: []
-  DeckInfo: {fileID: 0}
-  CardDrawNum: 0
+  IfEnemy: 0
+  DeckInfo: {fileID: 11400000, guid: fa61fff040b888041b53e1c7097fdf1e, type: 2}
+  ActionPoint_Max: 3
+  ActionPoint_Resume: 0
+  MovePoint_Max: 30
+  MovePoint_Resume: 30
 --- !u!114 &6375307661498246671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurPath: []
-  CostPerUnit_Walk: 2
+  SpaceHigh: 4
 --- !u!114 &6375307661498246670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,8 +191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  isMoving: 0
-  ifMoveNext: 0
   ifFinishMoving: 0
 --- !u!114 &7666746912837725616
 MonoBehaviour:

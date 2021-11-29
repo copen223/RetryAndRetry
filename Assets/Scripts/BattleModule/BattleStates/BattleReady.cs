@@ -22,6 +22,8 @@ namespace Assets.Scripts.BattleModule.BattleStates
                     var player = actor.GetComponent<PlayerController>();
                     List<Card> cards = cardBuilder.CreatCardsByDeckInfo(player.DeckInfo);
                     player.deck = new Deck(player, cards);
+                    List<Card> upCards = cardBuilder.CreatCardsByDeckInfo(player.UpChangeDeckInfo);
+                    player.upChangeDeck = new UpChangeDeck(player, upCards);
                 }
             }
 

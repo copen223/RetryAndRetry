@@ -19,6 +19,7 @@ public class CardController : MonoBehaviour,ITargetInPool
     public CardViewController SpriteController;
     public GameObject ActionObject;
     public CardActionController ActionController;
+    public GameObject SelectionWindow;
     /// <summary>
     /// 卡牌的持有者
     /// </summary>
@@ -44,13 +45,16 @@ public class CardController : MonoBehaviour,ITargetInPool
     private void Start()
     {
         // 链接初始化
-        Hand = transform.parent.transform.parent.gameObject;
+        var CardSystemTF = transform.parent.parent.parent;
+        Hand = CardSystem.instance.Hand;
+        SelectionWindow = CardSystem.instance.SelectionWindow;
         CardStates = new List<CardState>(transform.GetComponents<CardState>());
         currentState = CardStates[0];
         SpriteObject = transform.Find("Sprite").gameObject;
         SpriteController = SpriteObject.GetComponent<CardViewController>();
         ActionObject = transform.Find("Action").gameObject;
         ActionController = ActionObject.GetComponent<CardActionController>();
+        
     }
     private void Update()
     {
@@ -105,7 +109,9 @@ public class CardController : MonoBehaviour,ITargetInPool
         currentState.ChangeStateTo<CardDiscard>();
     }
 
-    // 切换card数据时进行刷新,在handcontroller中以sendmessage调用
+    /// <summary>
+    /// 切换card数据时进行刷新,在handcontroller中以sendmessage调用
+    /// </summary>
     public void OnReset()
     {
         SpriteObject.SetActive(true);
@@ -121,6 +127,10 @@ public class CardController : MonoBehaviour,ITargetInPool
         }
         SpriteObject.GetComponent<CardViewController>().OnReset();
     }
+    //public void OnSelectedWindow()
+    //{
+    //    currentState.ChangeStateTo<CardSelectionWindow>();
+    //}
     #endregion
     public void OnEnable()
     {

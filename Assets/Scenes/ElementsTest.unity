@@ -1768,14 +1768,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1267124080570303508, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
-      propertyPath: MovePoint_Max
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1267124080570303508, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
-      propertyPath: MovePoint_Resume
-      value: 30
-      objectReference: {fileID: 0}
     - target: {fileID: 1267124080570303512, guid: cc25aafece10abd4d9955b8dea637733, type: 3}
       propertyPath: m_Name
       value: Player

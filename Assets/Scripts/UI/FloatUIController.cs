@@ -41,7 +41,7 @@ public class FloatUIController : MonoBehaviour
             {
                 Vector3 baseWorldPos = ifChaseTarget ? target.transform.position : BaseWorldPos;
                 Vector3 newWorldPos = baseWorldPos + dir.normalized * MoveSpeed * timer;
-                Debug.Log(newWorldPos);
+                //Debug.Log(newWorldPos);
                 Vector3 newScreenPos = Camera.main.WorldToScreenPoint(newWorldPos);
 
                 transform.position = newScreenPos;

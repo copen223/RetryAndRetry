@@ -11,6 +11,7 @@ public class CardSystemController : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(ifAcive);
         }
+        transform.Find("SelectionWindow").gameObject.SetActive(false);
     }
     
     public void OnEnterBattle()

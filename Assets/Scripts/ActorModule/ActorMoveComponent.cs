@@ -128,7 +128,7 @@ public class ActorMoveComponent : MonoBehaviour
             HandleActionToNode(curTargetNode);
             yield return StartCoroutine(MoveToNodeCouroutine(curTargetNode));
 
-            //    last = curTargetPos;
+            last = curTargetPos;
             //}
             //yield return new WaitForEndOfFrame();
         }

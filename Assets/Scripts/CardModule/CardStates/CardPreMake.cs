@@ -41,7 +41,7 @@ namespace Assets.Scripts.CardModule.CardStates
             Card card = Controller.Card;
 
             //----------阶段1，判断卡牌类型----------//
-            if (card.type == CardType.Passive)
+            if (card.type == CardUseType.Passive)
                 IsActiveCard = false;
             else
                 IsActiveCard = true;

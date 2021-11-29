@@ -7,7 +7,8 @@ using Assets.Scripts.CardModule;
 public class CardInfo : ScriptableObject
 {
     public string CardName;
-    public CardType Type;
+    public CardUseType Type;
+    public int UpChangeLevel;
     public string Effects;
     public CardActionType ActionType;
     public List<float> ActionValues= new List<float>();

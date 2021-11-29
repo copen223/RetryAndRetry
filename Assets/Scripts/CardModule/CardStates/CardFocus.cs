@@ -16,10 +16,7 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateStart();
             Controller.Card.situation = CardSituation.Focused;
 
-            // 为玩家增加1点行动点数
-            AddActionPointForPlayer();
-
-            if (Controller.SpriteObject.transform.localRotation.z!=90)
+            if (Mathf.Abs(Controller.SpriteObject.transform.localRotation.z - 90) > Mathf.Epsilon)
                 Controller.SpriteController.SetFocusRotation();
 
             SetEventProtect();
@@ -55,11 +52,13 @@ namespace Assets.Scripts.CardModule.CardStates
             if (eventData.button == PointerEventData.InputButton.Right)
             {
                 // 禁止取消专注
-               // ChangeStateTo<CardAfterFocus>();
+                // ChangeStateTo<CardAfterFocus>();
+                // 卡牌升阶
+                ChangeStateTo<CardUpChangePre>();
             }
         }
 
-        public void AddActionPointForPlayer()
+        private void AddActionPointForPlayer()
         {
             var actor = Controller.holder.GetComponent<ActorController>();
             if(actor is PlayerController)

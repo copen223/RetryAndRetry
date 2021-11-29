@@ -13,6 +13,11 @@ namespace Assets.Scripts.CardModule
 
         public List<Container> Containers;
 
+        public override void TranslateCardTo(Card card, CardPool pool)
+        {
+            base.TranslateCardTo(card, pool);
+        }
+
         public override void AddCard(Card card)
         {
             // 添加卡牌
@@ -33,6 +38,27 @@ namespace Assets.Scripts.CardModule
                 Containers[i].Card = list[i];
             }
             for(;i<Containers.Count;i++)
+            {
+                Containers[i].Card = null;
+            }
+        }
+        /// <summary>
+        /// 将index位置的卡牌替换为card，原卡牌送去pool
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="card"></param>
+        /// <param name="pool"></param>
+        public void ReplaceCardTo(int index,Card card,CardPool pool)
+        {
+            var replaced = list[index];
+            pool.AddCard(replaced);
+            list[index] = card;
+            int i = 0;
+            for (; i < Containers.Count && i < list.Count; i++)
+            {
+                Containers[i].Card = list[i];
+            }
+            for (; i < Containers.Count; i++)
             {
                 Containers[i].Card = null;
             }

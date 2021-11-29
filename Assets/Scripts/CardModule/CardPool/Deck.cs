@@ -20,7 +20,7 @@ namespace Assets.Scripts.CardModule
             return list[0];
 
         }
-        public Card GetFirstCard(CardType cardType)
+        public Card GetFirstCard(CardUseType cardType)
         {
             for(int i =0;i<list.Count;i++)
             {

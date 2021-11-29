@@ -72,8 +72,8 @@ namespace ActorModule.AI
             focusHandler.SetFocusTrailHandler(Actor, focusCard, focusDir1);
             yield return focusHandler.StartHandleFocusTrail();
 
-            focusHandler.SetFocusTrailHandler(Actor, focusCard, focusDir2);
-            yield return focusHandler.StartHandleFocusTrail();
+            //focusHandler.SetFocusTrailHandler(Actor, focusCard, focusDir2);
+            //yield return focusHandler.StartHandleFocusTrail();
 
             //------------进行移动--------------
 
@@ -171,7 +171,8 @@ namespace ActorModule.AI
             heatLevelOfEnemies_dic.Clear();
             foreach(var go in BattleManager.instance.ActorQueue)
             {
-                heatLevelOfEnemies_dic.Add(go, UpdateHeatLevel(go));
+                if(go.GetComponent<ActorController>().group.type != Actor.GetComponent<ActorController>().group.type)
+                    heatLevelOfEnemies_dic.Add(go, UpdateHeatLevel(go));
             }
         }
 
@@ -213,7 +214,7 @@ namespace ActorModule.AI
         private bool AttackScanTarget(Vector3 curPoint,Vector2 referenceDir,float distance,bool Up2Down, out Vector2 attackDir)
         {
             int scanDirValue = Up2Down ? 1 : -1;
-            float startAngle = -30, endAngle = 30; int rayCount = 10;
+            float startAngle = -25, endAngle = 25; int rayCount = 10;
             for (float a = startAngle; a <= endAngle; a += (endAngle - startAngle) / rayCount)
             {
                 Quaternion rotation = Quaternion.Euler(0, 0, scanDirValue * a);

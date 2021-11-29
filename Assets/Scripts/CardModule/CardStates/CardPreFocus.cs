@@ -15,8 +15,20 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             base.StateStart();
 
+            // 为玩家增加1点行动点数
+            AddActionPointForPlayer();
+
             Controller.SpriteObject.SendMessage("StartAnimation", 2);
             SetEventProtect();
+        }
+        public void AddActionPointForPlayer()
+        {
+            var actor = Controller.holder.GetComponent<ActorController>();
+            if (actor is PlayerController)
+            {
+                var player = actor as PlayerController;
+                player.ActionPoint += 1;
+            }
         }
 
         public override void StateUpdate()

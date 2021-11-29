@@ -43,6 +43,8 @@ namespace Assets.Scripts.CardModule
             card.name = info.CardName;
             card.type = info.Type;
             card.situation = CardSituation.Idle;
+            card.cardLevel = info.UpChangeLevel;
+            card.upChangeType = info.UpChangeLevel == 0 ? CardUpChangeType.Normal : CardUpChangeType.UpChange;
             
             //-------------action----------------
             List<float> actionValues = info.ActionValues;

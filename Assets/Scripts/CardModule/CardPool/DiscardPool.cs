@@ -10,6 +10,15 @@ namespace Assets.Scripts.CardModule
     {
         public DiscardPool(PlayerController holder, List<Card> cardList) : base(holder,cardList) { }
 
+        public override void TranslateCardTo(Card card, CardPool pool)
+        {
+            if(pool is Deck && card.upChangeType == CardUpChangeType.UpChange) // 返回卡组的上转卡回到上转卡组
+            {
+                base.TranslateCardTo(card, Holder.upChangeDeck);
+            }
+            else
+                base.TranslateCardTo(card, pool);
+        }
         public override void AddCard(Card card)
         {
             base.AddCard(card);

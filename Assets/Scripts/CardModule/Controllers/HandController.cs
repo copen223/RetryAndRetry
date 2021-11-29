@@ -36,10 +36,11 @@ public class HandController : MonoBehaviour
     public GameObject DiscardObject;
     public GameObject DrawButtonObject;
 
-    private Deck deck;
-    private DiscardPool discard;
-    private Hand hand;
-    private List<Container> containers = new List<Container>();
+    private Deck deck { get { return Holder.GetComponent<PlayerController>().deck; } }
+    private DiscardPool discard { get { return Holder.GetComponent<PlayerController>().discard; } }
+    private Hand hand { get { return Holder.GetComponent<PlayerController>().hand; } }
+    private UpChangeDeck upChangeDeck { get { return Holder.GetComponent<PlayerController>().upChangeDeck; } }
+    private List<Container> containers { get { return Holder.GetComponent<PlayerController>().containers; }set { Holder.GetComponent<PlayerController>().containers = value; } }
 
     [Header("订阅者")]
     public List<GameObject> ListenerObjectsList = new List<GameObject>();
@@ -124,7 +125,6 @@ public class HandController : MonoBehaviour
     {
         var container = ContainerObjects_list[index];
         container.SendMessage("OnCardReplaced");
-
     }
 
 
@@ -141,6 +141,11 @@ public class HandController : MonoBehaviour
         CardObjects_list.Remove(gb);
         CardObjects_list.Add(gb);
     }
+    /// <summary>
+    /// 当正在处理某张卡时，你希望冻结其他卡的交互请使用这个方法
+    /// </summary>
+    /// <param name="gb"></param>
+    /// <param name="isStart"></param>
     public void OnCardMakeDo(GameObject gb,bool isStart)
     {
         foreach(var card in CardObjects_list)
@@ -179,11 +184,7 @@ public class HandController : MonoBehaviour
         //------------------设置-------------------//
         Holder = BattleManager.instance.CurActorObject; // 持有者设置
         PlayerController actor = Holder.GetComponent<PlayerController>();
-        // 更新卡池和卡槽列表
-        deck = actor.deck;  
-        hand = actor.hand;
-        discard = actor.discard;
-        containers = actor.containers;
+
         //-------------对象池与卡牌列表更新------------//
         // 有多少卡就创建多少卡牌对象
         CardObjects_list.Clear();
@@ -206,11 +207,7 @@ public class HandController : MonoBehaviour
             gb.GetComponent<ContainerController>().Container = containers[i];
             ContainerObjects_list.Add(gb);
             gb.transform.localPosition = GetCorrectCardPos(i);  // 确定位置
-            //if (i<CardObjects_list.Count)
-            //    gb.GetComponent<ContainerController>().CardObject = CardObjects_list[i];
-            //else
-            //    gb.GetComponent<ContainerController>().CardObject = null;
-            // gb.SendMessage("OnReset");
+
             gb.GetComponent<ContainerController>().OnReset();
         }
 
@@ -253,6 +250,19 @@ public class HandController : MonoBehaviour
     private void OnEnemyTurnStart()
     {
         
+    }
+    /// <summary>
+    /// 用新的数据层来刷新手卡显示层
+    /// </summary>
+    public void ResetHandCards()
+    {
+        int i= 0;
+        foreach(var card in CardObjects_list)
+        {
+            card.GetComponent<CardController>().Card = hand.list[i];
+            card.GetComponent<CardController>().OnReset();
+            i++;
+        }
     }
 
     private void OnPlayerTurnEnd()
@@ -332,5 +342,10 @@ public class HandController : MonoBehaviour
         // 返回信息
         if (!isChanging)
             BattleManager.instance.GetComponent<BattleTurnDraw>().OnDrawOver();
+    }
+
+    public void OnUpChangeCard(int index,Card card)
+    {
+
     }
 }
