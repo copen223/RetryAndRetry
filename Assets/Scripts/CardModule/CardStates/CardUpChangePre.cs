@@ -17,7 +17,7 @@ namespace Assets.Scripts.CardModule.CardStates
             selectionWindow = Controller.SelectionWindow.GetComponent<CardSelectionWindowController>();
             player = Controller.holder.GetComponent<PlayerController>();
             var upChangeDeck = player.upChangeDeck;
-            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetUpChangeCardList(Controller.Card),OnFinishSelectCardCallBack);
+            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetUpChangeCardList(Controller.Card),OnFinishSelectCardCallBack, player.gameObject);
             
             selectionWindow.CancleUpChangeEvent += OnCancleUpChangeCallBack;
 
@@ -25,7 +25,7 @@ namespace Assets.Scripts.CardModule.CardStates
         }
 
         /// <summary>
-        /// 选择界面按下右键,取消上转
+        /// 选择界面按下右键,取消上转，监听selectionWindow.CancleUpChangeEvent
         /// </summary>
         public void OnCancleUpChangeCallBack()
         {
@@ -33,21 +33,25 @@ namespace Assets.Scripts.CardModule.CardStates
 
         }
         /// <summary>
-        /// 确定选择对象，进行上转
+        /// 确定选择对象，进行上转，监听CardInWindowController.OnCardDoSelectedEvent
         /// </summary>
         /// <param name="selectedCard"></param>
         public void OnFinishSelectCardCallBack(Card selectedCard)
         {
             // 数据层变动
             player.upChangeDeck.TranslateCardTo(selectedCard, player.hand, player.hand.GetIndex(Controller.Card));
+
+            player.ActionPoint -= selectedCard.cardLevel;
+
             // 显示层变动
-            Controller.Hand.GetComponent<HandController>().ResetHandCards();
             ChangeStateTo<CardIdle>();
+            Controller.Hand.GetComponent<HandController>().ResetHandCards();
         }
 
         public override void StateExit()
         {
             base.StateExit();
+            selectionWindow.CancleUpChangeEvent -= OnCancleUpChangeCallBack;
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);
             selectionWindow.EndWindowShow(OnFinishSelectCardCallBack);
         }

@@ -29,6 +29,7 @@ namespace Assets.Scripts.CardModule
                 if (result == card.type)
                     return card;
             }
+            UnityEngine.Debug.LogWarning("卡组已空！");
             Holder.discard.TranslateAllCardTo(this);
             Shuffle();
             for (int i = 0; i < list.Count; i++)

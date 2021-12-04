@@ -16,7 +16,7 @@ namespace ActorModule.AI
     public class ProximityAttackAP : ActionPlan
     {
         [SerializeField]
-        private GameObject debugLine;
+        private GameObject debugLine = null;
 
         private Dictionary<GameObject, float> heatLevelOfEnemies_dic = new Dictionary<GameObject, float>();  // 威胁度字典
 
@@ -24,10 +24,10 @@ namespace ActorModule.AI
         private GameObject attackTarget;
         
         [SerializeField]
-        private string attackCardInfo;
+        private string attackCardInfo = null;
 
         [SerializeField]
-        private string focusCardInfo;
+        private string focusCardInfo = null;
         private Card focusCard;
 
         private bool ifAttackUp;    // 决定该单位攻击方向
@@ -231,7 +231,7 @@ namespace ActorModule.AI
                 foreach (var hit in hits)
                 {
                     if (hit.collider == null) continue;
-
+                    
                     if (hit.collider.transform.parent.gameObject == attackTarget)
                     {
                         attackDir = rayDir2D;

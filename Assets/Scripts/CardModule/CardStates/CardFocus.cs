@@ -16,7 +16,7 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateStart();
             Controller.Card.situation = CardSituation.Focused;
 
-            if (Mathf.Abs(Controller.SpriteObject.transform.localRotation.z - 90) > Mathf.Epsilon)
+            if (Mathf.Abs(Controller.SpriteObject.transform.localRotation.eulerAngles.z - 90) > Mathf.Epsilon)
                 Controller.SpriteController.SetFocusRotation();
 
             SetEventProtect();
@@ -31,6 +31,8 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
+
+            Controller.Card.situation = CardSituation.Idle;
             // 取消focus
             if (Controller.Card.IfHasTrail)
             {

@@ -18,14 +18,14 @@ public class CardActionController : MonoBehaviour
     public CardController Controller;
     // 数据
     private CardAction action;  // 当前的行动数据
-    [SerializeField]private GameObject ContactPrefab;    // 接触点贴图
+    [SerializeField]private GameObject ContactPrefab = null;    // 接触点贴图
     private TargetPool contactPool;  //  接触点贴图对象池
     private List<Vector3> contactPoints = new List<Vector3>();  // 接触点位置
     private List<GameObject> contactObjects = new List<GameObject>();   // 接触的battleTrail
     private List<GameObject> targets = new List<GameObject>();  // 选中的对象
     private List<Combat> combats = new List<Combat>();
 
-    [SerializeField]private GameObject FocusTrailPrefab;     // 专注轨迹预组
+    [SerializeField]private GameObject FocusTrailPrefab = null;     // 专注轨迹预组
     private TargetPool focusTrailPool;      // 专注轨迹池
 
     public void AddNewTrailToPool(GameObject gb) { focusTrailPool.AddToPool(gb); }

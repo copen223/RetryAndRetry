@@ -259,6 +259,8 @@ public class HandController : MonoBehaviour
         int i= 0;
         foreach(var card in CardObjects_list)
         {
+            if (i >= hand.list.Count)
+                return;
             card.GetComponent<CardController>().Card = hand.list[i];
             card.GetComponent<CardController>().OnReset();
             i++;

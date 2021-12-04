@@ -8,7 +8,7 @@ namespace Assets.Scripts.CardModule
 {
     public class CardPool
     {
-        public PlayerController Holder;
+        public readonly PlayerController Holder;
 
         /// <summary>
         /// 除非类型为CardPool否则只读，外部不能修改！

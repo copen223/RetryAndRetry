@@ -10,7 +10,7 @@ namespace Assets.Scripts.CardModule
     {
         private TargetPool focusTrailPool;
         [SerializeField]
-        private GameObject focusTrailPrefab;
+        private GameObject focusTrailPrefab = null;
         // Start is called before the first frame update
 
         private Card focusCard;

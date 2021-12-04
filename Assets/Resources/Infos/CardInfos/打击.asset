@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: "\u6253\u51FB"
   Type: 1
+  UpChangeLevel: 1
   Effects: "\u653B\u51FB\uFF1A\u4F24\u5BB3\uFF1A3\uFF1B"
   ActionType: 1
   ActionValues:

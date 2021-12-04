@@ -10,6 +10,9 @@ namespace Assets.Scripts.CardModule
 {
     public class Card
     {
+        /// <summary>
+        /// 卡牌名称
+        /// </summary>
         public string name;
 
         public Card() { }
@@ -50,6 +53,7 @@ namespace Assets.Scripts.CardModule
         private GameObject focusTrail;       // 卡牌专注轨迹，用途只有判断该卡牌是否有专注轨迹 不影响使用
         public CardUpChangeType upChangeType;
         public int cardLevel;
+        public CardElement cardElement;
 
         /// <summary>
         /// 设置专注轨迹，同时把专注轨迹的卡牌设置为该卡牌
@@ -110,8 +114,12 @@ namespace Assets.Scripts.CardModule
         BackDown
     }
 
-
-
-
-
+    public enum CardElement
+    {
+        Jin,
+        Mu,
+        Shui,
+        Huo,
+        Tu
+    }
 }

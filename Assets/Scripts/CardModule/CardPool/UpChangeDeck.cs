@@ -24,7 +24,7 @@ namespace Assets.Scripts.CardModule
 
             foreach(var card in list)
             {
-                if(card.cardLevel == targetLevel)
+                if(card.cardLevel == targetLevel && CheckWuXing(baseCard ,card))
                 {
                     upChangeCards.Add(card);
                 }
@@ -32,6 +32,22 @@ namespace Assets.Scripts.CardModule
 
             return upChangeCards;
         }
+
+        private bool CheckWuXing(Card orgin,Card end)
+        {
+            if (ShengDic[orgin.cardElement] == end.cardElement)
+                return true;
+            return false;
+        }
+
+        private Dictionary<CardElement, CardElement> ShengDic = new Dictionary<CardElement, CardElement>
+        {
+            { CardElement.Mu,CardElement.Huo },
+            { CardElement.Huo,CardElement.Tu },
+            { CardElement.Tu,CardElement.Jin },
+            { CardElement.Shui,CardElement.Mu },
+            { CardElement.Jin,CardElement.Shui },
+        };
 
         /// <summary>
         /// 将池子里的card和hand index位置的卡牌进行交换，原有卡牌丢弃

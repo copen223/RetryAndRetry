@@ -9,14 +9,18 @@ using System;
 public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,IPointerClickHandler
 {
     #region UI对象链接
-    [SerializeField] private Text cardName_text;
-    [SerializeField] private Text cardDes_text;
-    [SerializeField] private Text cardLevel_text;
-    [SerializeField] private GameObject cardView_go;
+    [SerializeField] private Text cardName_text = null;
+    [SerializeField] private Text cardDes_text = null;
+    [SerializeField] private Text cardLevel_text = null;
+    [SerializeField] private GameObject cardView_go = null;
     #endregion
 
     #region 储存信息
     private Card card;
+    /// <summary>
+    /// 正在进行选择的单位
+    /// </summary>
+    private GameObject selector;
 
 
     #endregion
@@ -27,9 +31,16 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
         this.card = card;
         UpdateView();
     }
+    public void SetSelector(GameObject selector)
+    {
+        this.selector = selector;
+    }
     #endregion
 
     #region 内部方法
+    /// <summary>
+    /// 更新显示层
+    /// </summary>
     private void UpdateView()
     {
         cardView_go.transform.localScale = new Vector3(1, 1, 1);
@@ -39,6 +50,13 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
             cardLevel_text.text = card.cardLevel + "";
         else
             cardLevel_text.text = "";
+    }
+    private bool IfCanUpChange()
+    {
+        var playerCon = selector.GetComponent<PlayerController>();
+        if (playerCon.ActionPoint >= card.cardLevel)
+            return true;
+        return false;
     }
     #endregion
 
@@ -59,7 +77,10 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            OnCardDoSelectedEvent?.Invoke(card);
+            if (IfCanUpChange())
+                OnCardDoSelectedEvent?.Invoke(card);
+            else
+                UIManager.instance.CreatFloatUIAt(selector, Vector2.zero, 2f, Color.black, "行动点数不足！");
         }
     }
     #endregion

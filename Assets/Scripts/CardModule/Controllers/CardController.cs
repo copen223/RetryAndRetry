@@ -119,10 +119,19 @@ public class CardController : MonoBehaviour,ITargetInPool
         {
             if (card.situation == CardSituation.Idle)
                 currentState.ChangeStateTo<CardIdle>();
-            if (card.situation == CardSituation.Focused && !(currentState is CardFocus))
+            if (card.situation == CardSituation.Focused)
             {
-                Debug.LogError("刷新时发现有专注状态卡牌，设为专注");
-                currentState.ChangeStateTo<CardFocus>();
+                Debug.LogError("刷新时发现有专注状态卡牌，设为专注：" + card.name);
+                if (!(currentState is CardFocus))
+                {
+                    currentState.ChangeStateTo<CardFocus>();
+                    return;
+                }
+                else
+                {
+                    SpriteObject.GetComponent<CardViewController>().SetFocusRotation();
+                    return;
+                }
             }
         }
         SpriteObject.GetComponent<CardViewController>().OnReset();

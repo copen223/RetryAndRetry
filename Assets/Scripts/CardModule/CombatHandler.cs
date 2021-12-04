@@ -18,7 +18,7 @@ namespace Assets.Scripts.CardModule
         private Card atkCard;
         private Vector2 atkDir;
 
-        [SerializeField] private GameObject ContactPrefab;    // 接触点贴图
+        [SerializeField] private GameObject ContactPrefab = null;    // 接触点贴图
         private TargetPool contactPool;  //  接触点贴图对象池
 
 

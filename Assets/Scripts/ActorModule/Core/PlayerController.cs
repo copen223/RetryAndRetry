@@ -135,22 +135,22 @@ public class PlayerController : ActorController
         upChangeList_debug.Clear();
         if (deck == null || hand == null || discard == null || upChangeDeck == null)
             return;
-        foreach (var card in deck.list)
-        {
-            deckList_debug.Add(card.name);
-        }
-        foreach (var card in hand.list)
-        {
-            handList_debug.Add(card.name);
-        }
-        foreach (var card in discard.list)
-        {
-            discardList_debug.Add(card.name);
-        }
-        foreach(var card in upChangeDeck.list)
-        {
-            upChangeList_debug.Add(card.name);
-        }
+        //foreach (var card in deck.list)
+        //{
+        //    deckList_debug.Add(card.name);
+        //}
+        //foreach (var card in hand.list)
+        //{
+        //    handList_debug.Add(card.name);
+        //}
+        //foreach (var card in discard.list)
+        //{
+        //    discardList_debug.Add(card.name);
+        //}
+        //foreach(var card in upChangeDeck.list)
+        //{
+        //    upChangeList_debug.Add(card.name);
+        //}
 
     }
     #endregion

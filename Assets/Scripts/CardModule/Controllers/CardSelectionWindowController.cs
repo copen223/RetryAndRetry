@@ -7,8 +7,8 @@ using System;
 public class CardSelectionWindowController : MonoBehaviour
 {
     [SerializeField]
-    private GameObject cardPrefab;
-    [SerializeField] Transform cardParent;
+    private GameObject cardPrefab = null;
+    [SerializeField] Transform cardParent = null;
 
     List<GameObject> cards_list = new List<GameObject>();
 
@@ -26,7 +26,7 @@ public class CardSelectionWindowController : MonoBehaviour
     /// 显示卡牌选择界面
     /// </summary>
     /// <param name="cards"></param>
-    public void ShowCardSelectionWindow(List<Card> cards, Action<Card> finishSelectFunc)
+    public void ShowCardSelectionWindow(List<Card> cards, Action<Card> finishSelectFunc, GameObject who)
     {
         gameObject.SetActive(true);
         int i = 0;
@@ -47,6 +47,7 @@ public class CardSelectionWindowController : MonoBehaviour
 
             var con = go.GetComponent<CardInWindowController>();
             con.SetCard(card);
+            con.SetSelector(who);
             con.OnCardDoSelectedEvent += finishSelectFunc;
         }
         for (; i < cards_list.Count; i++)

@@ -9,6 +9,8 @@ public class CardInfo : ScriptableObject
     public string CardName;
     public CardUseType Type;
     public int UpChangeLevel;
+    public CardUpChangeType CardUpChangeType = CardUpChangeType.Normal;
+    public CardElement CardElement = CardElement.Mu;
     public string Effects;
     public CardActionType ActionType;
     public List<float> ActionValues= new List<float>();

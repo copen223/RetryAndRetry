@@ -5,6 +5,10 @@ using UnityEngine;
 public class CardState : MonoBehaviour
 {
     //------------------------------------事件订阅--------------------------------//
+    /// <summary>
+    /// 进入该状态的动画结束时调用 参数代表现在是动画开始还是结束时
+    /// </summary>
+    /// <param name="isStart"> </param>
     protected virtual void OnAnimationDo(bool isStart) { }
 
     public CardController Controller;
