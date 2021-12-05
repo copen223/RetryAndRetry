@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.CardModule.CardStates
 {
-    class CardUpChangePre : CardState
+    public class CardDownChangePre : CardState
     {
         CardSelectionWindowController selectionWindow;
         PlayerController player;
@@ -20,8 +20,8 @@ namespace Assets.Scripts.CardModule.CardStates
             selectionWindow = Controller.SelectionWindow.GetComponent<CardSelectionWindowController>();
             player = Controller.holder.GetComponent<PlayerController>();
             var upChangeDeck = player.upChangeDeck;
-            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetWuXingChangeCardList(Controller.Card, WuxingChangeType.Sheng),OnFinishSelectCardCallBack, player.gameObject);
-            
+            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetWuXingChangeCardList(Controller.Card, WuxingChangeType.NiKe), OnFinishSelectCardCallBack, player.gameObject);
+
             selectionWindow.CancleUpChangeEvent += OnCancleUpChangeCallBack;
 
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, true);  // 冻结卡牌交互
@@ -46,9 +46,8 @@ namespace Assets.Scripts.CardModule.CardStates
 
             player.ActionPoint -= selectedCard.cardLevel;
 
-            OnExitFocusEvent?.Invoke();
-
             // 显示层变动
+            OnExitFocusEvent?.Invoke();
             ChangeStateTo<CardIdle>();
             Controller.Hand.GetComponent<HandController>().ResetHandCards();
         }

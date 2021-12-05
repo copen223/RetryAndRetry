@@ -16,8 +16,8 @@ MonoBehaviour:
   Type: 1
   UpChangeLevel: 2
   CardUpChangeType: 1
-  CardElement: 1
-  Effects: "\u653B\u51FB\uFF1A\u4F24\u5BB3\uFF1A2-\u65E0\uFF1A\u51B2\u523A\uFF1A2\uFF1B"
+  CardElement: 0
+  Effects: "\u653B\u51FB\uFF1A\u4F24\u5BB3\uFF1A1.2-\u65E0\uFF1A\u51B2\u523A\uFF1A2\uFF1B"
   ActionType: 1
   ActionValues:
   - 2

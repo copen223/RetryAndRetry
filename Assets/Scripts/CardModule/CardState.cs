@@ -16,7 +16,10 @@ public class CardState : MonoBehaviour
 
     public virtual void StateUpdate() { }
 
-    public virtual void StateExit() { Controller.SpriteController.RemoveOberserver(OnAnimationDo,this); }
+    public virtual void StateExit()
+    {
+        Controller.SpriteController.RemoveOberserver(OnAnimationDo,this); 
+    }
 
     public void ChangeStateTo<T>()
     {

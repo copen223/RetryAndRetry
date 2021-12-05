@@ -9,6 +9,8 @@ namespace Assets.Scripts.CardModule
 {
     public class CardEffect
     {
+        public Card Card;
+
         public bool isAtking;           // 用于判断该效果是否为攻击方效果
         public EffectTrigger Trigger;   // 效果触发条件
        // public EffectTargetType TargetType;     // 效果发动类型

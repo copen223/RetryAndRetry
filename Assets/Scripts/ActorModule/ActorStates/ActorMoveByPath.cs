@@ -26,10 +26,10 @@ namespace Assets.Scripts.ActorModule.ActorStates
 
         public override void StateStart()
         {
-            rayDrawer = gameObject.GetComponent<ActorRayDrawer>();
+            rayDrawer = Controller.GetComponent<ActorRayDrawer>();
             //var pathfinder = gameObject.GetComponent<PathFinderComponent>();
             //var path = pathfinder.CurPath;
-            moveComponent = gameObject.GetComponent<ActorMoveComponent>();
+            moveComponent = Controller.GetComponent<ActorMoveComponent>();
             //moveComponent.StartMoveByPathList(path);
             moveComponent.StartMoveByNodePathList(nodePath);    // 把按一般路劲修改成了node信息
             

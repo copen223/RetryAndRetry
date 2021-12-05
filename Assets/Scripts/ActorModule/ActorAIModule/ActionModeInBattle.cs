@@ -10,12 +10,33 @@ namespace ActorModule.AI
     {
         public GameObject Actor { get { return transform.parent.gameObject; } }
 
+        public enum ActionIntention
+        {
+            None,
+            AttackUp,
+            AttackDown
+        }
+
+        private ActionIntention nextActionIntention;
+
         /// <summary>
         /// 控制器在AI的Action阶段调用
         /// </summary>
         public virtual void StartDoBattleAI()
         {
             
+        }
+
+        private void ShowActionIntentionCallBack()
+        {
+            if(nextActionIntention == ActionIntention.AttackDown)
+            {
+
+            }
+            else if(nextActionIntention == ActionIntention.AttackUp)
+            {
+
+            }
         }
     }
 }

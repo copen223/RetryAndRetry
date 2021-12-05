@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.CardModule
 {
+    public enum WuxingChangeType
+    {
+        Sheng,
+        NiKe
+    }
+
     public class UpChangeDeck : CardPool
     {
         public UpChangeDeck(PlayerController holder, List<Card> cardList) : base(holder, cardList) { }
@@ -15,29 +21,54 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         /// <param name="card"></param>
         /// <returns></returns>
-        public List<Card> GetUpChangeCardList(Card baseCard)
+        public List<Card> GetWuXingChangeCardList(Card baseCard,WuxingChangeType type)
         {
             List<Card> upChangeCards = new List<Card>();
             int baseLevel = baseCard.cardLevel;
-            int targetLevel = baseLevel += 1;
+            int targetLevel = -1;
+            if (type == WuxingChangeType.Sheng) targetLevel = baseLevel += 1;
+            else if (type == WuxingChangeType.NiKe) targetLevel = baseLevel -= 1;
 
 
             foreach(var card in list)
             {
-                if(card.cardLevel == targetLevel && CheckWuXing(baseCard ,card))
+                if (type == WuxingChangeType.Sheng)
                 {
-                    upChangeCards.Add(card);
+                    if (card.cardLevel == targetLevel && CheckWuXingSheng(baseCard, card))
+                    {
+                        upChangeCards.Add(card);
+                    }
+                }
+                else if (type == WuxingChangeType.NiKe)
+                {
+                    if (card.cardLevel == targetLevel && CheckWuxingKe(card, baseCard))
+                    {
+                        upChangeCards.Add(card);
+                    }
                 }
             }
-
             return upChangeCards;
         }
 
-        private bool CheckWuXing(Card orgin,Card end)
+
+        private bool CheckWuXingSheng(Card source,Card end)
         {
-            if (ShengDic[orgin.cardElement] == end.cardElement)
+            if (ShengDic[source.cardElement] == end.cardElement)
                 return true;
             return false;
+        }
+        /// <summary>
+        /// 向被克关系演变
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        private bool CheckWuxingKe(Card source,Card end)
+        {
+            if (KeDic[source.cardElement] == end.cardElement)
+                return true;
+            else
+                return false;
         }
 
         private Dictionary<CardElement, CardElement> ShengDic = new Dictionary<CardElement, CardElement>
@@ -47,6 +78,15 @@ namespace Assets.Scripts.CardModule
             { CardElement.Tu,CardElement.Jin },
             { CardElement.Shui,CardElement.Mu },
             { CardElement.Jin,CardElement.Shui },
+        };
+
+        private Dictionary<CardElement, CardElement> KeDic = new Dictionary<CardElement, CardElement>
+        {
+            { CardElement.Mu,CardElement.Tu },
+            { CardElement.Tu,CardElement.Shui },
+            { CardElement.Shui,CardElement.Huo },
+            { CardElement.Huo,CardElement.Jin },
+            { CardElement.Jin,CardElement.Mu },
         };
 
         /// <summary>

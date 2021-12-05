@@ -14,10 +14,10 @@ namespace Assets.Scripts.ActorModule.ActorStates
         private ActorRayDrawer rayDrawer;
         public override void StateStart()
         {
-            moveComponent = gameObject.GetComponent<ActorMoveComponent>();
-            pathfinderComponent = gameObject.GetComponent<PathFinderComponent>();
+            moveComponent = Controller.GetComponent<ActorMoveComponent>();
+            pathfinderComponent = Controller.GetComponent<PathFinderComponent>();
             pathfinderComponent.SearchPathFrom(gameObject.transform.position);
-            rayDrawer = gameObject.GetComponent<ActorRayDrawer>();
+            rayDrawer = Controller.GetComponent<ActorRayDrawer>();
         }
         public override void StateUpdate()
         {
@@ -64,7 +64,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 (Controller as PlayerController).MovePoint = surplus;    // 应用消耗值
-                Controller.gameObject.GetComponent<ActorMoveByPath>().SetNodePath(nodePath); // 设置路径
+                (Controller as PlayerController).StatesChild.GetComponent<ActorMoveByPath>().SetNodePath(nodePath); // 设置路径
                 ChangeStateTo<ActorMoveByPath>();   // 开始移动
                 return;
             }

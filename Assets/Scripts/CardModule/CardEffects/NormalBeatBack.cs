@@ -24,15 +24,6 @@ namespace Assets.Scripts.CardModule.CardEffects
             dis = _dis;
         }
 
-        //public override void DoEffect(ActorController user, List<ActorController> targets)
-        //{
-        //    dir = user.FaceDir;
-        //    var finder = user.GetComponent<PathFinderComponent>();
-        //    var path = finder.SearchAndGetPathByEnforcedMove(user.transform.position, dir, dis);
-        //    var move = user.GetComponent<ActorMoveComponent>();
-        //    move.StartForceMoveByPathList(path);
-        //}
-
         public override void DoEffect(Combat combat)
         {
             var target = isAtking ? combat.Dfder : combat.Atker;

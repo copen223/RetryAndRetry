@@ -11,6 +11,9 @@ using ActorModule.AI;
 /// </summary>
 public class ActorController : MonoBehaviour,ICanBeHitObject
 {
+    // 标签
+    protected bool IfMyTurn { get { return BattleManager.instance.CurActorObject == gameObject; } }
+    
     // 链接
     public GameObject Sprite { get { return transform.Find("Sprite").gameObject; } }
     public Vector3 CenterOffset { get { return Sprite.transform.localPosition; } }
@@ -24,9 +27,23 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     [Header("设置标签")]
     [SerializeField]
     private bool SpriteFaceToRight = false;
-    public Vector2 FaceDir 
-    { 
-        get 
+
+    #region 属性相关
+    [Header("属性设置")]
+    public float HealPoint;
+    public float HealPoint_Max;
+
+    public ActorAbility Ability;
+
+    #endregion
+    // 外部对象
+    [HideInInspector]
+    public GameObject FocusCountUI_GO;
+
+    #region 贴图控制
+    public Vector2 FaceDir
+    {
+        get
         {
             if (SpriteFaceToRight)
                 return transform.localScale.x * Vector2.right;
@@ -35,17 +52,6 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         }
     }
 
-
-    // 属性
-    [Header("属性设置")]
-    public float HealPoint;
-    public float HealPoint_Max;
-
-    // 外部对象
-    [HideInInspector]
-    public GameObject FocusCountUI_GO;
-
-    #region 贴图控制
     public void ChangeFaceTo(Vector3 dir) 
     {
         // 方向接近于0，不改变方向
@@ -166,6 +172,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     #endregion
 
     #region 流程响应事件
+
     /// <summary>
     /// 回合结束时触发
     /// </summary>
@@ -189,19 +196,53 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     public List<ActorState> ActorStates = new List<ActorState>();
     #endregion
 
+    #region 鼠标事件
+    
+    #endregion
+
     #region 事件相关
     // 事件响应
 
     private List<float> damageDatasList = new List<float>();
+
+    /// <summary>
+    /// 决定Onbehit时的演出表现
+    /// </summary>
+    [HideInInspector]
+    public bool ifBlock = false;
+
     public virtual void OnBehit(DamageData data)
     {
-        var damage = data.damage;
+        // 闪避判断
+        int dodge = Ability.Dodge.FinalValue;
+        int targetHit = data.hit;
+        int randomValue = UnityEngine.Random.Range(0, 12);
+
+        Debug.Log("命中值" + targetHit + "随机值" + randomValue + "闪避值" + dodge);
+
+        if (targetHit + randomValue < dodge)
+        {
+            OnDodge(data);
+            return;
+        }
+
+        // 转身
+        ChangeFaceTo(data.dir);
+
+        // 伤害应用
+        var damage = data.damage - Ability.Defense.FinalValue;
+        if (damage < 0)
+            damage = 0;
+
         if (HealPoint - damage <= 0)
             damage = HealPoint;
         HealPoint -= damage;
 
-        // 转身
-        ChangeFaceTo(data.dir);
+        // 如果存在格挡，则显示格挡
+        if(ifBlock)
+        {
+            OnBlock(data);
+        }
 
         // 伤害字符
         Vector3 textOffset = new Vector3(0, 0.25f, 0);
@@ -210,7 +251,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
         Vector3 textMove = new Vector3(-data.dir.x + textRandomOffset.y, 1f, 0);
         float time = 1f;
-        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, data.damage + "");
+        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, damage + "");
 
         EventInvoke(ActorEvent.OnBehit);
     }
@@ -235,6 +276,18 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         Vector3 textMove = new Vector3(-data.dir.x/2, 1f, 0);
         float time = 1f;
         UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.green, "闪避");
+    }
+
+    private void OnBlock(DamageData data)
+    {
+        // 格挡字符
+        Vector3 textOffset = new Vector3(0, 0.25f, 0);
+        Vector3 textRandomOffset = new Vector3(Random.Range(0, 0.5f), Random.Range(0, 0.5f), 0);
+        Vector3 textPos = Sprite.transform.position + textOffset + textRandomOffset;
+        Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
+        Vector3 textMove = new Vector3(data.dir.x / 4, 1f, 0);
+        float time = 1f;
+        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.blue, "格挡");
     }
 
     public void OnBeatBack(Vector2 dir,int dis)

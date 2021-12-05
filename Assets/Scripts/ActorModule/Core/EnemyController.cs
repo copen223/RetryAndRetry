@@ -12,6 +12,9 @@ public class EnemyController : ActorController
     public int MovePoint { get { return movePoint; } set { movePoint = Mathf.Clamp(value,0,MaxMovePoint); } }
     private int movePoint;
 
+    [Header("存放状态机的子物体")]
+    public Transform StatesChild = null;
+
 
     void Awake()
     {
@@ -21,7 +24,7 @@ public class EnemyController : ActorController
 
     private void Start()
     {
-        ActorStates = new List<ActorState>(transform.GetComponents<ActorState>());
+        ActorStates = new List<ActorState>(StatesChild.GetComponents<ActorState>());
         currentState = ActorStates.Find((x) => { return (x is ActorActionIdle); });
     }
 

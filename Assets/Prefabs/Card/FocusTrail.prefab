@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Seter: {fileID: 0}
   Actor: {fileID: 0}
+  LineSettingColor: {r: 0.105322145, g: 0.5754717, b: 0.16409084, a: 0}
+  LineColor: {r: 0.8666667, g: 0.5529412, b: 0.5687608, a: 0}
   IfOccupied: 0
   IfShow: 0
 --- !u!114 &5214723390997666330
@@ -142,7 +144,7 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 64186
+      atime1: 65535
       atime2: 0
       atime3: 0
       atime4: 0

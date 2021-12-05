@@ -9,41 +9,51 @@ namespace Assets.Scripts.CardModule.CardEffects
 {
     public class NormalDamage:CardEffect
     {
-        public float damage;
+        /// <summary>
+        /// 伤害倍率
+        /// </summary>
+        public float damageValue;
 
-        public NormalDamage(float _damage, EffectTrigger trigger)
+        /// <summary>
+        /// Combat加值区
+        /// </summary>
+        public float DamageAddValue_Combat { get; set; }
+        /// <summary>
+        /// Combat乘值区
+        /// </summary>
+        public float DamageMultiValue_Combat { get; set; }
+
+        /// <summary>
+        /// 初始化伤害计算公式各项
+        /// </summary>
+        private void InitDamageValue()
         {
-            damage = _damage;
-            Trigger = trigger;
-            CombatPriority = 1;
+            DamageAddValue_Combat = 0;
+            DamageMultiValue_Combat = 1;
         }
 
-        //public override void DoEffect(ActorController user, List<ActorController> targets)
-        //{
-        //    foreach(var target in targets)
-        //    {
-        //        var dir = (user.transform.position - target.transform.position);
-        //        target.GetComponent<ActorController>().OnBehit(new DamageData(damage,dir));
-        //    }
-        //}
+        public NormalDamage(float _damageValue, EffectTrigger trigger)
+        {
+            damageValue = _damageValue;
+            Trigger = trigger;
+            CombatPriority = 1;
+            InitDamageValue();
+        }
 
         public override void DoEffect(Combat combat)
         {
-            var dir = isAtking ? combat.Atker.transform.position - combat.Dfder.transform.position : combat.Dfder.transform.position - combat.Atker.transform.position;
-            if (isAtking)
-            {
-                combat.Dfder.OnBehit(new DamageData(damage, dir));
-                // var target = combat.Dfder;
-                // var finder = target.GetComponent<PathFinderComponent>();
-                // var path = finder.SearchAndGetPathByEnforcedMove(target.transform.position, -1 * dir, 2,false);
-                // var move = target.GetComponent<ActorMoveComponent>();
-                // move.StartForceMoveByPathList(path);
-            }
-            else
-            {
-                combat.Atker.OnBehit(new DamageData(damage, dir));
-            }
+            var damage = damageValue * Card.User.Ability.Attack.FinalValue;
 
+            var dir = isAtking ? combat.Atker.transform.position - combat.Dfder.transform.position : combat.Dfder.transform.position - combat.Atker.transform.position;
+            float finalDamage = (damage + DamageAddValue_Combat) * DamageMultiValue_Combat;
+            if (finalDamage < 0)
+                finalDamage = 0;
+
+            ActorController target = isAtking ? combat.Dfder : combat.Atker;
+
+            target.OnBehit(new DamageData(finalDamage, dir, Card.User.Ability.Hit.FinalValue));
+
+            InitDamageValue();
             base.DoEffect(combat);
         }
     }

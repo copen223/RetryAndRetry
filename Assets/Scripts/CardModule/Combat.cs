@@ -20,6 +20,11 @@ namespace Assets.Scripts.CardModule
         public List<Card> DfdCards = new List<Card>();
         public Card AtkCard;
 
+        #region Combat事件
+        public event Action CombatEndEvent;
+        #endregion
+
+
         public Combat (ActorController atker,ActorController dfder)
         {
             Atker = atker;
@@ -32,8 +37,14 @@ namespace Assets.Scripts.CardModule
             DfdCards = dfdCards;
             Atker = atker.GetComponent<ActorController>();
             Dfder = dfder.GetComponent<ActorController>();
+
+            AtkCard.User = Atker;
+            foreach (var card in dfdCards) card.User = Dfder;
         }
 
+        /// <summary>
+        /// Combat进行时
+        /// </summary>
         public void DoCombat()
         {
             //------------------载入攻击、防御卡牌的效果------------------
@@ -63,6 +74,9 @@ namespace Assets.Scripts.CardModule
                 var effect = CombatEffects[i];
                 effect.DoEffect(this);
             }
+
+            //--------------------Combat执行结束----------------------
+            CombatEndEvent?.Invoke();
         }
 
         public void StartDoCombat()
@@ -86,4 +100,6 @@ namespace Assets.Scripts.CardModule
         }
 
     }
+
+    
 }

@@ -9,9 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53cef123be0958546bf2730be4ed18b3, type: 3}
-  m_Name: PlayerDeck1
+  m_Script: {fileID: 11500000, guid: 01fd95731d104b44da9dd2a4c0365f34, type: 3}
+  m_Name: "\u683C\u6321"
   m_EditorClassIdentifier: 
-  CardWithCount:
-  - "\u6253\u51FB 5"
-  - "\u683C\u6321 5"
+  CardName: "\u683C\u6321"
+  Type: 2
+  UpChangeLevel: 1
+  CardUpChangeType: 0
+  CardElement: 4
+  Effects: "\u683C\u6321\uFF1A2\uFF1B"
+  ActionType: 2
+  ActionValues:
+  - 0.5
+  - 0.75

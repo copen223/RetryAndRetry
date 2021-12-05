@@ -60,7 +60,9 @@ namespace ActorModule.AI
             {
                 CardBuilder builder = new CardBuilder();
                 attackCard = builder.CreatCardByName(attackCardInfo);
+                attackCard.User = ActionMode.Actor.GetComponent<ActorController>();
                 focusCard = builder.CreatCardByName(focusCardInfo);
+                focusCard.User = ActionMode.Actor.GetComponent<ActorController>();
             }
             StartCoroutine(DoPlanCoroutine());
         }
@@ -115,9 +117,8 @@ namespace ActorModule.AI
                     break;
             }
 
-            selfGo.GetComponent<ActorMoveByPath>().SetNodePath(pathFinder.VectorPath2NodePath(path));
-            // selfGo.GetComponent<ActorMoveByPath>().SetPath(path);
-            selfGo.GetComponent<ActorActionIdle>().ChangeStateTo<ActorMoveByPath>();
+            selfController.StatesChild.GetComponent<ActorMoveByPath>().SetNodePath(pathFinder.VectorPath2NodePath(path));
+            selfController.StatesChild.GetComponent<ActorActionIdle>().ChangeStateTo<ActorMoveByPath>();
 
             //----------------等待移动完成---------------------
 

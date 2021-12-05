@@ -26,6 +26,5 @@ public class ActorState : MonoBehaviour
 
     private void Start()
     {
-        Controller = transform.GetComponent<ActorController>();
     }
 }

@@ -64,7 +64,10 @@ namespace Assets.Scripts.CardModule
             {
                 var effect = CreatEffectByText(effectString);
                 if (effect != null)
+                {
+                    effect.Card = card;
                     cardEffects.Add(effect);
+                }
             }
 
             card.effects = cardEffects;
@@ -133,13 +136,15 @@ namespace Assets.Scripts.CardModule
             switch (name_string)
             {
                 case "伤害": case "普通伤害":case "NomalDamage":case "Damage":
-                    effect = new CardEffects.NormalDamage(int.Parse(value_string),trigger);break;
+                    effect = new CardEffects.NormalDamage(float.Parse(value_string),trigger);break;
                 case "闪避": case "普通闪避": case "NomalDodge": case "Dodge":
-                    effect = new CardEffects.NormalDodge();break;
+                    effect = new CardEffects.NormalDodge(int.Parse(value_string));break;
                 case "冲刺":
                     effect = new CardEffects.NormalDash(int.Parse(value_string));break;
                 case "击退":
                     effect = new CardEffects.NormalBeatBack(int.Parse(value_string));break;
+                case "格挡":
+                    effect = new CardEffects.NormalBlock(int.Parse(value_string));break;
                 default: effect = null;break;
             }
 

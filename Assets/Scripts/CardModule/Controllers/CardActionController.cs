@@ -258,19 +258,23 @@ public class CardActionController : MonoBehaviour
 
             var gb = focusTrailPool.GetTarget(Controller.holder.transform.Find("FocusTrails"));
             gb.transform.localScale = new Vector3(1, 1, 1);
+            gb.GetComponent<FocusTrailController>().IfShow = true;
             gb.GetComponent<FocusTrailController>().Seter = Controller.holder;
             gb.GetComponent<FocusTrailController>().SetPoints(points);
             gb.GetComponent<FocusTrailController>().SetOffsetPoints();  // 清空offset点集 防止使用offsetpoint决定线
+            gb.GetComponent<FocusTrailController>().SetColor(true);
             gb.SetActive(true);
 
             //-------------------输入-------------------------
             if(IfInputMouse0 && !gb.GetComponent<FocusTrailController>().IfOccupied)
             {
                 Vector2 scale_x = Controller.holder.transform.localScale;
-                gb.GetComponent<FocusTrailController>().SetOffsetPoints( point1_offset * scale_x, point2_offset * scale_x, point3_offset); 
+                gb.GetComponent<FocusTrailController>().SetOffsetPoints( point1_offset * scale_x, point2_offset * scale_x, point3_offset);
+                gb.GetComponent<FocusTrailController>().SetColor(false);
                 focusTrailPool.RemoveFromPool(gb);
                 Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
                 Controller.Card.SetFocusTrail(gb);
+                gb.GetComponent<FocusTrailController>().IfShow = false;
 
                 OnActionOverEvent?.Invoke();    // 通知action结束
                 break;

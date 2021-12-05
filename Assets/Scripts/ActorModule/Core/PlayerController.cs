@@ -6,6 +6,7 @@ using Assets.Scripts.CardModule.CardActions;
 using Assets.Scripts.CardModule.CardEffects;
 using Assets.Scripts.ActorModule;
 using Assets.Scripts.ActorModule.ActorStates;
+using UnityEngine.EventSystems;
 
 public class PlayerController : ActorController
 {
@@ -14,7 +15,6 @@ public class PlayerController : ActorController
     /// </summary>
     [Header("测试用标签，用于设定不同的阵营")]
     public bool IfEnemy; 
-
 
     public Hand hand;
     public DiscardPool discard;
@@ -78,9 +78,7 @@ public class PlayerController : ActorController
     // 进入战斗时，监听战斗管理器的回合开始与回合结束事件
     public override void OnEnterBattle()
     {
-        //BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnTurnStart);
-        //BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStart);
-        //BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnTurnEnd);
+        
     }
 
     public override void OnTurnEnd()
@@ -94,7 +92,7 @@ public class PlayerController : ActorController
     {
         base.OnTurnStart(); 
         currentState.ChangeStateTo<ActorActionIdle>();
-        ShowAllFocusTrail(true);
+        // ShowAllFocusTrail(true);
         // 恢复各项数值
         // ActionPoint += ActionPoint_Resume;
         ActionPoint = 0;
@@ -103,12 +101,16 @@ public class PlayerController : ActorController
 
 
     #region 生命周期
+
+    public Transform StatesChild = null;
     private void Start()
     {
-        ActorStates = new List<ActorState>(transform.GetComponents<ActorState>());
+        ActorStates = new List<ActorState>(StatesChild.GetComponents<ActorState>());
         currentState = ActorStates.Find((x) => { return (x is ActorNoActionIdle); });
 
         GameManager.instance.AddListener(GameManager.GameEvent.EnterBattle, OnEnterBattle);
+        Sprite.GetComponent<ActorSpriteController>().MouseEnterEvent += OnMouseEnterCallback;
+        Sprite.GetComponent<ActorSpriteController>().MouseExitEvent += OnMouseExitCallback;
     }
 
     private void Awake()
@@ -160,6 +162,8 @@ public class PlayerController : ActorController
     {
         currentState.ChangeStateTo<ActorSelectMoveTarget>();
     }
+
+
     #endregion
 
     #region 流程事件
@@ -170,4 +174,14 @@ public class PlayerController : ActorController
     //    MovePoint += MovePoint_Resume;
     //}
     #endregion
+
+    // 监听sprite鼠标进入事件 来实现focustrail的开关
+    void OnMouseEnterCallback()
+    {
+        ShowAllFocusTrail(true);
+    }
+    void OnMouseExitCallback()
+    { 
+        ShowAllFocusTrail(false);
+    }
 }

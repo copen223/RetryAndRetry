@@ -15,6 +15,11 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         public string name;
 
+        /// <summary>
+        /// 该卡牌的所属者
+        /// </summary>
+        public ActorController User;
+
         public Card() { }
         public Card(string _name,CardUseType _type,List<CardEffect> _effects)
         {
@@ -54,6 +59,16 @@ namespace Assets.Scripts.CardModule
         public CardUpChangeType upChangeType;
         public int cardLevel;
         public CardElement cardElement;
+
+        /// <summary>
+        /// 仅仅显示该卡牌的专注轨迹，没有实际作用
+        /// </summary>
+        /// <param name="ifShow"></param>
+        public void ShowFocusTrail(bool ifShow)
+        {
+            if(focusTrail != null)
+                focusTrail.GetComponent<FocusTrailController>().IfShow = ifShow;
+        }
 
         /// <summary>
         /// 设置专注轨迹，同时把专注轨迹的卡牌设置为该卡牌

@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour
     public GameObject floatUIPrefab;
     public Transform floatUIParent;
 
+    // 其他链接
+    public ActorUIController ActorUI { get { return transform.Find("Actor").GetComponent<ActorUIController>(); } }
+
     public static UIManager instance;
     // Start is called before the first frame update
     void Awake()

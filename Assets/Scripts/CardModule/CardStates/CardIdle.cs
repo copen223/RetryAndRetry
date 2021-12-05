@@ -12,6 +12,18 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateStart()
         {
             base.StateStart();
+
+            if (Controller.Card != null)
+            {
+                if (Controller.Card.IfHasTrail)
+                {
+                    var focusObject = Controller.Card.CancleFocusTrail();
+                    Controller.holder.GetComponent<ActorController>().RemoveFocusTrail(focusObject);
+                    focusObject.SetActive(false);
+                    Controller.ActionController.AddNewTrailToPool(focusObject);
+                }
+            }
+
             Controller.Card.situation = CardSituation.Idle;
             int index = 1;
             Controller.SpriteObject.SendMessage("StartAnimation", index);

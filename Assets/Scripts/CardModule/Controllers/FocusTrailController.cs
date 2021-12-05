@@ -16,7 +16,12 @@ public class FocusTrailController : MonoBehaviour
     //------------------数据-----------------
     Vector3[] linePoints;
     // 专注轨迹物体与sprite物体的相对位移，用于确定画线位置而非物体位置，物体位置在生成后由Transform父子关系进行确定
-    Vector3[] lineOffsetPoints = new Vector3[0];    
+    Vector3[] lineOffsetPoints = new Vector3[0];
+
+    [SerializeField]
+    private Color LineSettingColor;
+    [SerializeField]
+    private Color LineColor;
 
     //------------------标志参量---------------
     public bool IfOccupied;
@@ -47,6 +52,23 @@ public class FocusTrailController : MonoBehaviour
         {
             UpdateLineViewByPos();
         }
+    }
+
+    /// <summary>
+    /// 切换线的颜色
+    /// </summary>
+    /// <param name="isSetting"></param>
+    public void SetColor(bool isSetting)
+    {
+        //Color color = isSetting? LineColor:seli
+
+        //Gradient gradient = new Gradient();
+        //gradient.SetKeys(new GradientColorKey[] {Color.white,lineRenderer }, new GradientAlphaKey[] { });
+        //lineRenderer.colorGradient = new Gradient()
+        //if (isSetting)
+        //    colorKeys[1] = new GradientColorKey(LineColor,0.5f);
+        //else
+        //    colorKeys[1] = new GradientColorKey(LineColor, 0.5f);
     }
 
     /// <summary>
@@ -149,12 +171,12 @@ public class FocusTrailController : MonoBehaviour
         {
             if (collision.gameObject != gameObject && collision.tag == "FocusTrail")
             {
-                Debug.Log(collision.gameObject);
-                Debug.Log(collision.GetComponent<FocusTrailController>().Actor);
-                Debug.Log(Seter);
+                //Debug.Log(collision.gameObject);
+                //Debug.Log(collision.GetComponent<FocusTrailController>().Actor);
+                //Debug.Log(Seter);
                 if (collision.GetComponent<FocusTrailController>().Actor == Seter)
                 {
-                    Debug.Log("yes");
+                    //Debug.Log("yes");
                     IfOccupied = true;
                     return;
                 }

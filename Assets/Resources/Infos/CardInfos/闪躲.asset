@@ -15,7 +15,9 @@ MonoBehaviour:
   CardName: "\u95EA\u8EB2"
   Type: 2
   UpChangeLevel: 1
-  Effects: "\u95EA\u907F\uFF1B"
+  CardUpChangeType: 1
+  CardElement: 2
+  Effects: "\u95EA\u907F:4\uFF1B"
   ActionType: 2
   ActionValues:
   - 0.5

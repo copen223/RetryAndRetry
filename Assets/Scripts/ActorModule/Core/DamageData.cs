@@ -22,10 +22,15 @@ namespace Assets.Scripts.ActorModule
         /// 伤害的方向
         /// </summary>
         public Vector2 dir;
-        public DamageData(float _damage, Vector2 _dir)
+        /// <summary>
+        /// 伤害的命中值
+        /// </summary>
+        public int hit;
+        public DamageData(float _damage, Vector2 _dir,int hit)
         {
             damage = _damage;
             dir = _dir;
+            this.hit = hit;
         }
 
         public DamageData(float _damage, Vector2 _dir, DamageSource _source)
