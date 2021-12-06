@@ -128,6 +128,8 @@ namespace Assets.Scripts.CardModule
                     case "攻击":trigger = EffectTrigger.OnCombatAtk;break;
                     case "反应":trigger = EffectTrigger.OnCombatDfd;break;
                     case "无":trigger = EffectTrigger.None;break;
+                    case "伤害":trigger = EffectTrigger.OnDoDamage;break;
+                    case "打出":trigger = EffectTrigger.OnMake;break;
                 }
 
             }
@@ -145,6 +147,8 @@ namespace Assets.Scripts.CardModule
                     effect = new CardEffects.NormalBeatBack(int.Parse(value_string));break;
                 case "格挡":
                     effect = new CardEffects.NormalBlock(int.Parse(value_string));break;
+                case "毒":
+                    effect = new CardEffects.GiveBuff(trigger, "毒");break;
                 default: effect = null;break;
             }
 

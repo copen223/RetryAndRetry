@@ -17,6 +17,10 @@ namespace Assets.Scripts.CardModule
         public int CombatPriority;              // Combat触发时的优先级
         public EffectDoPriority DoPriority;     // 作用优先级层级
         //public virtual void DoEffect(ActorController user, List<ActorController> targets) { }   // 针对目标的效果
+        /// <summary>
+        /// 针对combat的效果，在进行combat时依次触发
+        /// </summary>
+        /// <param name="combat"></param>
         public virtual void DoEffect(Combat combat) { foreach (var effect in AdditionalEffects_List) { effect.isAtking = isAtking; effect.DoEffect(combat); } } // 针对combat的效果
 
         public List<CardEffect> AdditionalEffects_List = new List<CardEffect>();    // 附加效果列表
@@ -32,7 +36,11 @@ namespace Assets.Scripts.CardModule
         OnMake,
         OnFocus,
         OnCombatAtk,
-        OnCombatDfd
+        OnCombatDfd,
+        /// <summary>
+        /// 对对方造成伤害时触发
+        /// </summary>
+        OnDoDamage
     }
 
     public enum EffectTargetType

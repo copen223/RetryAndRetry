@@ -20,6 +20,10 @@ namespace Assets.Scripts.CardModule
         public List<Card> DfdCards = new List<Card>();
         public Card AtkCard;
 
+        // 待处理特殊条件效果列表
+        public List<CardEffect> ListenEventEffects = new List<CardEffect>();
+
+
         #region Combat事件
         public event Action CombatEndEvent;
         #endregion
@@ -47,6 +51,8 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         public void DoCombat()
         {
+            Atker.SetCombat(this);Dfder.SetCombat(this);
+
             //------------------载入攻击、防御卡牌的效果------------------
             CombatEffects.Clear();
             foreach(var effect in AtkCard.effects)
@@ -55,6 +61,12 @@ namespace Assets.Scripts.CardModule
                 {
                     effect.isAtking = true;
                     CombatEffects.Add(effect);
+                }
+                if(effect.Trigger == EffectTrigger.OnDoDamage)
+                {
+                    effect.isAtking = true;
+                    Dfder.GetComponent<ActorController>().OnInjuredEvent += effect.DoEffect;
+                    ListenEventEffects.Add(effect);
                 }
             }
             foreach (var card in DfdCards)
@@ -76,8 +88,27 @@ namespace Assets.Scripts.CardModule
             }
 
             //--------------------Combat执行结束----------------------
+            CancleAllListeners();
             CombatEndEvent?.Invoke();
         }
+
+        /// <summary>
+        /// combat已经结束，注销所有有监听的效果
+        /// </summary>
+        private void CancleAllListeners()
+        {
+            foreach(var effect in ListenEventEffects)
+            {
+                ActorController user = effect.Card.User;
+                ActorController target = effect.isAtking ? Dfder.GetComponent<ActorController>() : Atker.GetComponent<ActorController>();
+                switch(effect.Trigger)
+                {
+                    case EffectTrigger.OnDoDamage:
+                        target.OnInjuredEvent -= effect.DoEffect; break;
+                }
+            }
+        }
+
 
         public void StartDoCombat()
         {

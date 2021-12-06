@@ -5,6 +5,7 @@ using Assets.Scripts.ActorModule;
 using Assets.Scripts.ActorModule.ActorStates;
 using Assets.Scripts.Tools;
 using ActorModule.AI;
+using Assets.Scripts.CardModule;
 
 /// <summary>
 /// 人物对象控制器，player和enemy控制器都继承自它，都实现了可交互对象接口
@@ -13,8 +14,9 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
 {
     // 标签
     protected bool IfMyTurn { get { return BattleManager.instance.CurActorObject == gameObject; } }
-    
+
     // 链接
+    public BuffController BuffCon { get { return transform.Find("Buffs").GetComponent<BuffController>(); } }
     public GameObject Sprite { get { return transform.Find("Sprite").gameObject; } }
     public Vector3 CenterOffset { get { return Sprite.transform.localPosition; } }
     public Vector3 CenterPos { get { return transform.position + CenterOffset; } }
@@ -88,7 +90,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         am.StartDoBattleAI();
     }
 
-    #region 卡牌战斗相关
+    #region 专注轨迹相关
 
     //-----------------FocusTrail---------------------//
     [SerializeField]
@@ -105,7 +107,8 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     /// </summary>
     /// <param name="gb"></param>
     public void RemoveFocusTrail(GameObject gb) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); }
-    
+    public void RemoveFocusTrail(GameObject gb,bool ifDestory) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); if (ifDestory) Destroy(gb); }
+
     /// <summary>
     /// 该方法一般由AI调用
     /// 玩家专注轨迹的变化和卡牌变化绑定，卡牌在从专注状态退出时会调用上方的Remove方法
@@ -196,8 +199,15 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     public List<ActorState> ActorStates = new List<ActorState>();
     #endregion
 
-    #region 鼠标事件
-    
+
+
+    #region 效果处理相关
+    private Combat combat;
+    public void SetCombat(Combat combat) { this.combat = combat; }
+
+    public event System.Action<Combat> OnInjuredEvent;
+
+
     #endregion
 
     #region 事件相关
@@ -211,6 +221,10 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     [HideInInspector]
     public bool ifBlock = false;
 
+    /// <summary>
+    /// 受击
+    /// </summary>
+    /// <param name="data"></param>
     public virtual void OnBehit(DamageData data)
     {
         // 闪避判断
@@ -229,31 +243,8 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         // 转身
         ChangeFaceTo(data.dir);
 
-        // 伤害应用
-        var damage = data.damage - Ability.Defense.FinalValue;
-        if (damage < 0)
-            damage = 0;
-
-        if (HealPoint - damage <= 0)
-            damage = HealPoint;
-        HealPoint -= damage;
-
-        // 如果存在格挡，则显示格挡
-        if(ifBlock)
-        {
-            OnBlock(data);
-        }
-
-        // 伤害字符
-        Vector3 textOffset = new Vector3(0, 0.25f, 0);
-        Vector3 textRandomOffset = new Vector3(Random.Range(0,0.5f), Random.Range(0,0.5f), 0);
-        Vector3 textPos = Sprite.transform.position + textOffset + textRandomOffset;
-        Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
-        Vector3 textMove = new Vector3(-data.dir.x + textRandomOffset.y, 1f, 0);
-        float time = 1f;
-        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, damage + "");
-
-        EventInvoke(ActorEvent.OnBehit);
+        // 受伤
+        OnInjured(data);
     }
     public void OnHealUp(float heal)
     {
@@ -290,6 +281,40 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.blue, "格挡");
     }
 
+    /// <summary>
+    /// 受伤
+    /// </summary>
+    public void OnInjured(DamageData data)
+    {
+        // 伤害应用
+        var damage = data.damage - Ability.Defense.FinalValue;
+        if (damage < 0)
+            damage = 0;
+
+        if (HealPoint - damage <= 0)
+            damage = HealPoint;
+        HealPoint -= damage;
+
+        // 如果存在格挡，则显示格挡
+        if (ifBlock)
+        {
+            OnBlock(data);
+        }
+
+        // 伤害字符
+        Vector3 textOffset = new Vector3(0, 0.25f, 0);
+        Vector3 textRandomOffset = new Vector3(Random.Range(0, 0.5f), Random.Range(0, 0.5f), 0);
+        Vector3 textPos = Sprite.transform.position + textOffset + textRandomOffset;
+        Vector3 textMoveOffset = new Vector3(0, 0.5f, 0);
+        Vector3 textMove = new Vector3(-data.dir.x + textRandomOffset.y, 1f, 0);
+        float time = 1f;
+        UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, damage + "");
+
+        OnInjuredEvent?.Invoke(combat);
+
+        EventInvoke(ActorEvent.OnBehit);
+    }
+
     public void OnBeatBack(Vector2 dir,int dis)
     {
         var finder = GetComponent<PathFinderComponent>();
@@ -298,6 +323,16 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         var path = finder.SearchAndGetPathByEnforcedMove(transform.position, dir, dis, true);
         move.StartForceMoveByPathList(finder.VectorPath2NodePath(path));
     }
+
+    public void OnBuff(string buff)
+    {
+        Debug.Log(gameObject + "" + buff);
+    }
+
+    #endregion
+
+    #region 遗留的老事件系统
+
 
     //-------------------事件订阅-------------------//
     public enum ActorEvent

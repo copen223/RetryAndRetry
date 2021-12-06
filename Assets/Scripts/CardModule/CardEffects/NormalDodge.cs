@@ -64,6 +64,17 @@ namespace Assets.Scripts.CardModule.CardEffects
             //}
 
             base.DoEffect(combat);  //  附加effect进行
+
+            // 丢弃该卡
+            if(Card.User is PlayerController )
+            {
+                var player = Card.User as PlayerController;
+                player.DiscardCard(Card);
+            }
+            if (Card.User is EnemyController)
+            {
+                Card.User.RemoveFocusTrail(Card.focusTrail,true);
+             }
         }
     }
 }

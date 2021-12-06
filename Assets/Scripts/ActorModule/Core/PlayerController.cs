@@ -99,6 +99,28 @@ public class PlayerController : ActorController
         MovePoint += MovePoint_Resume;
     }
 
+    #region 卡牌相关
+    /// <summary>
+    /// 丢弃手卡
+    /// </summary>
+    /// <param name="card"></param>
+    public void DiscardCard(Card card)
+    {
+        if(hand.list.Contains(card))
+        {
+            if (card.situation == CardSituation.Focused)
+            {
+                // 遇到专注的卡牌要进行轨迹、卡牌、人物的解绑和销毁专注轨迹
+                card.situation = CardSituation.Idle;
+                var focusObject = card.CancleFocusTrail();
+                RemoveFocusTrail(focusObject);
+                Destroy(focusObject);
+            }
+
+            hand.TranslateCardTo(card, discard);
+        }
+    }
+    #endregion
 
     #region 生命周期
 
@@ -137,22 +159,22 @@ public class PlayerController : ActorController
         upChangeList_debug.Clear();
         if (deck == null || hand == null || discard == null || upChangeDeck == null)
             return;
-        //foreach (var card in deck.list)
-        //{
-        //    deckList_debug.Add(card.name);
-        //}
-        //foreach (var card in hand.list)
-        //{
-        //    handList_debug.Add(card.name);
-        //}
-        //foreach (var card in discard.list)
-        //{
-        //    discardList_debug.Add(card.name);
-        //}
-        //foreach(var card in upChangeDeck.list)
-        //{
-        //    upChangeList_debug.Add(card.name);
-        //}
+        foreach (var card in deck.list)
+        {
+            deckList_debug.Add(card.name);
+        }
+        foreach (var card in hand.list)
+        {
+            handList_debug.Add(card.name);
+        }
+        foreach (var card in discard.list)
+        {
+            discardList_debug.Add(card.name);
+        }
+        foreach (var card in upChangeDeck.list)
+        {
+            upChangeList_debug.Add(card.name);
+        }
 
     }
     #endregion

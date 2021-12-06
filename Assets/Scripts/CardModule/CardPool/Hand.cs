@@ -13,6 +13,11 @@ namespace Assets.Scripts.CardModule
 
         public List<Container> Containers;
 
+        /// <summary>
+        /// 如果是丢弃手牌的卡，除了该方法以外，还要将focustrail与card、actor解绑，以及销毁focustrail！
+        /// </summary>
+        /// <param name="card"></param>
+        /// <param name="pool"></param>
         public override void TranslateCardTo(Card card, CardPool pool)
         {
             base.TranslateCardTo(card, pool);
@@ -28,7 +33,10 @@ namespace Assets.Scripts.CardModule
             else
                 card.Container = null;
         }
-
+        /// <summary>
+        /// 外部应用translate！
+        /// </summary>
+        /// <param name="card"></param>
         public override void RemoveCard(Card card)
         {
             base.RemoveCard(card);
