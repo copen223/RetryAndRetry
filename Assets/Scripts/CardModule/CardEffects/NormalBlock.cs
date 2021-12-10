@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
+
+    [CreateAssetMenu(fileName = "Effect", menuName = "MyInfo/效果/格挡")]
     public class NormalBlock: CardEffect
     {
         public float reduceDamage;
@@ -49,6 +52,15 @@ namespace Assets.Scripts.CardModule.CardEffects
             //}
             combat.CombatEndEvent += ClearInfluenceCallBack;
             base.DoEffect(combat);  //  附加effect进行
+        }
+
+        public override CardEffect Clone()
+        {
+            NormalBlock effect = CreateInstance<NormalBlock>();
+            effect.reduceDamage = reduceDamage;
+            effect.CombatPriority = 2;
+            effect.AdditionalEffects_List = CloneAdditionalEffects();
+            return effect;
         }
     }
 }

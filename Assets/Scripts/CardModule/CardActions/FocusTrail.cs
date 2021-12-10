@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardActions
 {
+    [CreateAssetMenu(fileName = "Action", menuName = "MyInfo/使用形式/专注轨迹")]
     public class FocusTrail : CardAction
     {
         public float Distance_X;      // 放置轨迹的x距离

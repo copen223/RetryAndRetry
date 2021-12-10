@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
+
+    [CreateAssetMenu(fileName = "Effect", menuName = "MyInfo/效果/伤害")]
     public class NormalDamage:CardEffect
     {
+        [Header("伤害倍率")]
         /// <summary>
         /// 伤害倍率
         /// </summary>
@@ -26,7 +30,7 @@ namespace Assets.Scripts.CardModule.CardEffects
         /// <summary>
         /// 初始化伤害计算公式各项
         /// </summary>
-        private void InitDamageValue()
+        public void InitDamageValue()
         {
             DamageAddValue_Combat = 0;
             DamageMultiValue_Combat = 1;
@@ -51,10 +55,24 @@ namespace Assets.Scripts.CardModule.CardEffects
 
             ActorController target = isAtking ? combat.Dfder : combat.Atker;
 
-            target.OnBehit(new DamageData(finalDamage, dir, Card.User.Ability.Hit.FinalValue));
+            combat.DoHit(target, new DamageData(finalDamage, dir, Card.User.Ability.Hit.FinalValue));
 
             InitDamageValue();
+
+            damageValue += 1;
+
             base.DoEffect(combat);
+        }
+
+        public override CardEffect Clone()
+        {
+            NormalDamage effect = CreateInstance<NormalDamage>();
+            effect.damageValue = damageValue;
+            effect.Trigger = Trigger;
+            effect.CombatPriority = 1;
+            effect.InitDamageValue();
+            effect.AdditionalEffects_List = CloneAdditionalEffects();
+            return effect;
         }
     }
 }

@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
+
+    [CreateAssetMenu(fileName = "Effect", menuName = "MyInfo/效果/给予buff")]
     public class GiveBuff:CardEffect
     {
         string buff;
@@ -15,6 +18,15 @@ namespace Assets.Scripts.CardModule.CardEffects
             Trigger = trigger;
             this.buff = buff;
             CombatPriority = 3;
+        }
+
+        public override CardEffect Clone()
+        {
+            GiveBuff effect = ScriptableObject.CreateInstance<GiveBuff>();
+            effect.Trigger = Trigger;
+            effect.buff = buff;
+            effect.AdditionalEffects_List = CloneAdditionalEffects();
+            return effect;
         }
 
         public override void DoEffect(Combat combat)

@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
-    public class NormalDodge:CardEffect
+
+    [CreateAssetMenu(fileName = "Effect", menuName = "MyInfo/效果/闪避")]
+    public class NormalDodge : CardEffect
     {
         Combat combat;
         public int dodgeValue;
@@ -75,6 +78,14 @@ namespace Assets.Scripts.CardModule.CardEffects
             {
                 Card.User.RemoveFocusTrail(Card.focusTrail,true);
              }
+        }
+
+        public override CardEffect Clone()
+        {
+            NormalDodge effect = CreateInstance<NormalDodge>();
+            effect.CombatPriority = 2;
+            effect.AdditionalEffects_List = CloneAdditionalEffects();
+            return effect;
         }
     }
 }

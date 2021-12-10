@@ -15,6 +15,6 @@ namespace Assets.Scripts.ActorModule
         /// 受伤方法
         /// </summary>
         /// <param name="data"></param>
-        void OnBehit(DamageData data);
+        void OnInjured(DamageData data);
     }
 }

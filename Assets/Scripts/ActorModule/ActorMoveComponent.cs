@@ -200,7 +200,7 @@ public class ActorMoveComponent : MonoBehaviour
     {
         if (node.FallCount <= 6) return;    // 6格即1.5格下落不受伤
         float fallDamge = Mathf.FloorToInt(node.FallCount * FallDamagePerUnit);
-        Actor.GetComponent<ActorController>().OnBehit(new DamageData(fallDamge, Vector2.zero,50));
+        Actor.GetComponent<ActorController>().OnInjured(new DamageData(fallDamge, Vector2.zero,50));
     }
     private void HandleBeatBack(Node node)
     {

@@ -7,13 +7,15 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
+
+    [CreateAssetMenu(fileName = "Effect", menuName = "MyInfo/效果/击退")]
     /// <summary>
     /// 冲刺效果
     /// </summary>
     public class NormalBeatBack : CardEffect
     {
         Vector2 dir;    // 击退方向
-        int dis;        // 冲刺距离
+        public int dis;        // 冲刺距离
 
         /// <summary>
         /// 成为一个效果的附加效果
@@ -22,6 +24,14 @@ namespace Assets.Scripts.CardModule.CardEffects
         public NormalBeatBack(int _dis)
         {
             dis = _dis;
+        }
+
+        public override CardEffect Clone()
+        {
+            NormalBeatBack effect = CreateInstance<NormalBeatBack>();
+            effect.dis = dis;
+            effect.AdditionalEffects_List = CloneAdditionalEffects();
+            return effect;
         }
 
         public override void DoEffect(Combat combat)

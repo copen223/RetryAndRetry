@@ -5,6 +5,11 @@ using Assets.Scripts.BufferModule;
 
 public class BuffController : MonoBehaviour
 {
+    private void Start()
+    {
+        buffParent = transform;
+    }
+
     private Transform buffParent;
 
     public List<Buff> buffs = new List<Buff>();

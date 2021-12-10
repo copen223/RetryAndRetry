@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.CardModule;
 using UnityEngine;
+using Assets.Scripts.ActorModule;
 
 namespace Assets.Scripts.CardModule
 {
@@ -51,7 +52,7 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         public void DoCombat()
         {
-            Atker.SetCombat(this);Dfder.SetCombat(this);
+            //Atker.SetCombat(this);Dfder.SetCombat(this);
 
             //------------------载入攻击、防御卡牌的效果------------------
             CombatEffects.Clear();
@@ -62,12 +63,12 @@ namespace Assets.Scripts.CardModule
                     effect.isAtking = true;
                     CombatEffects.Add(effect);
                 }
-                if(effect.Trigger == EffectTrigger.OnDoDamage)
-                {
-                    effect.isAtking = true;
-                    Dfder.GetComponent<ActorController>().OnInjuredEvent += effect.DoEffect;
-                    ListenEventEffects.Add(effect);
-                }
+                //if(effect.Trigger == EffectTrigger.OnDoDamage)
+                //{
+                //    effect.isAtking = true;
+                //    Dfder.GetComponent<ActorController>().OnInjuredEvent += effect.DoEffect;
+                //    ListenEventEffects.Add(effect);
+                //}
             }
             foreach (var card in DfdCards)
             {
@@ -88,26 +89,74 @@ namespace Assets.Scripts.CardModule
             }
 
             //--------------------Combat执行结束----------------------
-            CancleAllListeners();
+            //CancleAllListeners();
             CombatEndEvent?.Invoke();
         }
 
         /// <summary>
-        /// combat已经结束，注销所有有监听的效果
+        /// 触发cards中所有卡牌触发为trigger的效果
         /// </summary>
-        private void CancleAllListeners()
+        /// <param name="trigger"></param>
+        /// <param name="cards"></param>
+        private void TouchOffEffect( EffectTrigger trigger,params Card[] cards)
         {
-            foreach(var effect in ListenEventEffects)
+            foreach(var card in cards)
             {
-                ActorController user = effect.Card.User;
-                ActorController target = effect.isAtking ? Dfder.GetComponent<ActorController>() : Atker.GetComponent<ActorController>();
-                switch(effect.Trigger)
+                foreach(var effect in card.effects)
                 {
-                    case EffectTrigger.OnDoDamage:
-                        target.OnInjuredEvent -= effect.DoEffect; break;
+                    if(effect.Trigger == trigger)
+                    {
+                        effect.DoEffect(this);
+                    }
                 }
             }
+            
         }
+
+
+
+        #region 一些效果处理接口
+        public void DoHit(ActorController target,DamageData damageData)
+        {
+            // 闪避判断
+            int dodge = target.Ability.Dodge.FinalValue;
+            int targetHit = damageData.hit;
+            int randomValue = UnityEngine.Random.Range(0, 12);
+
+            Debug.Log("命中值" + targetHit + "随机值" + randomValue + "闪避值" + dodge);
+
+            if (targetHit + randomValue < dodge)
+            {
+                target.OnDodge(damageData);
+                return;
+            }
+
+            // 转身
+            target.ChangeFaceTo(damageData.dir);
+
+            // 受伤
+            TouchOffEffect(EffectTrigger.OnDoDamage, AtkCard);
+            target.OnInjured(damageData);
+        }
+
+        #endregion
+
+        ///// <summary>
+        ///// combat已经结束，注销所有有监听的效果
+        ///// </summary>
+        //private void CancleAllListeners()
+        //{
+        //    foreach(var effect in ListenEventEffects)
+        //    {
+        //        ActorController user = effect.Card.User;
+        //        ActorController target = effect.isAtking ? Dfder.GetComponent<ActorController>() : Atker.GetComponent<ActorController>();
+        //        switch(effect.Trigger)
+        //        {
+        //            case EffectTrigger.OnDoDamage:
+        //                target.OnInjuredEvent -= effect.DoEffect; break;
+        //        }
+        //    }
+        //}
 
 
         public void StartDoCombat()

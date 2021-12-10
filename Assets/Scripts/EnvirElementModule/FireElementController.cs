@@ -27,7 +27,7 @@ public class FireElementController : MonoBehaviour
         if (MyTools.CheckLayerIfCanAttack(layer))
         {
             DamageData data = new DamageData(fireDamage, Vector2.zero, DamageSource.EnvirSurface);
-            go.GetComponent<ICanBeHitObject>().OnBehit(data);
+            go.GetComponent<ICanBeHitObject>().OnInjured(data);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Assets.Scripts.BattleModule.BattleStates
     {
         public override void StateStart()
         {
-            CardBuilder cardBuilder = new CardBuilder();
+            CardBuilder2 cardBuilder = new CardBuilder2();
 
             foreach(var actor in Manager.ActorList)
             {

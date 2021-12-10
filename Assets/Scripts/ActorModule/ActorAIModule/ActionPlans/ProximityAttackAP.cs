@@ -58,7 +58,7 @@ namespace ActorModule.AI
         {
             if (attackCard == null || focusCard == null)
             {
-                CardBuilder builder = new CardBuilder();
+                CardBuilder2 builder = new CardBuilder2();
                 attackCard = builder.CreatCardByName(attackCardInfo);
                 attackCard.User = ActionMode.Actor.GetComponent<ActorController>();
                 focusCard = builder.CreatCardByName(focusCardInfo);
