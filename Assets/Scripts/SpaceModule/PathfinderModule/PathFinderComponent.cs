@@ -968,6 +968,11 @@ public class PathFinderComponent : MonoBehaviour
         return grid.GetCellCenterWorld(new Vector3Int(cellPos.Item1, cellPos.Item2, 0));
     }
 
+    public Vector3Int WorldToCell(Vector3 pos)
+    {
+        return grid.WorldToCell(pos);
+    }
+
     public List<Node> VectorPath2NodePath(List<Vector3> path)
     {
         List<Node> nodes = new List<Node>();

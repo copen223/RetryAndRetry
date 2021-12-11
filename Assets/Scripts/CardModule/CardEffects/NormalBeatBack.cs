@@ -47,5 +47,10 @@ namespace Assets.Scripts.CardModule.CardEffects
 
             base.DoEffect(combat);  // 附加combat进行
         }
+
+        public override string GetDescriptionText()
+        {
+            return "击退目标<color=green>" + dis + "</color>格" + GetAdditionalDescriptionText();
+        }
     }
 }

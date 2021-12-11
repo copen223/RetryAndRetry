@@ -84,8 +84,16 @@ namespace Assets.Scripts.CardModule.CardEffects
         {
             NormalDodge effect = CreateInstance<NormalDodge>();
             effect.CombatPriority = 2;
+            effect.dodgeValue = dodgeValue;
             effect.AdditionalEffects_List = CloneAdditionalEffects();
             return effect;
+        }
+
+        public override string GetDescriptionText()
+        {
+            string triggerText = "";
+            string text = "增加<color=green>" + dodgeValue + "</color>点闪避" + GetAdditionalDescriptionText();
+            return triggerText+":" + text;
         }
     }
 }

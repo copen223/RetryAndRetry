@@ -56,5 +56,11 @@ namespace Assets.Scripts.CardModule.CardEffects
 
             base.DoEffect(combat);  // 附加combat进行
         }
+
+        public override string GetDescriptionText()
+        {
+            string text = "向前方冲刺<color=green>" + dis + "</color>格" + GetAdditionalDescriptionText();
+            return text;
+        }
     }
 }

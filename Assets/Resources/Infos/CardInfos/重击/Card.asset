@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: "\u91CD\u51FB"
   Type: 1
-  UpChangeLevel: 2
-  CardUpChangeType: 0
+  UpChangeLevel: 1
+  CardUpChangeType: 1
   CardElement: 3
   cardEffects:
   - {fileID: 11400000, guid: 3ce88df60c3777b4e9c004555a064d44, type: 2}

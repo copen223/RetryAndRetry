@@ -8,7 +8,7 @@ using Assets.Scripts.CardModule;
 
 namespace Assets.Scripts.BattleModule.BattleStates
 {
-    // 战斗准备阶段 主要是用卡牌构造器从对象的卡组信息进行卡组实例的初始化，测试时跳过这个阶段
+    // 战斗准备阶段 主要是用卡牌构造器从对象的卡组信息进行卡组实例的初始化
     public class BattleReady:BattleState
     {
         public override void StateStart()

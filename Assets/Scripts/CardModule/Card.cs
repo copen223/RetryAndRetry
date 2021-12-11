@@ -99,7 +99,15 @@ namespace Assets.Scripts.CardModule
         public Container Container { get { return container; } set { container = value;if(value!=null && value.Card!=this)value.Card = this; } }
         private Container container;
         //---------------------------
-        public virtual string GetCardDescription() { return ""; }
+        public virtual string GetCardDescription() 
+        {
+            string text = "";
+            foreach(var effect in effects)
+            {
+               text += effect.GetDescriptionText()+" ";
+            }
+            return text;
+        }
         
     }
 

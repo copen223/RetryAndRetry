@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85c3643d6cffea34b85eae31e969443f, type: 3}
-  m_Name: EBeatBack
+  m_Script: {fileID: 11500000, guid: 76c3c561d18bf4e42bfe07982feb9576, type: 3}
+  m_Name: "\u6062\u590D\u6548\u679C"
   m_EditorClassIdentifier: 
   isAtking: 0
   Trigger: 0
   CombatPriority: 0
   DoPriority: 0
   AdditionalEffects_List: []
-  dis: 1
+  RecoverValue: 1
+  RecoverValueType: 0

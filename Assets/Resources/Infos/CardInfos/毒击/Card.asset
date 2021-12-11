@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: "\u6BD2\u51FB"
   Type: 1
-  UpChangeLevel: 1
+  UpChangeLevel: 0
   CardUpChangeType: 0
   CardElement: 1
   cardEffects:
-  - {fileID: 11400000, guid: d1f6ce7fad02b4449ba7d42764fbd779, type: 2}
   - {fileID: 11400000, guid: 0a997a1e6d81cad40b59032918017c9f, type: 2}
+  - {fileID: 11400000, guid: d1f6ce7fad02b4449ba7d42764fbd779, type: 2}
   cardAction: {fileID: 11400000, guid: e488e2ad8822fc948a67ea9d15332f04, type: 2}

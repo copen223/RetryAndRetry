@@ -59,6 +59,10 @@ namespace Assets.Scripts.CardModule
                 var cloneEffect = infoEffect.Clone();
 
                 cloneEffect.Card = card;
+                foreach(var addEffect in cloneEffect.AdditionalEffects_List)
+                {
+                    addEffect.Card = card;
+                }
                 card.effects.Add(cloneEffect);
             }
 

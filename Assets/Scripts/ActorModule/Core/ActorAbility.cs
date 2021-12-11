@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class ActorAbility : MonoBehaviour
 {
+    // DEBUG
+    private void Update()
+    {
+        
+    }
+    //
     void Start()
     {
         UpdateValueByBase();

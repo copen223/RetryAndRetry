@@ -62,5 +62,10 @@ namespace Assets.Scripts.CardModule.CardEffects
             effect.AdditionalEffects_List = CloneAdditionalEffects();
             return effect;
         }
+
+        public override string GetDescriptionText()
+        {
+            return "减少<color=blue>" + reduceDamage + "</color>点伤害" + GetAdditionalDescriptionText();
+        }
     }
 }

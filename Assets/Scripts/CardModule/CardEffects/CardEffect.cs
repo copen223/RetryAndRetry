@@ -54,6 +54,23 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         /// <returns></returns>
         public abstract CardEffect Clone();
+
+        public abstract string GetDescriptionText();
+
+        /// <summary>
+        /// 重写getdescriptiontext时要加上附加效果文本
+        /// </summary>
+        /// <returns></returns>
+        public string GetAdditionalDescriptionText()
+        {
+            string text = "";
+            foreach(var effect in AdditionalEffects_List)
+            {
+                text += "，";
+                text += effect.GetDescriptionText();
+            }
+            return text;
+        }
     }
 
     public enum EffectTrigger

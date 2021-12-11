@@ -85,6 +85,7 @@ namespace Assets.Scripts.CardModule
             for(int i = 0;i<CombatEffects.Count;i++)    // 效果依次对该Combat进行处理
             {
                 var effect = CombatEffects[i];
+                Debug.Log(effect.ToString() + "-" + i);
                 effect.DoEffect(this);
             }
 

@@ -59,8 +59,6 @@ namespace Assets.Scripts.CardModule.CardEffects
 
             InitDamageValue();
 
-            damageValue += 1;
-
             base.DoEffect(combat);
         }
 
@@ -73,6 +71,12 @@ namespace Assets.Scripts.CardModule.CardEffects
             effect.InitDamageValue();
             effect.AdditionalEffects_List = CloneAdditionalEffects();
             return effect;
+        }
+
+        public override string GetDescriptionText()
+        {
+            string text = "造成<color=red>" + Card.User.Ability.Attack.FinalValue + "</color>点伤害"+ GetAdditionalDescriptionText();
+            return text;
         }
     }
 }

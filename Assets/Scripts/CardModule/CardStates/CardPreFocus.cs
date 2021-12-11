@@ -23,6 +23,9 @@ namespace Assets.Scripts.CardModule.CardStates
         }
         public void AddActionPointForPlayer()
         {
+            if (Controller.Card.type == CardUseType.Passive)
+                return;
+
             var actor = Controller.holder.GetComponent<ActorController>();
             if (actor is PlayerController)
             {

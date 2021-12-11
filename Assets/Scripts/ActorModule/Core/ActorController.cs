@@ -30,6 +30,18 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     [SerializeField]
     private bool SpriteFaceToRight = false;
 
+    #region 其他对外方法
+    /// <summary>
+    /// 将坐标与网格对齐
+    /// </summary>
+    public void InitPosition()
+    {
+        Vector3Int cellPos = GetComponent<PathFinderComponent>().WorldToCell(transform.position);
+        transform.position = GetComponent<PathFinderComponent>().CellToWorld((cellPos.x,cellPos.y));
+    }
+    #endregion
+
+
     #region 属性相关
     [Header("属性设置")]
     public float HealPoint;

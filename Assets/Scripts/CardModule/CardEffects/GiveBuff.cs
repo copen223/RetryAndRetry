@@ -35,5 +35,10 @@ namespace Assets.Scripts.CardModule.CardEffects
             target.OnBuff(buff);
             base.DoEffect(combat);
         }
+
+        public override string GetDescriptionText()
+        {
+            return "施加" + buff + GetAdditionalDescriptionText();
+        }
     }
 }

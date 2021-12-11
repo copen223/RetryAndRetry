@@ -23,6 +23,10 @@ namespace Assets.Scripts.BattleModule.BattleStates
                 {
                     actor.GetComponent<PlayerController>().deck.Shuffle();
                 }
+                if(actor.GetComponent<ActorController>()!=null)
+                {
+                    actor.GetComponent<ActorController>().InitPosition();
+                }
             }
             
             // 切换至战斗开始

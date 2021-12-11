@@ -19,11 +19,16 @@ namespace Assets.Scripts.CardModule
         {
             Holder = holder;
             list = cardList;
+            foreach(var card in cardList)
+            {
+                card.User = holder;
+            }
         }
 
         public virtual void AddCard(Card card)
         {
             list.Add(card);
+            card.User = Holder; // 更新使用者
         }
 
         public virtual void RemoveCard(Card card)

@@ -203,14 +203,40 @@ public class CardViewController : MonoBehaviour
     //-------------------------------------------- 卡牌动画结束 ---------------------------------------------------//
     //-------------------------------------------------------------------------------------------------------------//
     //-------------------------------------------- 卡牌信息开始 ---------------------------------------------------//
+    
+    [SerializeField]private Text CardName_Text = null;
+    [SerializeField]private Text Description_Text = null;
+    public Color Passive;
+    public Color Active;
+    [SerializeField]private Image Back = null;
 
-    public Text CardName_Text;
-    public Text Description_Text;
+    public Color Jin;
+    public Color Mu;
+    public Color Shui;
+    public Color Huo;
+    public Color Tu;
+    [SerializeField] private Image Element = null;
+
+    [SerializeField] private Text Level = null;
 
     // 卡牌更换
     public void OnCardChanged(Card card)
     {
         CardName_Text.text = card.name;
         Description_Text.text = card.GetCardDescription();
+
+        if (card.type == CardUseType.Active) Back.color = Active;
+        else Back.color = Passive;
+
+        switch(card.cardElement)
+        {
+            case CardElement.Huo:Element.color = Huo;break;
+            case CardElement.Jin:Element.color = Jin;break;
+            case CardElement.Mu:Element.color = Mu;break;
+            case CardElement.Shui:Element.color = Shui;break;
+            case CardElement.Tu:Element.color = Tu;break;
+        }
+
+        Level.text = "" + card.cardLevel;
     }
 }

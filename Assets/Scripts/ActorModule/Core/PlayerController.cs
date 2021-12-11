@@ -48,16 +48,16 @@ public class PlayerController : ActorController
 
     private void ChangeActionPoint(int value)
     {
-        if(BattleManager.instance.CurActorObject == gameObject)
-        {
-            if (value < 0)
-                value = 0;
-            if (value > ActionPoint_Max)
-                value = ActionPoint_Max;
-            actionPoint = value;
-            var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("ActionPoint").GetComponent<TextUIController>();
-            ui.ChangeValue(value);
-        }
+        //if (BattleManager.instance.CurActorObject != gameObject)
+        //    return;
+        if (value < 0)
+            value = 0;
+        if (value > ActionPoint_Max)
+            value = ActionPoint_Max;
+        actionPoint = value;
+        var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("ActionPoint").GetComponent<TextUIController>();
+        ui.ChangeValue(value);
+
     }
     private void ChangeMovePoint(int value)
     {
@@ -84,6 +84,7 @@ public class PlayerController : ActorController
     public override void OnTurnEnd()
     {
         base.OnTurnEnd();
+        ActionPoint = 0;
         currentState.ChangeStateTo<ActorNoActionIdle>();
         ShowAllFocusTrail(false);
     }
@@ -94,8 +95,7 @@ public class PlayerController : ActorController
         currentState.ChangeStateTo<ActorActionIdle>();
         // ShowAllFocusTrail(true);
         // 恢复各项数值
-        // ActionPoint += ActionPoint_Resume;
-        ActionPoint = 0;
+        ActionPoint += ActionPoint_Resume;
         MovePoint += MovePoint_Resume;
     }
 
