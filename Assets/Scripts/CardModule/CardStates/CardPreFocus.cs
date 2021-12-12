@@ -18,7 +18,7 @@ namespace Assets.Scripts.CardModule.CardStates
             // 为玩家增加1点行动点数
             AddActionPointForPlayer();
 
-            Controller.SpriteObject.SendMessage("StartAnimation", 2);
+            Controller.SpriteObject.SendMessage("StartAnimation", 8);
             SetEventProtect();
         }
         public void AddActionPointForPlayer()

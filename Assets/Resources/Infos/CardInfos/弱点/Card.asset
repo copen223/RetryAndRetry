@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: "\u5F31\u70B9"
   Type: 2
-  UpChangeLevel: -1
+  UpChangeLevel: 1
   CardUpChangeType: 0
   CardElement: 3
   cardEffects:

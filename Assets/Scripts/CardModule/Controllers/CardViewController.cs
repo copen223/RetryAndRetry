@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.CardModule;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CardViewController : MonoBehaviour
 {
@@ -57,7 +58,7 @@ public class CardViewController : MonoBehaviour
         StopAllCoroutines();
         animations_list = new List<IEnumerator> { SelectedAnimation(true), SelectedAnimation(false),FallDownAnimation(true), FallDownAnimation(false),
         MoveToCardPoolAnimation(DiscardTransform.position),MoveToCardPoolAnimation(DeckTransform.position)
-        ,ReplaceAnimation(true),ReplaceAnimation(false)};
+        ,ReplaceAnimation(true),ReplaceAnimation(false),ChangeMaskColorToFocus(true)};
 
         StartCoroutine(animations_list[index]);
         OnAnimationStart();
@@ -79,11 +80,39 @@ public class CardViewController : MonoBehaviour
         transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 90));
         OnAnimationOver();
     }
+    public void SetFocusMask()
+    {
+        transform.localScale = new Vector3(1, 1, 1);
+        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
+        FocusMask.gameObject.SetActive(true);
+        OnAnimationOver();
+    }
 
 
     private List<IEnumerator> animations_list;
 
     delegate IEnumerator GetEnumeator(bool i);
+
+    // 8
+    IEnumerator ChangeMaskColorToFocus(bool ifChangeto)
+    {
+        ColorMask.gameObject.SetActive(true);
+        float startA = ifChangeto ? 0 : FocusMask.color.a;
+        float endA = ifChangeto ? FocusMask.color.a : 0;
+        ColorMask.color = new Color(FocusMask.color.r, FocusMask.color.g, FocusMask.color.b, startA);
+        float curA = ColorMask.color.a;
+        float timer = 0;
+
+        while (curA != endA)
+        {
+            curA = Mathf.Lerp(startA, endA, timer / Time_Animation_Rotate);
+            ColorMask.color = new Color(FocusMask.color.r, FocusMask.color.g, FocusMask.color.b, curA);
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        ColorMask.gameObject.SetActive(false);
+        OnAnimationOver();
+    }
 
     // 选中时动画，可打断，移动模式为local，围绕card parent移动
     IEnumerator SelectedAnimation(bool isSelected)
@@ -91,6 +120,7 @@ public class CardViewController : MonoBehaviour
         float startY = isSelected ? 0 : OffsetY_Animation_selected;
         float endY = isSelected ? OffsetY_Animation_selected : 0;
         float curY = transform.localPosition.y;
+            
         float timer = 0;
 
         while(curY != endY)
@@ -219,6 +249,9 @@ public class CardViewController : MonoBehaviour
 
     [SerializeField] private Text Level = null;
 
+    [SerializeField] private Image FocusMask = null;
+    [SerializeField] private Image ColorMask = null;
+
     // 卡牌更换
     public void OnCardChanged(Card card)
     {
@@ -238,5 +271,12 @@ public class CardViewController : MonoBehaviour
         }
 
         Level.text = "" + card.cardLevel;
+
+        if (card.situation == CardSituation.Focused)
+            FocusMask.gameObject.SetActive(true);
+        else
+            FocusMask.gameObject.SetActive(false);
+
     }
+
 }

@@ -24,9 +24,20 @@ namespace Assets.Scripts.CardModule.CardStates
             }
 
             Controller.Card.situation = CardSituation.Focused;
+            Controller.OnReset();
 
-            if (Mathf.Abs(Controller.SpriteObject.transform.localRotation.eulerAngles.z - 90) > Mathf.Epsilon)
-                Controller.SpriteController.SetFocusRotation();
+            if(Controller.ifMouseSelectThis)
+            {
+                Debug.Log("dsffsd");
+                Controller.SpriteController.StartAnimation(0);
+            }
+            else
+            {
+                Controller.SpriteController.StartAnimation(1);
+            }
+
+            //if (Mathf.Abs(Controller.SpriteObject.transform.localRotation.eulerAngles.z - 90) > Mathf.Epsilon)
+            //    Controller.SpriteController.SetFocusRotation();
 
             SetEventProtect();
         }
@@ -83,7 +94,6 @@ namespace Assets.Scripts.CardModule.CardStates
                 }
             }
 
-
             // Controller.Card.situation = CardSituation.Idle;
         }
 
@@ -128,6 +138,8 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (IsEventProtecting)
                 return;
+            Controller.SpriteController.StartAnimation(0);
+
             Controller.Card.ShowFocusTrail(true);
         }
 
@@ -139,7 +151,10 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (IsEventProtecting)
                 return;
+            Controller.SpriteController.StartAnimation(1);
+
             Controller.Card.ShowFocusTrail(false);
         }
+
     }
 }

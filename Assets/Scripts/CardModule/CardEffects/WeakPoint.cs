@@ -23,6 +23,11 @@ namespace Assets.Scripts.CardModule.CardEffects
             var v = combat.GetActorValue(Card.User);
             v.BeHitMutiValue *= injuredValue;
 
+            Vector3 worldPos1 = Card.User.Sprite.transform.position;
+            Vector3 worldPos2 = combat.GetOtherActor(Card.User).Sprite.transform.position;
+            Vector3 uiWorldPos = (worldPos1 + worldPos2) / 2;
+            UIManager.instance.CreatFloatUIAt(uiWorldPos, Vector2.zero, 1f, Color.red, "暴击");
+
             base.DoEffect(combat);
         }
 

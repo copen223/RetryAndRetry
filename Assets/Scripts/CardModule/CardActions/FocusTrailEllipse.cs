@@ -22,7 +22,7 @@ namespace Assets.Scripts.CardModule.CardActions
         {
             if(IfSetABByCollider)
             {
-                float allowance = 0.05f;
+                float allowance = 0.1f;
                 a = Actor.Sprite.GetComponent<CapsuleCollider2D>().size.y/2 + allowance;
                 b = Actor.Sprite.GetComponent<CapsuleCollider2D>().size.x/2 + allowance;
             }

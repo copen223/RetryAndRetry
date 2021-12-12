@@ -6,8 +6,9 @@ using Assets.Scripts.CardModule;
 using Assets.Scripts.CardModule.CardStates;
 using Assets.Scripts.Tools;
 
-public class CardController : MonoBehaviour,ITargetInPool
+public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,IPointerExitHandler
 {
+    public bool ifMouseSelectThis = false;
 
     [Header("链接")]
     public List<CardState> CardStates = new List<CardState>();
@@ -129,7 +130,8 @@ public class CardController : MonoBehaviour,ITargetInPool
                 }
                 else
                 {
-                    SpriteObject.GetComponent<CardViewController>().SetFocusRotation();
+                    //SpriteObject.GetComponent<CardViewController>().SetFocusRotation();
+                    SpriteController.SetFocusMask();
                     return;
                 }
             }
@@ -144,5 +146,16 @@ public class CardController : MonoBehaviour,ITargetInPool
     public void OnEnable()
     {
         SetInteractActive(true);
+        ifMouseSelectThis = false;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        ifMouseSelectThis = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        ifMouseSelectThis = false;
     }
 }

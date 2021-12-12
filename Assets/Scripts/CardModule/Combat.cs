@@ -205,6 +205,15 @@ namespace Assets.Scripts.CardModule
                 return DfderValue;
         }
 
+        public ActorController GetOtherActor(ActorController actor)
+        {
+            if (actor == Atker)
+                return Dfder;
+            else
+                return Atker;
+        }
+
+
     }
 
     
