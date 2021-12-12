@@ -8,15 +8,17 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardActions
 {
-    [CreateAssetMenu(fileName = "Action", menuName = "MyInfo/使用形式/专注轨迹")]
-    public class FocusTrail : CardAction
+    public abstract class FocusTrail : CardAction
     {
-        public float Distance_X;      // 放置轨迹的x距离
-        public float Distance_Y;      // 放置轨迹的y距离
-        public FocusTrail(float x,float y)
-        {
-            Distance_X = x;
-            Distance_Y = y;
-        }
+        /// <summary>
+        /// 根据设置方向，获得形成专注轨迹的点集合
+        /// </summary>
+        /// <param name="setDir"></param>
+        /// <returns></returns>
+        public abstract List<Vector3> GetLineOffsetPoints(Vector2 setDir);
+
+        public bool CanCutOff;
+
+        public ActorController Actor;
     }
 }

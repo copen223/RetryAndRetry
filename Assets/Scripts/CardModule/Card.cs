@@ -79,6 +79,7 @@ namespace Assets.Scripts.CardModule
         {
             focusTrail = gb;
             gb.GetComponent<FocusTrailController>().Card = this;
+            gb.GetComponent<FocusTrailController>().CanCutOff = (CardAction as FocusTrail).CanCutOff;
         }
         /// <summary>
         /// 取消专注轨迹，即把两者的链接全部设为null,解绑

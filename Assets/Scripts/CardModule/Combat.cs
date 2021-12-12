@@ -15,6 +15,9 @@ namespace Assets.Scripts.CardModule
         public ActorController Atker;
         public ActorController Dfder;
 
+        public ActorCombatValue AtkerValue;
+        public ActorCombatValue DfderValue;
+
         // 待处理Combat效果列表
         public List<CardEffect> CombatEffects = new List<CardEffect>();
 
@@ -34,6 +37,8 @@ namespace Assets.Scripts.CardModule
         {
             Atker = atker;
             Dfder = dfder;
+            AtkerValue = new ActorCombatValue();
+            DfderValue = new ActorCombatValue();
         }
 
         public Combat(Card atkCard,List<Card> dfdCards, GameObject atker,GameObject dfder)
@@ -42,6 +47,9 @@ namespace Assets.Scripts.CardModule
             DfdCards = dfdCards;
             Atker = atker.GetComponent<ActorController>();
             Dfder = dfder.GetComponent<ActorController>();
+
+            AtkerValue = new ActorCombatValue();
+            DfderValue = new ActorCombatValue();
 
             AtkCard.User = Atker;
             foreach (var card in dfdCards) card.User = Dfder;
@@ -86,7 +94,11 @@ namespace Assets.Scripts.CardModule
             {
                 var effect = CombatEffects[i];
                 Debug.Log(effect.ToString() + "-" + i);
-                effect.DoEffect(this);
+                if (!effect.IfInactive)
+                {
+                    effect.DoEffect(this);
+                }
+                effect.IfInactive = false;
             }
 
             //--------------------Combat执行结束----------------------
@@ -99,7 +111,7 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         /// <param name="trigger"></param>
         /// <param name="cards"></param>
-        private void TouchOffEffect( EffectTrigger trigger,params Card[] cards)
+        private void TouchOffEffect( EffectTrigger trigger, bool isAtking , params Card[] cards)
         {
             foreach(var card in cards)
             {
@@ -107,7 +119,10 @@ namespace Assets.Scripts.CardModule
                 {
                     if(effect.Trigger == trigger)
                     {
-                        effect.DoEffect(this);
+                        effect.isAtking = isAtking;
+                        if(!effect.IfInactive)
+                            effect.DoEffect(this);
+                        effect.IfInactive = false;
                     }
                 }
             }
@@ -119,6 +134,16 @@ namespace Assets.Scripts.CardModule
         #region 一些效果处理接口
         public void DoHit(ActorController target,DamageData damageData)
         {
+            // 伤害修正
+            if(target == Atker)
+            {
+                damageData.damage *= AtkerValue.BeHitMutiValue;
+            }
+            else if(target == Dfder)
+            {
+                damageData.damage *= DfderValue.BeHitMutiValue;
+            }
+
             // 闪避判断
             int dodge = target.Ability.Dodge.FinalValue;
             int targetHit = damageData.hit;
@@ -136,29 +161,11 @@ namespace Assets.Scripts.CardModule
             target.ChangeFaceTo(damageData.dir);
 
             // 受伤
-            TouchOffEffect(EffectTrigger.OnDoDamage, AtkCard);
+            TouchOffEffect(EffectTrigger.OnDoDamage,true,AtkCard);
             target.OnInjured(damageData);
         }
 
         #endregion
-
-        ///// <summary>
-        ///// combat已经结束，注销所有有监听的效果
-        ///// </summary>
-        //private void CancleAllListeners()
-        //{
-        //    foreach(var effect in ListenEventEffects)
-        //    {
-        //        ActorController user = effect.Card.User;
-        //        ActorController target = effect.isAtking ? Dfder.GetComponent<ActorController>() : Atker.GetComponent<ActorController>();
-        //        switch(effect.Trigger)
-        //        {
-        //            case EffectTrigger.OnDoDamage:
-        //                target.OnInjuredEvent -= effect.DoEffect; break;
-        //        }
-        //    }
-        //}
-
 
         public void StartDoCombat()
         {
@@ -178,6 +185,24 @@ namespace Assets.Scripts.CardModule
                 else
                     return 1;
             }
+        }
+
+        public class ActorCombatValue
+        {
+            public float BeHitMutiValue;
+
+            public ActorCombatValue()
+            {
+                BeHitMutiValue = 1;
+            }
+        }
+
+        public ActorCombatValue GetActorValue(ActorController actor)
+        {
+            if (actor == Atker)
+                return AtkerValue;
+            else
+                return DfderValue;
         }
 
     }

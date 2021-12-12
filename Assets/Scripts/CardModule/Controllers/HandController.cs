@@ -9,6 +9,7 @@ using Assets.Scripts.BattleModule.BattleStates;
 // 手卡控制器，同时是卡牌UI界面的控制者
 public class HandController : MonoBehaviour
 {
+    public static HandController instance;
     [Header("挂载所有卡牌对象")]
     public List<GameObject> CardObjects_list = new List<GameObject>();
     public List<GameObject> ContainerObjects_list = new List<GameObject>();
@@ -52,6 +53,10 @@ public class HandController : MonoBehaviour
 
     void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(this);
         // 初始化对象池
         CardPool = new TargetPool(CardPrefab);
         ContainerPool = new TargetPool(ContainerPrefab);
@@ -72,6 +77,7 @@ public class HandController : MonoBehaviour
     {
         if(!isCorouting)
         {
+            //Debug.Log("dfsdfds");
             if(MoveHandCoroutines.Count>0)
             {
                 StartCoroutine(MoveHand(MoveHandCoroutines[0]));
@@ -118,7 +124,8 @@ public class HandController : MonoBehaviour
 
     public void DiscardCard(Card card)
     {
-        hand.TranslateCardTo(card, discard);
+        var player = BattleManager.instance.CurActorObject.GetComponent<PlayerController>();
+        player.DiscardCard(card);
     }
 
     private void ReplaceCard(int index)
@@ -157,10 +164,11 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void OnCardDiscard(GameObject gb)
+    public void OnCardDiscard(GameObject gb)
     {
         //---------------数据---------------//
         DiscardCard(gb.GetComponent<CardController>().Card);
+        CardObjects_list.Remove(gb);
         //---------------显示---------------//
         OnCardDisappear(gb);
         InitLayout(false);
@@ -256,14 +264,17 @@ public class HandController : MonoBehaviour
     /// </summary>
     public void ResetHandCards()
     {
-        int i= 0;
-        foreach(var card in CardObjects_list)
+        for (int i= 0;i < hand.list.Count;i++)
         {
-            if (i >= hand.list.Count)
-                return;
+            if (i >= CardObjects_list.Count)
+            {
+                CreatNewCardView();
+            }
+
+            var card = CardObjects_list[i];
+
             card.GetComponent<CardController>().Card = hand.list[i];
             card.GetComponent<CardController>().OnReset();
-            i++;
         }
     }
 
@@ -284,7 +295,8 @@ public class HandController : MonoBehaviour
         // 先弃掉不在卡槽中的卡
         for(int j = ContainerObjects_list.Count;j < CardObjects_list.Count;j++)
         {
-            hand.TranslateCardTo(hand.list[j], discard);    // 数据层变动
+            var player = BattleManager.instance.CurActorObject.GetComponent<PlayerController>();
+            player.DiscardCard(CardObjects_list[j].GetComponent<CardController>().Card);
             //CardObjects_list[j].SendMessage("OnDiscard");   // 显示层动画
             CardObjects_list[j].GetComponent<CardController>().OnDiscard();
             CardObjects_list.RemoveAt(j);                   // 移出显示对象
@@ -344,6 +356,18 @@ public class HandController : MonoBehaviour
         // 返回信息
         if (!isChanging)
             BattleManager.instance.GetComponent<BattleTurnDraw>().OnDrawOver();
+    }
+
+    private void CreatNewCardView()
+    {
+        var cardView = CardPool.GetTarget(CardsParent);
+        cardView.SetActive(true);
+        CardObjects_list.Add(cardView);     // 更新显示层对象列表
+
+        //cardView.GetComponent<CardController>().Card = hand.list[i];    // 更新显示层与数据链接
+        cardView.transform.localPosition = GetCorrectCardPos(CardObjects_list.IndexOf(cardView));    // 根据列表Index更新位置
+                                                                    //cardView.SendMessage("OnReset");
+        cardView.GetComponent<CardController>().OnReset();
     }
 
     public void OnUpChangeCard(int index,Card card)

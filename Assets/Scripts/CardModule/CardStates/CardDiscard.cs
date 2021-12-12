@@ -13,8 +13,8 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateStart();
 
             int index = 4;
-            Controller.SpriteObject.SendMessage("StartAnimation", index);
-            Controller.Hand.SendMessage("OnCardDiscard", gameObject);
+            Controller.SpriteObject.GetComponent<CardViewController>().StartAnimation(index); 
+            Controller.Hand.GetComponent<HandController>().OnCardDiscard(gameObject); 
         }
 
         public override void StateUpdate()
@@ -35,6 +35,7 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
+            HandController.instance.CardObjects_list.Remove(gameObject);
             base.StateExit();
         }
     }

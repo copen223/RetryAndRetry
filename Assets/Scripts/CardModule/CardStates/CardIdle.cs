@@ -26,7 +26,7 @@ namespace Assets.Scripts.CardModule.CardStates
 
             Controller.Card.situation = CardSituation.Idle;
             int index = 1;
-            Controller.SpriteObject.SendMessage("StartAnimation", index);
+            Controller.SpriteObject.GetComponent<CardViewController>().StartAnimation(index);
         }
 
         public override void StateUpdate()

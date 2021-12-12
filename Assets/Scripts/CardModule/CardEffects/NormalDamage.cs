@@ -59,6 +59,8 @@ namespace Assets.Scripts.CardModule.CardEffects
 
             InitDamageValue();
 
+            Card.User.OnDoAttack();
+
             base.DoEffect(combat);
         }
 
@@ -75,7 +77,7 @@ namespace Assets.Scripts.CardModule.CardEffects
 
         public override string GetDescriptionText()
         {
-            string text = "造成<color=red>" + Card.User.Ability.Attack.FinalValue + "</color>点伤害"+ GetAdditionalDescriptionText();
+            string text = "造成<color=red>" + Card.User.Ability.Attack.FinalValue * damageValue + "</color>点伤害"+ GetAdditionalDescriptionText();
             return text;
         }
     }

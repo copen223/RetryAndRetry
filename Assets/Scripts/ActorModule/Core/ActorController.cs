@@ -341,6 +341,33 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         Debug.Log(gameObject + "" + buff);
     }
 
+    public void OnDoAttack()
+    {
+        var con = gameObject.GetComponent<ActorController>();
+
+        CardBuilder2 builder = new CardBuilder2();
+
+        var weaknessCard = builder.CreatCardByName("弱点");
+
+        float angle = Random.Range(0, 360f);
+        Vector3 referenceDir = Vector3.right;
+        Quaternion rotation = Quaternion.Euler(0, 0, angle);
+        Vector3 dir3D = (Vector3)referenceDir;
+        Vector3 thisDir = rotation * dir3D;
+
+        if (con is PlayerController)
+        {
+            var player = con as PlayerController;
+            player.AddCardToHand(weaknessCard);
+            player.FocusOneCard(weaknessCard, thisDir);
+        }
+        else if(con is EnemyController)
+        {
+            var enemy = con as EnemyController;
+            enemy.FocusOneCard(weaknessCard, thisDir);
+        }
+    }
+
     #endregion
 
     #region 遗留的老事件系统

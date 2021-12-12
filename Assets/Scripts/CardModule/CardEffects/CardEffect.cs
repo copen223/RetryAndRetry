@@ -19,6 +19,10 @@ namespace Assets.Scripts.CardModule
         [HideInInspector]
         public int CombatPriority;              // Combat触发时的优先级
         public EffectDoPriority DoPriority;     // 作用优先级层级
+        [HideInInspector]
+        public bool IfInactive = false;         // 该效果是否生效
+
+
         //public virtual void DoEffect(ActorController user, List<ActorController> targets) { }   // 针对目标的效果
         /// <summary>
         /// 针对combat的效果，在进行combat时依次触发

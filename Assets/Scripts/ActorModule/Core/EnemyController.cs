@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.ActorModule;
 using Assets.Scripts.ActorModule.ActorStates;
+using Assets.Scripts.CardModule;
 
 public class EnemyController : ActorController
 {
@@ -33,6 +34,15 @@ public class EnemyController : ActorController
     {
         currentState.StateUpdate();
     }
+
+    #region 对外事件
+    public void FocusOneCard(Card card, Vector2 dir)
+    {
+        transform.Find("AI").GetComponent<FocusTrailHandler>().SetFocusTrailHandler(gameObject, card, dir);
+        transform.Find("AI").GetComponent<FocusTrailHandler>().StartHandleFocusTrailNoCallBack();
+    }
+
+    #endregion
 
     #region 流程事件
     public override void OnTurnStart()

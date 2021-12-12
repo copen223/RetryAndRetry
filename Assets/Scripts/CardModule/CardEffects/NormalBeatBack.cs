@@ -31,6 +31,7 @@ namespace Assets.Scripts.CardModule.CardEffects
             NormalBeatBack effect = CreateInstance<NormalBeatBack>();
             effect.dis = dis;
             effect.AdditionalEffects_List = CloneAdditionalEffects();
+            effect.Trigger = Trigger;
             return effect;
         }
 

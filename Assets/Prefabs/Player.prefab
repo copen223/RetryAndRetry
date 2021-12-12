@@ -134,6 +134,65 @@ MonoBehaviour:
   BasicsHit: 10
   BasicsDefense: 0
   BasicsHealPoint: 15
+--- !u!1 &4275847541252125177
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2305907909425683288}
+  - component: {fileID: 1191863953216464303}
+  - component: {fileID: 5839496408776841366}
+  m_Layer: 10
+  m_Name: AI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2305907909425683288
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4275847541252125177}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6375307661498246657}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1191863953216464303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4275847541252125177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c96a61dba09802b4081ba615f19e6c4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  focusTrailPrefab: {fileID: 4961986026492871041, guid: 01f7ba6c2b4bf384da02035d22f25b4e, type: 3}
+--- !u!114 &5839496408776841366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4275847541252125177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0b5bef3076220c4781be5193013d309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FocusTrailHandler: {fileID: 1191863953216464303}
+  Actor: {fileID: 6375307661498246668}
 --- !u!1 &6375307661126261088
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,6 +327,7 @@ Transform:
   - {fileID: 1508275306}
   - {fileID: 7944281155586716984}
   - {fileID: 6781746759875759990}
+  - {fileID: 2305907909425683288}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -300,6 +360,7 @@ MonoBehaviour:
   ActionPoint_Resume: 0
   MovePoint_Max: 30
   MovePoint_Resume: 30
+  playerHandlersController: {fileID: 5839496408776841366}
   deckList_debug: []
   handList_debug: []
   discardList_debug: []

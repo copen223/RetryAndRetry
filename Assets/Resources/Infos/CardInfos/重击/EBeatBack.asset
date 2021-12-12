@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: EBeatBack
   m_EditorClassIdentifier: 
   isAtking: 0
-  Trigger: 0
+  Trigger: 5
   CombatPriority: 0
   DoPriority: 0
+  IfInactive: 0
   AdditionalEffects_List: []
   dis: 1

@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a6720a0ca4bbff46b9858d97549eb21, type: 3}
-  m_Name: Action
+  m_Script: {fileID: 11500000, guid: efdcf9fe9485a724298ea4a33842576e, type: 3}
+  m_Name: "\u5F31\u70B9\u5706"
   m_EditorClassIdentifier: 
-  CanCutOff: 1
+  CanCutOff: 0
   Actor: {fileID: 0}
-  Distance_X: 0.5
-  Distance_Y: 0.75
+  radius: 0.4
+  angle: 30

@@ -141,23 +141,39 @@ public class CardActionController : MonoBehaviour
             {
                 // 射中的目标激活专注轨迹，显示专注个数。专注轨迹的具体显示视情况而定
                 target.GetComponent<ActorController>().ActiveAllFocusTrail(true);
-                target.GetComponent<ActorController>().ShowAllFocusTrail(false);
-                // target.GetComponent<ActorController>().ShowAllFocusTrail(true);
+                //target.GetComponent<ActorController>().ShowAllFocusTrail(false);
+                 target.GetComponent<ActorController>().ShowAllFocusTrail(true);
                 target.GetComponent<ActorController>().ShowFocusTrailCount(true);
             }
 
             //-------------------检测射线碰撞的专注轨迹-------------//
             dis = Vector2.Distance(point1, point2); 
             RaycastHit2D[] contactHits = Physics2D.RaycastAll(point1, dir, dis,LayerMask.GetMask("BattleTrail")); // 再射一次
-            foreach(var con in contactHits)     // 完成contactPoints/Objects更新
+
+            float rayCutOffLength = dis;
+            float allowance = 0.05f;
+
+            foreach (var con in contactHits)     // 完成contactPoints/Objects更新
             {
                 if (con.collider.tag == "FocusTrail")
                 {
+                    float hitLength = Vector2.Distance(point1, con.point);
+                    if (hitLength > rayCutOffLength + allowance)
+                        continue;
+
                     if (con.collider.gameObject.GetComponent<FocusTrailController>().Actor == Controller.holder)
                         continue;
+
                     if(con.collider.gameObject.GetComponent<FocusTrailController>().IfShow) // 只有与显示的轨迹相交才显示相交点
                         contactPoints.Add(con.point);
+
                     contactObjects.Add(con.transform.gameObject);
+
+                    var controller = con.collider.gameObject.GetComponent<FocusTrailController>();
+                    if (controller.CanCutOff)
+                    {
+                        rayCutOffLength = hitLength;
+                    }
                 }
             }
 
@@ -242,25 +258,21 @@ public class CardActionController : MonoBehaviour
             dir = dir.normalized;
 
             FocusTrail trail = action as FocusTrail;
+            trail.Actor = Controller.holder.GetComponent<ActorController>();
 
-            float x = trail.Distance_X * (dir.x < 0 ? (-1) : 1);
-            float y = trail.Distance_Y * (dir.y < 0 ? (-1) : 1);
+            List<Vector3> focusTrailOffsetPoints = trail.GetLineOffsetPoints(dir);
+            List<Vector3> focusTrailWorldPoints = new List<Vector3>();
+            foreach (var point in focusTrailOffsetPoints)
+            {
+                focusTrailWorldPoints.Add(point + Controller.holder.GetComponent<ActorController>().Sprite.transform.position);
+            }
 
-            // 获得世界坐标
-            Vector3 point1_offset = new Vector3(x, 0);
-            Vector3 point2_offset = new Vector3(x, y);
-            Vector3 point3_offset = new Vector3(0, y);
-            Vector3 point1 = point1_offset + Controller.holder.transform.Find("Sprite").transform.position;
-            Vector3 point2 = point2_offset + Controller.holder.transform.Find("Sprite").transform.position;
-            Vector3 point3 = point3_offset + Controller.holder.transform.Find("Sprite").transform.position;
-            points.Add(point1); points.Add(point2); points.Add(point3);
             //-------------------显示-------------------------
-
             var gb = focusTrailPool.GetTarget(Controller.holder.transform.Find("FocusTrails"));
             gb.transform.localScale = new Vector3(1, 1, 1);
             gb.GetComponent<FocusTrailController>().IfShow = true;
             gb.GetComponent<FocusTrailController>().Seter = Controller.holder;
-            gb.GetComponent<FocusTrailController>().SetPoints(points);
+            gb.GetComponent<FocusTrailController>().SetPoints(focusTrailWorldPoints);
             gb.GetComponent<FocusTrailController>().SetOffsetPoints();  // 清空offset点集 防止使用offsetpoint决定线
             gb.GetComponent<FocusTrailController>().SetColor(true);
             gb.SetActive(true);
@@ -269,7 +281,7 @@ public class CardActionController : MonoBehaviour
             if(IfInputMouse0 && !gb.GetComponent<FocusTrailController>().IfOccupied)
             {
                 Vector2 scale_x = Controller.holder.transform.localScale;
-                gb.GetComponent<FocusTrailController>().SetOffsetPoints( point1_offset * scale_x, point2_offset * scale_x, point3_offset);
+                gb.GetComponent<FocusTrailController>().SetOffsetPoints(focusTrailOffsetPoints.ToArray());
                 gb.GetComponent<FocusTrailController>().SetColor(false);
                 focusTrailPool.RemoveFromPool(gb);
                 Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
@@ -290,6 +302,15 @@ public class CardActionController : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    /// <summary>
+    /// 修正专注轨迹的相对point,通过人物朝向
+    /// </summary>
+    /// <returns></returns>
+    private List<Vector3> ReviseOffsetPoints(List<Vector3> basePoints)
+    {
+        return null;
     }
 
     private void SetContactPointPos(bool active)

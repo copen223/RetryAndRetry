@@ -26,6 +26,10 @@ public class FocusTrailController : MonoBehaviour
     //------------------标志参量---------------
     public bool IfOccupied;
     public bool IfShow;
+    /// <summary>
+    /// 是否能截断射线，以达到不触发后方轨迹的目的
+    /// </summary>
+    public bool CanCutOff;
 
     private void Awake()
     {
@@ -90,8 +94,8 @@ public class FocusTrailController : MonoBehaviour
         {
             //Debug.LogError(transform.position + "player" + Actor.transform.position + " sprite" + Actor.transform.Find("Sprite").transform.position);
             //linePoints_arry[i] = (transform.position + lineOffsetPoints[i]);
-            var pos1 = pos; var pos2 = lineOffsetPoints[i]; var scale_x = Actor.transform.localScale.x;
-            linePoints_arry[i] = new Vector3((pos1.x + pos2.x * scale_x), pos1.y + pos2.y, pos1.z + pos2.z);
+            var pos1 = pos; var pos2 = lineOffsetPoints[i]; var scale_x = Actor.transform.localScale.x; var selfScale_x = transform.localScale.x; 
+            linePoints_arry[i] = new Vector3((pos1.x + pos2.x * scale_x * selfScale_x), pos1.y + pos2.y, pos1.z + pos2.z);
         }
         lineRenderer.positionCount = linePoints_arry.Length;
         lineRenderer.SetPositions(linePoints_arry);

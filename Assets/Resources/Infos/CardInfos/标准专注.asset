@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a6720a0ca4bbff46b9858d97549eb21, type: 3}
   m_Name: "\u6807\u51C6\u4E13\u6CE8"
   m_EditorClassIdentifier: 
+  CanCutOff: 1
+  Actor: {fileID: 0}
   Distance_X: 0.5
   Distance_Y: 0.75

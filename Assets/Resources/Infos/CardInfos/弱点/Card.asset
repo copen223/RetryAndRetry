@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a265864e8ae0394d98ca701cd201b8f, type: 3}
   m_Name: Card
   m_EditorClassIdentifier: 
-  CardName: "\u91CD\u51FB"
-  Type: 1
-  UpChangeLevel: 1
-  CardUpChangeType: 1
+  CardName: "\u5F31\u70B9"
+  Type: 2
+  UpChangeLevel: -1
+  CardUpChangeType: 0
   CardElement: 3
   cardEffects:
-  - {fileID: 11400000, guid: 3ce88df60c3777b4e9c004555a064d44, type: 2}
-  - {fileID: 11400000, guid: a6b48bf8eea821848a5f4aa93d3e8504, type: 2}
-  cardAction: {fileID: 11400000, guid: e488e2ad8822fc948a67ea9d15332f04, type: 2}
+  - {fileID: 11400000, guid: 87e455d7ab84d9e43b4321922bc37d14, type: 2}
+  cardAction: {fileID: 11400000, guid: 72f06a582f0cddb4788f477ebb9d7fc6, type: 2}

@@ -16,6 +16,6 @@ MonoBehaviour:
   Trigger: 3
   CombatPriority: 1
   DoPriority: 0
-  AdditionalEffects_List:
-  - {fileID: 11400000, guid: a6b48bf8eea821848a5f4aa93d3e8504, type: 2}
+  IfInactive: 0
+  AdditionalEffects_List: []
   damageValue: 1.5

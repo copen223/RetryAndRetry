@@ -27,6 +27,11 @@ namespace Assets.Scripts.CardModule
             focuser = _focuser; focusCard = _focusCard; focusWorldDir = _focusWorldDir;
         }
 
+        public void StartHandleFocusTrailNoCallBack()
+        {
+            StartCoroutine(DoHandleFocusTrail());
+        }
+
         public IEnumerator StartHandleFocusTrail()
         {
             return DoHandleFocusTrail();
@@ -34,33 +39,30 @@ namespace Assets.Scripts.CardModule
 
         private IEnumerator DoHandleFocusTrail()
         {
-            List<Vector3> points = new List<Vector3>();
+            //List<Vector3> points = new List<Vector3>();
             float focusTime = 0.25f;
          
             //-------------------每帧更新-------------------
-            points.Clear();
+            //points.Clear();
             focusTrailPool.ReSet();
             //-------------------计算位置和点集------------------
 
             FocusTrail trail = focusCard.CardAction as FocusTrail;
+            trail.Actor = focuser.GetComponent<ActorController>();
 
-            float x = trail.Distance_X * (focusWorldDir.x < 0 ? (-1) : 1);
-            float y = trail.Distance_Y * (focusWorldDir.y < 0 ? (-1) : 1);
+            List<Vector3> focusTrailOffsetPoints = trail.GetLineOffsetPoints(focusWorldDir);
+            List<Vector3> focusTrailWorldPoints = new List<Vector3>();
+            foreach (var point in focusTrailOffsetPoints)
+            {
+                focusTrailWorldPoints.Add(point + focuser.GetComponent<ActorController>().Sprite.transform.position);
+            }
 
-            // 获得世界坐标
-            Vector3 point1_offset = new Vector3(x, 0);
-            Vector3 point2_offset = new Vector3(x, y);
-            Vector3 point3_offset = new Vector3(0, y);
-            Vector3 point1 = point1_offset + focuser.GetComponent<ActorController>().Sprite.transform.position;
-            Vector3 point2 = point2_offset + focuser.GetComponent<ActorController>().Sprite.transform.position;
-            Vector3 point3 = point3_offset + focuser.GetComponent<ActorController>().Sprite.transform.position;
-            points.Add(point1); points.Add(point2); points.Add(point3);
             //-------------------显示-------------------------
 
             var gb = focusTrailPool.GetTarget(focuser.transform.Find("FocusTrails"));
             gb.transform.localScale = new Vector3(1, 1, 1);
             gb.GetComponent<FocusTrailController>().Seter = focuser;
-            gb.GetComponent<FocusTrailController>().SetPoints(points);
+            gb.GetComponent<FocusTrailController>().SetPoints(focusTrailWorldPoints);
             gb.GetComponent<FocusTrailController>().SetOffsetPoints();  // 清空offset点集 防止使用offsetpoint决定线
             gb.SetActive(true);
 
@@ -68,13 +70,13 @@ namespace Assets.Scripts.CardModule
 
             //-------------------确定--------------------------
             Vector2 scale_x = focuser.transform.localScale;
-            gb.GetComponent<FocusTrailController>().SetOffsetPoints(point1_offset * scale_x, point2_offset * scale_x, point3_offset);
+            gb.GetComponent<FocusTrailController>().SetOffsetPoints(focusTrailOffsetPoints.ToArray());
             focusTrailPool.RemoveFromPool(gb);
             focuser.GetComponent<ActorController>().AddFocusTrail(gb);
             focusCard.SetFocusTrail(gb);
 
             focuser.GetComponent<ActorController>().ShowAllFocusTrail(false);
-            focuser.GetComponent<ActorController>().ActiveAllFocusTrail(false);
+            focuser.GetComponent<ActorController>().ActiveAllFocusTrail(true);
         }
     }
 }

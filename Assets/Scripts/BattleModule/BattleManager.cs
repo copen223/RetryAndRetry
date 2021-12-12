@@ -6,14 +6,14 @@ using Assets.Scripts.BattleModule.BattleStates;
 public class BattleManager : MonoBehaviour
 {
     //---------------------链接-------------------//
-    public HandController HandController;
+    public HandController HandController { get { return HandController.instance; } }
 
     static public BattleManager instance;
 
     private void Awake()
     {
         instance = this;
-        HandController = GameObject.Find("Hand").GetComponent<HandController>();
+        //HandController = GameObject.Find("Hand").GetComponent<HandController>();
     }
 
     private void Start()

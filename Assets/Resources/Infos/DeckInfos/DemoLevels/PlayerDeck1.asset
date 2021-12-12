@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PlayerDeck1
   m_EditorClassIdentifier: 
   CardWithCount:
-  - "\u6BD2\u51FB 3"
+  - "\u6253\u51FB 3"
   - "\u6253\u51FB 3"
   - "\u683C\u6321 4"

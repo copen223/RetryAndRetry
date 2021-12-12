@@ -38,6 +38,9 @@ public class PlayerController : ActorController
     public int MovePoint_Max;
     public int MovePoint_Resume;
 
+    [Header("组件链接")]
+    [SerializeField] private PlayerHandlersController playerHandlersController = null;
+
     #region 属性改变方法
 
     // debuge
@@ -120,6 +123,23 @@ public class PlayerController : ActorController
             hand.TranslateCardTo(card, discard);
         }
     }
+
+    public void AddCardToHand(Card card)
+    {
+        hand.AddCard(card);
+        if(BattleManager.instance.CurActorObject == gameObject)
+        {
+            HandController.instance.ResetHandCards();
+        }
+    }
+
+    public void FocusOneCard(Card card,Vector2 dir)
+    {
+        playerHandlersController.FocusTheCard(card, dir);
+        card.situation = CardSituation.Focused;
+        
+    }
+
     #endregion
 
     #region 生命周期

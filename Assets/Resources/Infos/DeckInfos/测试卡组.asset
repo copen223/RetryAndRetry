@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: "\u6D4B\u8BD5\u5361\u7EC4"
   m_EditorClassIdentifier: 
   CardWithCount:
-  - "\u91CD\u51FB 10"
+  - "\u5F31\u70B9 3"
+  - "\u6253\u51FB 3"

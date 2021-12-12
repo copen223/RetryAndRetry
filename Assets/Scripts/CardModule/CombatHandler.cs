@@ -95,11 +95,25 @@ namespace Assets.Scripts.CardModule
             List<Vector2> contactPoints = new List<Vector2>();  // 记录触发点的位置
 
             RaycastHit2D[] contactHits = Physics2D.RaycastAll(startPos, (rayEndPoint-startPos).normalized, Vector2.Distance(startPos,rayEndPoint), LayerMask.GetMask("BattleTrail"));
-            foreach(var hit in contactHits)
+            float rayCutOffLength = Vector2.Distance(startPos, rayEndPoint);
+            float allowance = 0.1f;
+
+            foreach (var hit in contactHits)
             {
                 if (hit.collider.tag != "FocusTrail") continue;
+
+                float hitLength = Vector2.Distance(startPos, hit.point);
+                if (hitLength > rayCutOffLength + allowance)
+                    continue;
+
                 contacts.Add(hit.collider.gameObject);
                 contactPoints.Add(hit.point);
+
+                var con = hit.collider.gameObject.GetComponent<FocusTrailController>();
+                if(con.CanCutOff)
+                {
+                    rayCutOffLength = hitLength;
+                }
             }
 
             combats_list.Clear();   // 记录本次攻击带来的combat
