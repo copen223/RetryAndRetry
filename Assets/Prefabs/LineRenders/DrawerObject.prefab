@@ -83,58 +83,22 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.98063004
-        inSlope: -9.865218
-        outSlope: -9.865218
+        value: 0.97396386
+        inSlope: -0.015294403
+        outSlope: -0.015294403
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.15732343
-      - serializedVersion: 3
-        time: 0.202649
-        value: 0.34016758
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.81841975
-        value: 0.3187402
-        inSlope: 0.02425845
-        outSlope: 0.02425845
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.9108599
-        value: 0.30422938
-        inSlope: -0.39542514
-        outSlope: -0.39542514
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.959497
-        value: 0.22512886
-        inSlope: -1.5244353
-        outSlope: -1.5244353
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
+        outWeight: 0.2155477
       - serializedVersion: 3
         time: 1
-        value: 0.3505745
-        inSlope: 11.606908
-        outSlope: 11.606908
+        value: 0.38511726
+        inSlope: -1.2191404
+        outSlope: -1.2191404
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.1619765
-        outWeight: 0
+        inWeight: 0.12485278
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4

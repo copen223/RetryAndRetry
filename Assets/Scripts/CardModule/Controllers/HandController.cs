@@ -65,11 +65,11 @@ public class HandController : MonoBehaviour
     void Start()
     {
         // 订阅事件
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStart);
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerDrawStart, OnPlayerTurnDraw);
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnPlayerTurnEnd);
+        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerTurnStart, OnPlayerTurnStartCallBack);
+        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.PlayerDrawStart, OnPlayerTurnDrawCallBack);
+        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.TurnEnd, OnPlayerTurnEndCallBack);
 
-        //
+        
         InitLayout(true);
     }
 
@@ -77,7 +77,7 @@ public class HandController : MonoBehaviour
     {
         if(!isCorouting)
         {
-            //Debug.Log("dfsdfds");
+            // 卡牌移动动画进行
             if(MoveHandCoroutines.Count>0)
             {
                 StartCoroutine(MoveHand(MoveHandCoroutines[0]));
@@ -85,7 +85,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-    // 卡牌布局
+    #region 卡牌布局相关
     private Vector3 GetCorrectCardPos(int index)
     {
         var pos = new Vector3(FirstPos.x + Spacing * index, FirstPos.y, 0);
@@ -105,8 +105,9 @@ public class HandController : MonoBehaviour
             card.transform.localPosition = GetCorrectCardPos(i);
         }
     }
+    #endregion
 
-    //---------------卡牌资源循环----------------//
+    #region 卡牌行为例如抽卡,还有冻结方法
     public void DrawCard()
     {
         deck.TranslateCardTo(deck.GetFirstCard(),hand);
@@ -122,34 +123,23 @@ public class HandController : MonoBehaviour
         }
     }
 
-    public void DiscardCard(Card card)
+    private void DiscardCard(Card card)
     {
         var player = BattleManager.instance.CurActorObject.GetComponent<PlayerController>();
         player.DiscardCard(card);
     }
 
-    private void ReplaceCard(int index)
-    {
-        var container = ContainerObjects_list[index];
-        container.SendMessage("OnCardReplaced");
-    }
-
-
-    //---------------消息发送------------------//
-    public void HandBroadcastMessage(string message)
-    {
-      // foreach (var gb in ListenerObjectsList) gb.SendMessage(message);
-    }
-
-
-    //---------------消息处理区----------------//
+    /// <summary>
+    /// 卡牌被丢弃的时候，从列表的最开始放到列表的最后
+    /// </summary>
+    /// <param name="gb"></param>
     private void OnCardDisappear(GameObject gb)
     {
         CardObjects_list.Remove(gb);
         CardObjects_list.Add(gb);
     }
     /// <summary>
-    /// 当正在处理某张卡时，你希望冻结其他卡的交互请使用这个方法
+    /// 当正在处理某张卡时，你希望冻结其他卡的交互请使用这个方法,记得要解冻
     /// </summary>
     /// <param name="gb"></param>
     /// <param name="isStart"></param>
@@ -164,63 +154,21 @@ public class HandController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 卡牌对象被丢弃时调用该方法告诉hand进行队列的切换
+    /// </summary>
+    /// <param name="gb"></param>
     public void OnCardDiscard(GameObject gb)
     {
         //---------------数据---------------//
         DiscardCard(gb.GetComponent<CardController>().Card);
-        CardObjects_list.Remove(gb);
         //---------------显示---------------//
         OnCardDisappear(gb);
         InitLayout(false);
     }
+    #endregion
 
-    private void OnDrawCard(Card card)
-    {
-
-    }
-
-    public void OnPlayerTurnStart()
-    {
-        //------------------hand显示--------------------//
-        MoveHandCoroutines.Add(new MoveHandInfo(ShowHandPos, true));
-
-        //------------------激活/重置-------------------//
-        foreach (var gb in CardObjects_list) gb.SetActive(false);
-        foreach (var gb in ContainerObjects_list) gb.SetActive(false);
-        DeckObject.SetActive(true);
-        DiscardObject.SetActive(true);
-        //------------------设置-------------------//
-        Holder = BattleManager.instance.CurActorObject; // 持有者设置
-        PlayerController actor = Holder.GetComponent<PlayerController>();
-
-        //-------------对象池与卡牌列表更新------------//
-        // 有多少卡就创建多少卡牌对象
-        CardObjects_list.Clear();
-        for (int i =0;i<hand.list.Count;i++)
-        {
-            var gb = CardPool.GetTarget(CardsParent);
-            gb.SetActive(true);
-            gb.GetComponent<CardController>().Card = hand.list[i];  // 更新显示与数据的链接
-            gb.transform.localPosition = GetCorrectCardPos(i);   // 确定位置
-            //gb.SendMessage("OnReset");
-            gb.GetComponent<CardController>().OnReset();        // 应用更新后的card数据
-            CardObjects_list.Add(gb);
-        }
-        // 有多少卡槽就创建多少卡槽对象
-        ContainerObjects_list.Clear();
-        for (int i = 0;i<containers.Count;i++)
-        {
-            var gb = ContainerPool.GetTarget(ContainersParent);
-            gb.SetActive(true);
-            gb.GetComponent<ContainerController>().Container = containers[i];
-            ContainerObjects_list.Add(gb);
-            gb.transform.localPosition = GetCorrectCardPos(i);  // 确定位置
-
-            gb.GetComponent<ContainerController>().OnReset();
-        }
-
-        
-    }
+    #region 卡牌移动事件排队进行
 
     IEnumerator MoveHand(MoveHandInfo info)
     {
@@ -243,6 +191,9 @@ public class HandController : MonoBehaviour
     }
     class MoveHandInfo { public Vector3 pos; public bool isStart; public MoveHandInfo(Vector3 _pos, bool _isStart) { pos = _pos;isStart = _isStart; } }
 
+    /// <summary>
+    /// 移动手牌的事件队列
+    /// </summary>
     private List<MoveHandInfo> MoveHandCoroutines = new List<MoveHandInfo>();
     
     IEnumerator StartCoroutineDelay(string _name,object value,float time)
@@ -255,12 +206,13 @@ public class HandController : MonoBehaviour
         }
         StartCoroutine(_name,value);
     }
-    private void OnEnemyTurnStart()
-    {
-        
-    }
+
+    #endregion
+
+    #region 卡牌的刷新与创建
+
     /// <summary>
-    /// 用新的数据层来刷新手卡显示层
+    /// 用新的数据层来刷新手卡显示层，是更新函数
     /// </summary>
     public void ResetHandCards()
     {
@@ -277,27 +229,85 @@ public class HandController : MonoBehaviour
             card.GetComponent<CardController>().OnReset();
         }
     }
-
-    private void OnPlayerTurnEnd()
+    /// <summary>
+    /// 上述函数的另一个声明
+    /// </summary>
+    public void UpdateHandCardsView()
     {
-        // 交互限制
-        foreach(var card in CardObjects_list)
+        ResetHandCards();
+    }
+    private void CreatNewCardView()
+    {
+        var cardView = CardPool.GetTarget(CardsParent);
+        cardView.SetActive(true);
+        CardObjects_list.Add(cardView);     // 更新显示层对象列表
+
+        //cardView.GetComponent<CardController>().Card = hand.list[i];    // 更新显示层与数据链接
+        cardView.transform.localPosition = GetCorrectCardPos(CardObjects_list.IndexOf(cardView));    // 根据列表Index更新位置
+                                                                                                     //cardView.SendMessage("OnReset");
+        cardView.GetComponent<CardController>().OnReset();
+    }
+    #endregion
+
+    #region 回调函数，玩家回合开始、结束的响应,包含换卡的硬代码
+    /// <summary>
+    /// 回合开始时，根据玩家hand数据进行卡牌和卡槽对象的创建
+    /// </summary>
+    public void OnPlayerTurnStartCallBack()
+    {
+        //------------------hand显示--------------------//
+        MoveHandCoroutines.Add(new MoveHandInfo(ShowHandPos, true));
+
+        //------------------激活/重置-------------------//
+        foreach (var gb in CardObjects_list) gb.SetActive(false);
+        foreach (var gb in ContainerObjects_list) gb.SetActive(false);
+        DeckObject.SetActive(true);
+        DiscardObject.SetActive(true);
+        //------------------设置-------------------//
+        Holder = BattleManager.instance.CurActorObject; // 持有者设置
+        PlayerController actor = Holder.GetComponent<PlayerController>();
+
+        //-------------对象池与卡牌列表更新------------//
+        // 有多少卡就创建多少卡牌对象
+        CardObjects_list.Clear();
+        for (int i = 0; i < hand.list.Count; i++)
         {
-            card.GetComponent<CardController>().SetInteractActive(false);
+            var gb = CardPool.GetTarget(CardsParent);
+            gb.SetActive(true);
+            gb.GetComponent<CardController>().Card = hand.list[i];  // 更新显示与数据的链接
+            gb.transform.localPosition = GetCorrectCardPos(i);   // 确定位置
+            //gb.SendMessage("OnReset");
+            gb.GetComponent<CardController>().OnReset();        // 应用更新后的card数据
+            CardObjects_list.Add(gb);
+        }
+        // 有多少卡槽就创建多少卡槽对象
+        ContainerObjects_list.Clear();
+        for (int i = 0; i < containers.Count; i++)
+        {
+            var gb = ContainerPool.GetTarget(ContainersParent);
+            gb.SetActive(true);
+            gb.GetComponent<ContainerController>().Container = containers[i];
+            ContainerObjects_list.Add(gb);
+            gb.transform.localPosition = GetCorrectCardPos(i);  // 确定位置
+
+            gb.GetComponent<ContainerController>().OnReset();
         }
 
-        MoveHandCoroutines.Add(new MoveHandInfo(HideHandPos, false));
-    }
 
-    public void OnPlayerTurnDraw()
+    }
+    /// <summary>
+    /// 监听BattleManager的回合开始事件的回调函数
+    /// </summary>
+    public void OnPlayerTurnDrawCallBack()
     {
         bool isChanging = false;
         // 先弃掉不在卡槽中的卡
-        for(int j = ContainerObjects_list.Count;j < CardObjects_list.Count;j++)
+        for (int j = ContainerObjects_list.Count; j < CardObjects_list.Count; j++)
         {
+            // 数据层
             var player = BattleManager.instance.CurActorObject.GetComponent<PlayerController>();
-            player.DiscardCard(CardObjects_list[j].GetComponent<CardController>().Card);
-            //CardObjects_list[j].SendMessage("OnDiscard");   // 显示层动画
+            DiscardCard(CardObjects_list[j].GetComponent<CardController>().Card);
+            // 显示层
             CardObjects_list[j].GetComponent<CardController>().OnDiscard();
             CardObjects_list.RemoveAt(j);                   // 移出显示对象
             j--;
@@ -306,7 +316,7 @@ public class HandController : MonoBehaviour
         // 再换卡
         int i;
         for (i = 0; i < containers.Count; i++)
-        { 
+        {
             var container = containers[i];
             // 无卡则抽卡
             if (container.Card == null)
@@ -329,18 +339,23 @@ public class HandController : MonoBehaviour
                 isChanging = true;
                 //-----------换牌数据层--------------//
                 var rep = deck.GetFirstCard(containers[i].type);
-                discard.AddCard(hand.list[i]); // 弃牌区已更新
-                hand.list[i] = rep;  // 手牌已换
-                deck.RemoveCard(rep); // 卡组已更新
+                hand.ReplaceCardTo(i, rep, discard);
+                deck.RemoveCard(rep);
+
+                //discard.AddCard(hand.list[i]); // 弃牌区已更新
+                //hand.list[i] = rep;  // 手牌已换
+                //deck.RemoveCard(rep); // 卡组已更新
+
                 containers[i].Card = rep; // 卡槽已更新 
                 //-----------换牌显示层--------------//
                 var cardView = CardObjects_list[i];
-                cardView.SendMessage("OnCardReplaced", hand.list[i]);
+                cardView.GetComponent<CardController>().OnCardReplaced(hand.list[i]);
+                //cardView.SendMessage("OnCardReplaced", hand.list[i]);
             }
         }
         InitLayout(true);
 
-        foreach(var card in CardObjects_list)
+        foreach (var card in CardObjects_list)
         {
             card.GetComponent<CardController>().SetInteractActive(true);
         }
@@ -357,21 +372,17 @@ public class HandController : MonoBehaviour
         if (!isChanging)
             BattleManager.instance.GetComponent<BattleTurnDraw>().OnDrawOver();
     }
-
-    private void CreatNewCardView()
+    private void OnPlayerTurnEndCallBack()
     {
-        var cardView = CardPool.GetTarget(CardsParent);
-        cardView.SetActive(true);
-        CardObjects_list.Add(cardView);     // 更新显示层对象列表
+        // 交互限制
+        foreach(var card in CardObjects_list)
+        {
+            card.GetComponent<CardController>().SetInteractActive(false);
+        }
 
-        //cardView.GetComponent<CardController>().Card = hand.list[i];    // 更新显示层与数据链接
-        cardView.transform.localPosition = GetCorrectCardPos(CardObjects_list.IndexOf(cardView));    // 根据列表Index更新位置
-                                                                    //cardView.SendMessage("OnReset");
-        cardView.GetComponent<CardController>().OnReset();
+        MoveHandCoroutines.Add(new MoveHandInfo(HideHandPos, false));
     }
+    #endregion
 
-    public void OnUpChangeCard(int index,Card card)
-    {
 
-    }
 }

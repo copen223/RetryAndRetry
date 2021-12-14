@@ -111,14 +111,15 @@ public class PlayerController : ActorController
     {
         if(hand.list.Contains(card))
         {
-            if (card.situation == CardSituation.Focused)
-            {
-                // 遇到专注的卡牌要进行轨迹、卡牌、人物的解绑和销毁专注轨迹
-                card.situation = CardSituation.Idle;
-                var focusObject = card.CancleFocusTrail();
-                RemoveFocusTrail(focusObject);
-                Destroy(focusObject);
-            }
+            // 下列代码已转移至hand类中
+            //if (card.situation == CardSituation.Focused)
+            //{
+            //    // 遇到专注的卡牌要进行轨迹、卡牌、人物的解绑和销毁专注轨迹
+            //    card.situation = CardSituation.Idle;
+            //    var focusObject = card.CancleFocusTrail();
+            //    RemoveFocusTrail(focusObject);
+            //    Destroy(focusObject);
+            //}
 
             hand.TranslateCardTo(card, discard);
         }

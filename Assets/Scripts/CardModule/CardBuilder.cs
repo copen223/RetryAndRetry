@@ -52,7 +52,7 @@ namespace Assets.Scripts.CardModule
 
             switch(info.ActionType)
             {
-                case CardActionType.AttackTrail:card.CardAction = new CardActions.AttackTrail(actionValues[0],actionValues[1],(int)actionValues[2]);break;
+                //case CardActionType.AttackTrail:card.CardAction = new CardActions.AttackTrail(actionValues[0],actionValues[1],(int)actionValues[2]);break;
                 //case CardActionType.FocusTrail:card.CardAction = new CardActions.FocusTrail(actionValues[0],actionValues[1]);break;
                 case CardActionType.None:card.CardAction = null;break;
             }

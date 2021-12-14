@@ -27,6 +27,8 @@ namespace Assets.Scripts.CardModule
 
         public virtual void AddCard(Card card)
         {
+            if (card.ifDisapear)
+                return;
             list.Add(card);
             card.User = Holder; // 更新使用者
         }

@@ -8,17 +8,39 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardActions
 {
-    [CreateAssetMenu(fileName = "Action", menuName = "MyInfo/使用形式/攻击轨迹")]
-    public class AttackTrailParabola : CardAction
+    [CreateAssetMenu(fileName = "Action", menuName = "MyInfo/使用形式/攻击轨迹_抛物线")]
+    public class AttackTrailParabola : AttackTrail
     {
-        public float Distance_max;      // 可选定的最大距离
-        public float Distance_min;      // 可选定的最小距离
-        public int TargetNum;           // 可选定的对象数目
-        public AttackTrailParabola(float min,float max,int targetNum)
+        public float Speed_X;
+        private float speed_Y;
+        private float g = 10;
+        public override List<Vector2> GetLinePoints(Vector2 basePoint, Vector2 endPoint)
         {
-            Distance_min = min;
-            Distance_max = max;
-            TargetNum = targetNum;
+            List<Vector2> points = new List<Vector2>();
+
+            int dirX = (endPoint - basePoint).x > 0 ? 1 : -1;
+
+            float dis_x = Mathf.Abs(endPoint.x - basePoint.x);
+            float dis_y = endPoint.y - basePoint.y;
+
+            float time = dis_x / Speed_X;
+
+            int pointCount = 200;
+
+            //speed_Y = Speed_X;
+            speed_Y = (dis_y + 0.5f * g * time * time) / time;
+
+            for (float timer = 0; timer < time; timer += time / pointCount)
+            {
+                float point_x = basePoint.x + Speed_X * timer * dirX;
+                float point_y = basePoint.y + speed_Y * timer - 0.5f * g * timer * timer;
+
+                points.Add(new Vector2(point_x, point_y));
+            }
+
+            return points;
         }
+
+
     }
 }

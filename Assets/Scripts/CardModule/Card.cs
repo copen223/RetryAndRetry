@@ -60,6 +60,12 @@ namespace Assets.Scripts.CardModule
         public int cardLevel;
         public CardElement cardElement;
 
+        // 标签
+        /// <summary>
+        /// 丢弃后消失
+        /// </summary>
+        public bool ifDisapear = false;
+
         /// <summary>
         /// 仅仅显示该卡牌的专注轨迹，没有实际作用
         /// </summary>

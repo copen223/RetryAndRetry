@@ -82,6 +82,8 @@ namespace Assets.Scripts.CardModule
                 }
             }
 
+            atker.GetComponent<ActorController>().ActiveAllFocusTrail(false);   // 放置射线接触到自身trail
+
             //------2.激活对象的专注轨迹，再次进行射线检测，构建combat------
             foreach (var target in beHitTargets)
             {

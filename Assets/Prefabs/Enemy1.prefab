@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8326774332111561596}
   - component: {fileID: 8326774332111561597}
-  - component: {fileID: 1725665132355274936}
   - component: {fileID: 8326774332111561598}
   - component: {fileID: 8326774332111561599}
   - component: {fileID: 8326774332111561540}
@@ -20,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8326774332111561596
 Transform:
   m_ObjectHideFlags: 0
@@ -53,8 +52,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   advantage: 0
   SpriteFaceToRight: 0
-  HealPoint: 14
-  HealPoint_Max: 14
+  HealPoint: 100
+  HealPoint_Max: 100
   Ability: {fileID: 2660354024611147884}
   FocusCountUI_GO: {fileID: 0}
   focusTrails: []
@@ -63,23 +62,6 @@ MonoBehaviour:
   ifBlock: 0
   MaxMovePoint: 28
   StatesChild: {fileID: 6786002252598354797}
---- !u!114 &1725665132355274936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8326774332111561541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cdbc8feb0c718f4cbdcd6ad2db7b1a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BasicsAttack: 0
-  BasicsDodge: 0
-  BasicsHit: 0
-  BasicsDefense: 0
-  BasicsHealPoint: 0
 --- !u!114 &8326774332111561598
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,11 +20,22 @@ namespace Assets.Scripts.CardModule
         /// <param name="pool"></param>
         public override void TranslateCardTo(Card card, CardPool pool)
         {
+            if (card.situation == CardSituation.Focused)
+            {
+                // 遇到专注的卡牌要进行轨迹、卡牌、人物的解绑和销毁专注轨迹
+                card.situation = CardSituation.Idle;
+                var focusObject = card.CancleFocusTrail();
+                Holder.RemoveFocusTrail(focusObject);
+                UnityEngine.GameObject.Destroy(focusObject);
+            }
             base.TranslateCardTo(card, pool);
         }
 
         public override void AddCard(Card card)
         {
+            if (card == null)
+                return;
+
             // 添加卡牌
             base.AddCard(card);
             // 对应卡槽
@@ -40,6 +51,13 @@ namespace Assets.Scripts.CardModule
         public override void RemoveCard(Card card)
         {
             base.RemoveCard(card);
+            foreach (var effect in card.effects)
+            {
+                if (effect.Trigger == EffectTrigger.OnDiscard)
+                {
+                    effect.DoEffect(new Combat(Holder, Holder));
+                }
+            }
             int i = 0;
             for(;i< Containers.Count && i<list.Count;i++)
             {
@@ -59,7 +77,17 @@ namespace Assets.Scripts.CardModule
         public void ReplaceCardTo(int index,Card card,CardPool pool)
         {
             var replaced = list[index];
+
+            foreach (var effect in list[index].effects)
+            {
+                if (effect.Trigger == EffectTrigger.OnDiscard)
+                {
+                    effect.DoEffect(new Combat(Holder, Holder));
+                }
+            }
+
             pool.AddCard(replaced);
+
             list[index] = card;
             int i = 0;
             for (; i < Containers.Count && i < list.Count; i++)

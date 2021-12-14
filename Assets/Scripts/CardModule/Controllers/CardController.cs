@@ -88,18 +88,9 @@ public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,I
         canInteract = active;
     }
 
-    private void OnAnimationStart()
-    {
-        Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationStart");
-    }
-    private void OnAnimationOver() 
-    {
-        Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationOver"); 
-    }
-
 
     #region 状态切换事件
-    private void OnCardReplaced(Card rep)
+    public void OnCardReplaced(Card rep)
     {
         ToBeReplacedCard = rep;
         currentState.ChangeStateTo<CardPreReplaced>();
@@ -122,7 +113,7 @@ public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,I
                 currentState.ChangeStateTo<CardIdle>();
             if (card.situation == CardSituation.Focused)
             {
-                Debug.LogError("刷新时发现有专注状态卡牌，设为专注：" + card.name);
+                //Debug.LogError("刷新时发现有专注状态卡牌，设为专注：" + card.name);
                 if (!(currentState is CardFocus))
                 {
                     currentState.ChangeStateTo<CardFocus>();

@@ -5,6 +5,7 @@ using Assets.Scripts.CardModule;
 using Assets.Scripts.CardModule.CardActions;
 using System;
 using Assets.Scripts.Tools;
+using Assets.Scripts.Physics;
 
 public class CardActionController : MonoBehaviour
 {
@@ -57,7 +58,7 @@ public class CardActionController : MonoBehaviour
         Vector3 holderPos = Controller.holder.transform.position;
         holderPos = new Vector3(holderPos.x, holderPos.y, 1) + Controller.holder.GetComponent<ActorController>().CenterOffset;
 
-        Vector3 point1 = holderPos;                 // 获取第一个点
+        Vector3 startPos = holderPos;                 // 获取第一个点
 
         AttackTrail trail = action as AttackTrail;  // 获取AttackTrail信息
 
@@ -66,7 +67,6 @@ public class CardActionController : MonoBehaviour
             //---------------每帧重置数据-----------------//
             foreach (var target in targets)
             {
-
                 target.GetComponent<ActorController>().ActiveAllFocusTrail(false);
                 target.GetComponent<ActorController>().ShowFocusTrailCount(false);
             }
@@ -80,8 +80,8 @@ public class CardActionController : MonoBehaviour
             //------------------画攻击线--------------//
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePos = new Vector3(mousePos.x, mousePos.y, 1);
-            Vector3 dir = (mousePos - point1).normalized;    //  方向确定
-            float dis = Vector2.Distance(mousePos, point1);  // 距离确定
+            Vector3 dir = (mousePos - startPos).normalized;    //  方向确定
+            float dis = Vector2.Distance(mousePos, startPos);  // 距离确定
 
             Controller.holder.GetComponent<ActorController>().ChangeFaceTo(dir);
 
@@ -91,12 +91,16 @@ public class CardActionController : MonoBehaviour
             if (dis > trail.Distance_max) dis = trail.Distance_max;
             else if (dis < trail.Distance_min) dis = trail.Distance_min;
 
-            Vector3 point2 = point1 + dir * dis; //  point2确定
+            Vector3 endPos = startPos + dir * dis; //  point2确定
 
             //-----------------射线检测--------------//
-            RaycastHit2D[] hits = Physics2D.RaycastAll(point1, dir, dis);
+            List<Vector2> tailPoints = trail.GetLinePoints(startPos, endPos);
 
-            for(int i =0; i<hits.Length; i++)
+            //Debug.Log(startPos + "" + endPos);
+
+            RaycastHit2D[] hits = MyPhysics2D.RayCastAlongLine(tailPoints);
+
+            for(int i =0; i < hits.Length; i++)
             {
                 //-----------------------决定检测对象
                 var hit = hits[i];
@@ -113,7 +117,7 @@ public class CardActionController : MonoBehaviour
                     if(hit.collider.tag == "Obstacle" && 
                         !CheckLayerIfCanAttack(hit.transform.gameObject.layer))  // 遇到障碍物，射线被阻断
                     {
-                        point2 = hit.point;
+                        endPos = hit.point;
                         break;
                     }
                     else if(CheckLayerIfCanAttack(hit.transform.gameObject.layer))  // 遇到可攻击对象
@@ -123,13 +127,13 @@ public class CardActionController : MonoBehaviour
                             targets.Add(targetGo);   // 选中对象+1
                             if (targets.Count == trail.TargetNum)
                             {
-                                point2 = hits[i].point;
+                                endPos = hits[i].point;
                                 break;
                             }
                         }
                         else                                // 对象已满时
                         {
-                            point2 = hits[i - 1].point;
+                            endPos = hits[i - 1].point;
                             break;
                         }
                     }
@@ -147,8 +151,10 @@ public class CardActionController : MonoBehaviour
             }
 
             //-------------------检测射线碰撞的专注轨迹-------------//
-            dis = Vector2.Distance(point1, point2); 
-            RaycastHit2D[] contactHits = Physics2D.RaycastAll(point1, dir, dis,LayerMask.GetMask("BattleTrail")); // 再射一次
+            dis = Vector2.Distance(startPos, endPos);
+            // RaycastHit2D[] contactHits = Physics2D.RaycastAll(startPos, dir, dis,LayerMask.GetMask("BattleTrail")); // 再射一次
+            RaycastHit2D[] contactHits = MyPhysics2D.RayCastAlongLine(trail.GetLinePoints(startPos, endPos));
+            //Debug.Log(startPos + "" + endPos);
 
             float rayCutOffLength = dis;
             float allowance = 0.05f;
@@ -157,7 +163,7 @@ public class CardActionController : MonoBehaviour
             {
                 if (con.collider.tag == "FocusTrail")
                 {
-                    float hitLength = Vector2.Distance(point1, con.point);
+                    float hitLength = Vector2.Distance(startPos, con.point);
                     if (hitLength > rayCutOffLength + allowance)
                         continue;
 
@@ -197,7 +203,15 @@ public class CardActionController : MonoBehaviour
             //----------------------显示------------------------------//
 
             SetContactPointPos(true);                           // 显示接触点
-            points = new List<Vector3> { point1, point2 };
+            //points = new List<Vector3> { startPos, endPos };
+
+            var points2d = trail.GetLinePoints(startPos, endPos);
+            points = new List<Vector3>();
+            foreach(var p in points2d)
+            {
+                points.Add(p);
+            }
+
             //Debug.Log("画攻击轨迹线");
             LineDrawer.instance.DrawLine(this, points, 0);  // 显示射线
 

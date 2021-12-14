@@ -8,22 +8,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.CardModule.CardActions
 {
-    [CreateAssetMenu(fileName = "Action", menuName = "MyInfo/使用形式/攻击轨迹")]
-    public class AttackTrail : CardAction
+    //[CreateAssetMenu(fileName = "Action", menuName = "MyInfo/使用形式/攻击轨迹")]
+    public abstract class AttackTrail : CardAction
     {
         public float Distance_max;      // 可选定的最大距离
         public float Distance_min;      // 可选定的最小距离
         public int TargetNum;           // 可选定的对象数目
-        public AttackTrail(float min,float max,int targetNum)
-        {
-            Distance_min = min;
-            Distance_max = max;
-            TargetNum = targetNum;
-        }
 
-        public virtual List<Vector2> GetLinePoints(Vector2 basePoint,Vector2 mouseWorldPoint)
-        {
-            return null;
-        }
+        public abstract List<Vector2> GetLinePoints(Vector2 basePoint, Vector2 endPoint);
     }
 }

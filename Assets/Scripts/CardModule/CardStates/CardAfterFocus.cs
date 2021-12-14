@@ -17,7 +17,6 @@ namespace Assets.Scripts.CardModule.CardStates
 
             Controller.SpriteObject.SendMessage("StartAnimation", 3);
             SetEventProtect();
-            Controller.Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationStart");
         }
 
         public override void StateUpdate()
@@ -57,7 +56,6 @@ namespace Assets.Scripts.CardModule.CardStates
                     ChangeStateTo<CardSelected>();
                 else ChangeStateTo<CardIdle>();
 
-                Controller.Hand.GetComponent<HandController>().HandBroadcastMessage("OnAnimationOver");
             }
         }
     }

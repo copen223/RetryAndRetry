@@ -20,4 +20,4 @@ MonoBehaviour:
   cardEffects:
   - {fileID: 11400000, guid: 3ce88df60c3777b4e9c004555a064d44, type: 2}
   - {fileID: 11400000, guid: a6b48bf8eea821848a5f4aa93d3e8504, type: 2}
-  cardAction: {fileID: 11400000, guid: e488e2ad8822fc948a67ea9d15332f04, type: 2}
+  cardAction: {fileID: 11400000, guid: ccc73c7a53b88ca4e9268e3e81fb3010, type: 2}

@@ -87,7 +87,8 @@ namespace Assets.Scripts.CardModule
         /// <summary>
         /// 对对方造成伤害时触发
         /// </summary>
-        OnDoDamage
+        OnDoDamage,
+        OnDiscard
     }
 
     public enum EffectTargetType
