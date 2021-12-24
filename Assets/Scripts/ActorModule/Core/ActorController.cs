@@ -153,7 +153,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     }
 
     /// <summary>
-    /// 激活focustrail，但不显示
+    /// 激活focustrail，但不显示。一般只在被选作攻击对象时才会激活focustrail;所以在回合结束时会将所有trail暂时失活。
     /// </summary>
     /// <param name="isActive"></param>
     public void ActiveAllFocusTrail(bool isActive)
@@ -193,7 +193,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     /// </summary>
     public virtual void OnTurnEnd()
     {
-        
+        ActiveAllFocusTrail(false);
     }
     /// <summary>
     /// 回合开始时触发

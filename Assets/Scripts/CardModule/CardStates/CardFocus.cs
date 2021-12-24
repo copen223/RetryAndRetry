@@ -28,11 +28,14 @@ namespace Assets.Scripts.CardModule.CardStates
 
             if(Controller.ifMouseSelectThis)
             {
-                Debug.Log("dsffsd");
+                Controller.Card.User.ActiveAllFocusTrail(true);
+                Controller.Card.ShowFocusTrail(true);
                 Controller.SpriteController.StartAnimation(0);
             }
             else
             {
+                Controller.Card.User.ActiveAllFocusTrail(false);
+                Controller.Card.ShowFocusTrail(false);
                 Controller.SpriteController.StartAnimation(1);
             }
 
@@ -140,6 +143,7 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             Controller.SpriteController.StartAnimation(0);
 
+            Controller.Card.User.ActiveAllFocusTrail(true);
             Controller.Card.ShowFocusTrail(true);
         }
 
@@ -153,6 +157,7 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             Controller.SpriteController.StartAnimation(1);
 
+            Controller.Card.User.ActiveAllFocusTrail(false);
             Controller.Card.ShowFocusTrail(false);
         }
 

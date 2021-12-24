@@ -7,6 +7,7 @@ using UnityEngine;
 using Assets.Scripts.CardModule.CardActions;
 using Assets.Scripts.Tools;
 using System.Collections;
+using Assets.Scripts.Physics;
 
 namespace Assets.Scripts.CardModule
 {
@@ -16,7 +17,9 @@ namespace Assets.Scripts.CardModule
 
         private GameObject atker;
         private Card atkCard;
-        private Vector2 atkDir;
+        //private Vector2 atkDir;
+        private Vector2 atkTargetPoint; // 攻击目标点
+
 
         [SerializeField] private GameObject ContactPrefab = null;    // 接触点贴图
         private TargetPool contactPool;  //  接触点贴图对象池
@@ -33,9 +36,14 @@ namespace Assets.Scripts.CardModule
         /// <param name="atker"></param>
         /// <param name="atkCard"></param>
         /// <param name="atkDir"></param>
-        public void SetCombatHandler(GameObject _atker,Card _atkCard,Vector2 _atkDir)
+        //public void SetCombatHandler(GameObject _atker,Card _atkCard,Vector2 _atkDir)
+        //{
+        //    atker = _atker; atkCard = _atkCard; atkDir = _atkDir;
+        //}
+
+        public void SetCombatHandler(GameObject _atker, Card _atkCard, Vector2 _atkTargetPoint)
         {
-            atker = _atker; atkCard = _atkCard; atkDir = _atkDir;
+            atker = _atker; atkCard = _atkCard; atkTargetPoint = _atkTargetPoint;
         }
 
         /// <summary>
@@ -48,15 +56,21 @@ namespace Assets.Scripts.CardModule
 
         private IEnumerator DoHandleCombat(Action endFunc)
         {
+            var atkDir = atkTargetPoint - (Vector2)atker.GetComponent<ActorController>().Sprite.transform.position;
+
             var atkerCon = atker.GetComponent<ActorController>();
             atkerCon.ChangeFaceTo(atkDir);
 
             //------1.发出射线,确定攻击将作用的对象们-------
             Vector2 startPos = atkerCon.CenterOffset + atker.transform.position;
             AttackTrail atkTrail = atkCard.CardAction as AttackTrail;
-            float rayDistance = atkTrail.Distance_max;
+            //float rayDistance = atkTrail.Distance_max;
 
-            RaycastHit2D[] hits = Physics2D.RaycastAll(startPos, atkDir, rayDistance);
+            List<Vector2> rayLinePoints = atkTrail.GetLinePoints(startPos, atkTargetPoint);
+            RaycastHit2D[] hits = MyPhysics2D.RayCastAlongLine(rayLinePoints);
+
+            //RaycastHit2D[] hits = Physics2D.RaycastAll(startPos, atkDir, rayDistance);
+
             List<GameObject> beHitTargets = new List<GameObject>();     // 储存hit的对象，是1.发出射线的关键结果
 
             Vector2 rayEndPoint = startPos;   // 显示射线的终点位置
@@ -68,8 +82,12 @@ namespace Assets.Scripts.CardModule
                 if (CheckLayerIfCanAttack(hit.collider.gameObject.layer))
                 {
                     var targetCon = hit.collider.transform.parent.GetComponent<ActorController>();
-                    if (!(targetCon.group.IsPlayer ^ atkerCon.group.IsPlayer)) continue;    // 对象为友军，跳过
-                    
+
+                    if (targetCon.gameObject == atker) continue; // 是自己 跳过
+
+                    //if (!(targetCon.group.IsPlayer ^ atkerCon.group.IsPlayer)) continue;    // 对象为友军，跳过
+                    //if (targetCon.group.type == atkerCon.group.type) continue; // 对象为友军，跳过
+
                     if (beHitTargets.Count < atkTrail.TargetNum)    // 添加该对象，并检查是否超过攻击允许对象数，若超过，结束检测
                     {
                         beHitTargets.Add(targetCon.gameObject);
@@ -96,8 +114,9 @@ namespace Assets.Scripts.CardModule
             List<GameObject> contacts = new List<GameObject>(); // 记录触发的专注轨迹
             List<Vector2> contactPoints = new List<Vector2>();  // 记录触发点的位置
 
-            RaycastHit2D[] contactHits = Physics2D.RaycastAll(startPos, (rayEndPoint-startPos).normalized, Vector2.Distance(startPos,rayEndPoint), LayerMask.GetMask("BattleTrail"));
-            float rayCutOffLength = Vector2.Distance(startPos, rayEndPoint);
+            // RaycastHit2D[] contactHits = Physics2D.RaycastAll(startPos, (rayEndPoint-startPos).normalized, Vector2.Distance(startPos,rayEndPoint), LayerMask.GetMask("BattleTrail"));
+            RaycastHit2D[] contactHits = MyPhysics2D.RayCastAlongLine(atkTrail.GetLinePoints(startPos, rayEndPoint)); 
+            float rayCutOffLength = Vector2.Distance(startPos, rayEndPoint);    // 用于实现截断攻击轨迹的专注轨迹机制
             float allowance = 0.1f;
 
             foreach (var hit in contactHits)
@@ -133,8 +152,16 @@ namespace Assets.Scripts.CardModule
             }
 
             //-------3.显示层，示意攻击方向以及播放动画--------
+            var points2d = atkTrail.GetLinePoints(startPos, rayEndPoint);
+            var points = new List<Vector3>();
+            foreach (var p in points2d)
+            {
+                points.Add(p);
+            }
 
-            LineDrawer.instance.DrawLine(this, new List<Vector3> { startPos, rayEndPoint }, 0);  // 1显示射线
+            LineDrawer.instance.DrawLine(this, points, 0);  // 1显示射线
+
+            // LineDrawer.instance.DrawLine(this, new List<Vector3> { startPos, rayEndPoint }, 0);  // 1显示射线
             SetContactPointPos(true, contactPoints);    // 2显示接触点
 
             float animationTime = 0.75f;float animationTimer = 0;

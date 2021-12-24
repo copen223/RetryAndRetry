@@ -147,7 +147,7 @@ namespace Assets.Scripts.CardModule
             // 闪避判断
             int dodge = target.Ability.Dodge.FinalValue;
             int targetHit = damageData.hit;
-            int randomValue = UnityEngine.Random.Range(0, 12);
+            int randomValue = UnityEngine.Random.Range(1, 12);
 
             Debug.Log("命中值" + targetHit + "随机值" + randomValue + "闪避值" + dodge);
 

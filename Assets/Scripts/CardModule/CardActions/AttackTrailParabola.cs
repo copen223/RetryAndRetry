@@ -35,7 +35,13 @@ namespace Assets.Scripts.CardModule.CardActions
                 float point_x = basePoint.x + Speed_X * timer * dirX;
                 float point_y = basePoint.y + speed_Y * timer - 0.5f * g * timer * timer;
 
-                points.Add(new Vector2(point_x, point_y));
+                Vector2 curPoint = new Vector2(point_x, point_y);
+
+                float distance = Vector2.Distance(curPoint, basePoint);
+                if (distance > Distance_max)
+                    break;
+
+                points.Add(curPoint);
             }
 
             return points;

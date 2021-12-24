@@ -76,7 +76,7 @@ namespace Assets.Scripts.CardModule
             focusCard.SetFocusTrail(gb);
 
             focuser.GetComponent<ActorController>().ShowAllFocusTrail(false);
-            focuser.GetComponent<ActorController>().ActiveAllFocusTrail(true);
+            focuser.GetComponent<ActorController>().ActiveAllFocusTrail(false);  
         }
     }
 }

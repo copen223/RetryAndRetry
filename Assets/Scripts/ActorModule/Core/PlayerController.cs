@@ -221,10 +221,12 @@ public class PlayerController : ActorController
     // 监听sprite鼠标进入事件 来实现focustrail的开关
     void OnMouseEnterCallback()
     {
+        ActiveAllFocusTrail(true);
         ShowAllFocusTrail(true);
     }
     void OnMouseExitCallback()
-    { 
+    {
+        ActiveAllFocusTrail(false);
         ShowAllFocusTrail(false);
     }
 }

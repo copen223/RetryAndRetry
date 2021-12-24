@@ -13,7 +13,21 @@ namespace Assets.Scripts.CardModule.CardActions
     {
         public override List<Vector2> GetLinePoints(Vector2 basePoint,Vector2 endPoint)
         {
-            return new List<Vector2>() { basePoint, endPoint };
+            Vector2 finalEndPoint = new Vector2(endPoint.x,endPoint.y);
+
+            float distance = Vector2.Distance(basePoint, endPoint);
+            Vector2 direction = (endPoint - basePoint).normalized;
+
+            //if(distance < Distance_min)
+            //{
+            //    finalEndPoint = basePoint + direction * Distance_min;
+            //}
+            if(distance > Distance_max)
+            {
+                finalEndPoint = basePoint + direction * Distance_max;
+            }
+
+            return new List<Vector2>() { basePoint, finalEndPoint };
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using Assets.Scripts.SpaceModule.PathfinderModule;
 using Assets.Scripts.ActorModule.ActorStates;
 using Assets.Scripts.CardModule.CardActions;
+using Assets.Scripts.Physics;
 
 namespace ActorModule.AI
 {
@@ -89,7 +90,7 @@ namespace ActorModule.AI
             EnemyController selfController = Actor.GetComponent<EnemyController>();
             PathFinderComponent pathFinder = Actor.GetComponent<PathFinderComponent>();
 
-            List<Node> canMoveNodes_list = pathFinder.SearchPathForm(selfGo.transform.position, CheckIfCanAttack); // 从自己开始进行寻路搜索
+            List<Node> canMoveNodes_list = pathFinder.SearchPathForm(selfGo.transform.position, CheckIfCanAttack2); // 从自己开始进行寻路搜索
             var path = new List<Vector3>();
             foreach (var node in canMoveNodes_list)
             {
@@ -132,15 +133,23 @@ namespace ActorModule.AI
 
             //----------------开始攻击------------
             AttackTrail trail = attackCard.CardAction as AttackTrail;
-            Vector2 atkReferenceDir = target.GetComponent<ActorController>().CenterPos - selfController.CenterPos;
 
-            Vector2 atkDir = Vector2.zero;
-            AttackScanTarget(selfController.CenterPos, atkReferenceDir.normalized, trail.Distance_max, ifAttackUp, out atkDir);
+            //Vector2 atkReferenceDir = target.GetComponent<ActorController>().CenterPos - selfController.CenterPos;
 
-            if (atkDir == Vector2.zero) InvokeActionPlanOverEvent();
+            //Vector2 atkDir = Vector2.zero;
+            //AttackScanTarget(selfController.CenterPos, atkReferenceDir.normalized, trail.Distance_max, ifAttackUp, out atkDir);
+
+            var targetPos = attackTarget.GetComponent<ActorController>().CenterPos;
+            float maxY = attackTarget.GetComponent<ActorController>().Sprite.GetComponent<Collider2D>().bounds.size.y;
+
+            Vector2 atkTargetPoint = Vector2.zero;
+            AttackScanTarget2(selfController.CenterPos, target.GetComponent<ActorController>().CenterPos, maxY, ifAttackUp, out atkTargetPoint);
+
+            //if (atkDir == Vector2.zero) InvokeActionPlanOverEvent();
+            if (atkTargetPoint == Vector2.zero) InvokeActionPlanOverEvent();
 
             var combatHandler = AI.GetComponent<CombatHandler>();
-            combatHandler.SetCombatHandler(Actor, attackCard, atkDir);
+            combatHandler.SetCombatHandler(Actor, attackCard, atkTargetPoint);
             combatHandler.StartHandleCombat(InvokeActionPlanOverEvent);
 
 
@@ -193,11 +202,17 @@ namespace ActorModule.AI
             return heatLevel;
         }
 
+        /// <summary>
+        /// 检测位于curNode位置时，是否能攻击到目标attackTarget
+        /// </summary>
+        /// <param name="curNode"></param>
+        /// <returns></returns>
         private bool CheckIfCanAttack(Node curNode)
         {
             GameObject selfGo = transform.parent.parent.gameObject;
             PathFinderComponent pathFinder = selfGo.GetComponent<PathFinderComponent>();
             var curWorldPos = pathFinder.CellToWorld((curNode.x, curNode.y));
+
             var targetPos = attackTarget.transform.position;
 
             // 射线检测进行判断,向目标位置进行一次60度锥角的扫描，命中目标说明可以攻击中。
@@ -209,7 +224,21 @@ namespace ActorModule.AI
             AttackTrail trail = attackCard.CardAction as AttackTrail;
 
             Vector2 attackDir;
-            return AttackScanTarget(curPoint, dir2D, trail.Distance_max, true, out attackDir);
+            return AttackScanTarget(curPoint, dir2D, trail.Distance_max, ifAttackUp, out attackDir);
+        }
+
+        private bool CheckIfCanAttack2(Node curNode)
+        {
+            GameObject selfGo = transform.parent.parent.gameObject;
+            PathFinderComponent pathFinder = selfGo.GetComponent<PathFinderComponent>();
+            var curWorldPos = pathFinder.CellToWorld((curNode.x, curNode.y));
+
+            var selfPos = selfGo.GetComponent<ActorController>().CenterOffset + curWorldPos;    
+            var targetPos = attackTarget.GetComponent<ActorController>().CenterPos;
+            float maxY = attackTarget.GetComponent<ActorController>().Sprite.GetComponent<Collider2D>().bounds.size.y;  // 目标的高度
+
+            Vector2 finalAttackEndPoint;
+            return AttackScanTarget2(selfPos, targetPos, maxY, ifAttackUp, out finalAttackEndPoint);
         }
 
         private bool AttackScanTarget(Vector3 curPoint,Vector2 referenceDir,float distance,bool Up2Down, out Vector2 attackDir)
@@ -224,8 +253,8 @@ namespace ActorModule.AI
                 var rayDir2D = ((Vector2)rayDir).normalized;
 
                 // debug观察扫描线情况
-                //var debugLineGo = GameObject.Instantiate(debugLine);
-                //debugLineGo.GetComponent<DebugLineController>().DrawLine(curPoint, curPoint + rayDir * distance);
+                var debugLineGo = GameObject.Instantiate(debugLine);
+                debugLineGo.GetComponent<DebugLineController>().DrawLine(curPoint, curPoint + rayDir * distance);
 
                 var hits = Physics2D.RaycastAll(curPoint, rayDir2D, distance);
 
@@ -246,6 +275,82 @@ namespace ActorModule.AI
             attackDir = Vector2.zero;
             return false;
         }
+        private bool AttackScanTarget2(Vector3 curPos, Vector3 targetPos, float sizeY, bool ifFromUp2Down, out Vector2 attackEndPoint)
+        {
+            List<Vector3> rayTargetPositions = new List<Vector3>(); // 检测目标位置集合
+
+            int rayTargetPosCount = 10;
+            float rayTargetPosIntervalY = sizeY / rayTargetPosCount; 
+
+            for(int i =0; i  < rayTargetPosCount; i++)
+            {
+                float y = ifFromUp2Down ? targetPos.y + sizeY / 2 - rayTargetPosIntervalY * i : targetPos.y - sizeY / 2 + rayTargetPosIntervalY * i;
+                Vector3 pos = new Vector3(targetPos.x, y);
+                rayTargetPositions.Add(pos);
+            }
+
+            // 开始进行射线检测
+            AttackTrail trail = attackCard.CardAction as AttackTrail;
+
+            List<GameObject> beHitTargets = new List<GameObject>(); 
+
+            for (int i = 0; i < rayTargetPositions.Count; i++)
+            {
+                var targetPoint = rayTargetPositions[i];
+                var rayPoints = trail.GetLinePoints(curPos, targetPoint);
+
+                var hits = MyPhysics2D.RayCastAlongLine(rayPoints);
+                beHitTargets.Clear();
+
+                foreach (var hit in hits)
+                {
+                    if (hit.collider == null) continue;
+                    if (hit.collider.tag == "Obstacle" && !CheckLayerIfCanAttack(hit.collider.gameObject.layer)) { break; }
+                    if (CheckLayerIfCanAttack(hit.collider.gameObject.layer))
+                    {
+                        var targetCon = hit.collider.transform.parent.GetComponent<ActorController>();
+
+                        if (targetCon.gameObject == Actor) continue; // 是自己 跳过
+
+                        //if (!(targetCon.group.IsPlayer ^ atkerCon.group.IsPlayer)) continue;    // 对象为友军，跳过
+                        if (targetCon.group.type == Actor.GetComponent<ActorController>().group.type) break; // 对象为友军，跳过
+
+                        //if (beHitTargets.Count < trail.TargetNum)    // 添加该对象，并检查是否超过攻击允许对象数，若超过，结束检测
+                        //{
+                        //    beHitTargets.Add(targetCon.gameObject);
+                        //    if (beHitTargets.Count == trail.TargetNum)
+                        //    {
+                        //        break;
+                        //    }
+                        //}
+
+                        if (hit.collider.transform.parent.gameObject == attackTarget)
+                        {
+                            attackEndPoint = targetPoint;
+                            return true;
+                        }
+                    }
+
+
+                    //    if (hit.collider == null) continue;
+
+                    //if (hit.collider.transform.parent.gameObject == attackTarget)
+                    //{
+                    //    attackEndPoint = targetPoint;
+                    //    return true;
+                    //}
+
+                    //if (hit.collider.tag == "Obstacle")
+                    //    break;
+
+                    //if (1 << hit.collider.gameObject.layer == LayerMask.GetMask("EnvirObject"))
+                    //    break;
+                }
+            }
+
+            attackEndPoint = Vector2.zero;
+            return false;
+        }
 
         private float GetTargetHealPointValue(GameObject target)
         {
@@ -257,5 +362,15 @@ namespace ActorModule.AI
             return v;
         }
         #endregion
+
+        private bool CheckLayerIfCanAttack(int layer)
+        {
+            int bitmask = 1 << layer;
+            int layerCheck1 = LayerMask.GetMask("Actor");
+            int layerCheck2 = LayerMask.GetMask("EnvirObject");
+            int layerCheck = layerCheck1 | layerCheck2;
+            int layerCheckEnd = bitmask & layerCheck;
+            return 0 != (bitmask & layerCheckEnd);
+        }
     }
 }
