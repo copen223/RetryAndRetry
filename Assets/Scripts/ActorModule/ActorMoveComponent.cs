@@ -63,7 +63,7 @@ public class ActorMoveComponent : MonoBehaviour
             StartCoroutine(MoveByPathListCouroutine(path, false));
     }
     /// <summary>
-    /// 按路径移动协程
+    /// 按路径移动协程,基本不使用了
     /// </summary>
     /// <param name="path"></param>
     /// <param name="ifChangeFace"></param>
@@ -82,7 +82,7 @@ public class ActorMoveComponent : MonoBehaviour
 
                 ifMoveNext = false;
 
-                var point = path[i - 1];
+                var point = path[i - 1];    // 接下来要移动到的节点
                 var dir = point - last;
 
                 if (ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
@@ -109,7 +109,8 @@ public class ActorMoveComponent : MonoBehaviour
         {
             //if (ifMoveNext)
             //{
-            if (i >= 1) ArrivalTheNode(path[i - 1]);   // 到达上一个节点，进行结果处理
+            if (i >= 1) ArrivalTheNode(path[i - 1]);   // 到达上一个循环的目标节点，进行结果处理
+            if (i >= 2) LeaveTheNode(path[i - 2]);     // 离开上一个循环的起始节点，进行结果处理
 
             i++;
             if (i > path.Count) // 路径完成退出协程
@@ -121,16 +122,17 @@ public class ActorMoveComponent : MonoBehaviour
 
             var curTargetNode = path[i - 1];
             Vector3 curTargetPos = new Vector3(curTargetNode.worldX, curTargetNode.worldY, 0);
+
             // 方向改变
             var dir = curTargetPos - last;
             if (ifChangeFace) Actor.GetComponent<ActorController>().ChangeFaceTo(dir);
+
             // 改变动画，开始移动到该节点
             HandleActionToNode(curTargetNode);
             yield return StartCoroutine(MoveToNodeCouroutine(curTargetNode));
 
             last = curTargetPos;
-            //}
-            //yield return new WaitForEndOfFrame();
+
         }
         ifFinishMoving = true;
     }
@@ -194,6 +196,33 @@ public class ActorMoveComponent : MonoBehaviour
             default: break;
         }
         node.InvokeAriiveThisNodeEvent();   // 触发到达事件
+    }
+
+    /// <summary>
+    /// 离开节点时的处理
+    /// </summary>
+    /// <param name="node"></param>
+    private void LeaveTheNode(Node node)
+    {
+        float cellSizeY = GetComponent<PathFinderComponent>().cellSize.y;
+        int actorSizeY = GetComponent<PathFinderComponent>().SpaceHigh;
+        Vector2 upperPosition = new Vector2(node.worldX,node.worldY) + Vector2.up * (cellSizeY * actorSizeY);
+
+        var hits = Physics2D.RaycastAll(upperPosition, Vector2.up, 0);
+        foreach(var hit in hits)
+        {
+            if(hit.collider != null)
+            {
+                if (hit.collider.transform.parent.gameObject == gameObject)
+                    continue;
+                var actor = hit.transform.parent.transform.GetComponent<ActorController>();
+                if(actor != null)
+                {
+                    actor.OnFallDown();
+                }
+            }
+        }
+
     }
 
     private void HandleFallDamage(Node node)

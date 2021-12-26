@@ -29,9 +29,12 @@ public class PathFinderComponent : MonoBehaviour
 
     [SerializeField]
     [Header("该单位体积高度，用于判断是否可容纳")]
-    private int SpaceHigh = 4; 
+    public int SpaceHigh = 4; 
 
     //--------------------------//
+
+    public Vector2 cellSize { get { return grid.cellSize; } }
+
 
     private void Start()
     {
@@ -73,7 +76,10 @@ public class PathFinderComponent : MonoBehaviour
             // 判定cell类型
             cell.height = -200;
             if (map.map_dic.ContainsKey((pos.x, pos.y - 1)))
+            {
                 cell.height = map.map_dic[(pos.x, pos.y - 1)].height + 1;
+                cell.fallHeight = map.map_dic[(pos.x, pos.y - 1)].height + 1;
+            }
             if (hit.collider == null)
                 cell.Type = MapCellType.Empty;
             else if (hit.collider.tag == "Obstacle")
@@ -446,15 +452,32 @@ public class PathFinderComponent : MonoBehaviour
     /// <returns></returns>
     public List<Vector3> SearchAndGetPathByEnforcedMove(Vector3 startPos_world,Vector2 dir,int dis,bool ifIgnoreActor)
     {
-        if( dir == Vector2.right)
-        {
-            Debug.Log("");
-        }
         GenerateMapByRaycast();
 
         Vector3Int startPos_map = grid.WorldToCell(startPos_world);
         gragh = new Gragh();
         var targetPos = CreatEdgeByBeatBack(startPos_map.x,startPos_map.y,dir,dis, ifIgnoreActor);
+
+        dijkstra = new Dijkstra(gragh);
+        dijkstra.SearchShortPathFrom(GetNode((startPos_map.x, startPos_map.y)));
+
+        return GetPathFromTo(startPos_world, grid.CellToWorld(new Vector3Int(targetPos.Item1, targetPos.Item2, 0)));
+    }
+
+    /// <summary>
+    /// 获取下落路径
+    /// </summary>
+    /// <param name="startPos_world"></param>
+    /// <param name="ifFaceToRight"></param>
+    /// <returns></returns>
+    public List<Vector3> SearchAndGetPathByFallDown(Vector3 startPos_world,bool ifFaceToRight)
+    {
+        GenerateMapByRaycast();
+
+        Vector3Int startPos_map = grid.WorldToCell(startPos_world);
+
+        gragh = new Gragh();
+        var targetPos = CreatEdgeByFall(startPos_map.x, startPos_map.y, ifFaceToRight);
 
         dijkstra = new Dijkstra(gragh);
         dijkstra.SearchShortPathFrom(GetNode((startPos_map.x, startPos_map.y)));
@@ -847,25 +870,25 @@ public class PathFinderComponent : MonoBehaviour
 
         // 下落到达节点的建立与读取
         var cell = map.map_dic[(x, y)];
-        var targetCell = map.map_dic[(x, y - cell.height)];
+        var targetCell = map.map_dic[(x, y - cell.fallHeight)];
 
         // 下落处理1 位置被占用 取消下落
         if (targetCell.StayState == ObjectStayState.CantHold)
             return (x, y);
 
-        var targetNode = GetNode((x, y - cell.height));
+        var targetNode = GetNode((x, y - cell.fallHeight));
         targetNode.ActionToNode = ActorActionToNode.Fall;
-        targetNode.FallCount = cell.height;
+        targetNode.FallCount = cell.fallHeight;
 
         if (targetNode == curNode) return (x, y);
 
         Edge edge = new Edge(curNode, targetNode, 0);
         gragh.AddEdge(edge);
 
-        return (x, y - cell.height);
+        return (x, y - cell.fallHeight);
     }
     /// <summary>
-    /// 从(x,y)开始创建下落路径，并用ifToRight记录前置移动方向用于决定碰撞
+    /// 从(x,y)开始创建下落路径，并用ifToRight记录前置移动方向用于决定碰撞其他物体的击退方向
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -879,12 +902,12 @@ public class PathFinderComponent : MonoBehaviour
 
         // 下落到达节点的建立与读取
         var cell = map.map_dic[(x, y)];
-        var targetCell = map.map_dic[(x, y - cell.height)];
+        var targetCell = map.map_dic[(x, y - cell.fallHeight)];
 
         // 下落到达Node的建立
-        var targetNode = GetNode((x, y - cell.height));
+        var targetNode = GetNode((x, y - cell.fallHeight));
         targetNode.ActionToNode = ActorActionToNode.Fall;
-        targetNode.FallCount = cell.height;
+        targetNode.FallCount = cell.fallHeight;
 
         //下落处理1 位置被占用 取消下落
         //if (targetCell.StayState == ObjectStayState.CantHold)
@@ -928,7 +951,7 @@ public class PathFinderComponent : MonoBehaviour
         Edge edge = new Edge(curNode, targetNode, 0);
         gragh.AddEdge(edge);
 
-        return (x, y - cell.height);
+        return (x, y - cell.fallHeight);
     }
 
     void Onddd() { }
@@ -968,6 +991,11 @@ public class PathFinderComponent : MonoBehaviour
         return grid.GetCellCenterWorld(new Vector3Int(cellPos.Item1, cellPos.Item2, 0));
     }
 
+    public Vector3 CellToWorld(Vector3Int cellPos)
+    {
+        return grid.GetCellCenterWorld(new Vector3Int(cellPos.x, cellPos.y, 0));
+    }
+
     public Vector3Int WorldToCell(Vector3 pos)
     {
         return grid.WorldToCell(pos);
@@ -986,6 +1014,15 @@ public class PathFinderComponent : MonoBehaviour
         return nodes;
     }
     
+    [ContextMenu("重置该单位位置")]
+    public void ResetMyPosition()
+    {
+        groundTilemap = GameObject.Find("GroundTilemap").GetComponent<Tilemap>();
+        grid = groundTilemap.layoutGrid;
+
+        transform.position = CellToWorld(WorldToCell(transform.position));
+    }
+
 
     #endregion
 }

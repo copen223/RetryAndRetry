@@ -233,31 +233,6 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     [HideInInspector]
     public bool ifBlock = false;
 
-    ///// <summary>
-    ///// 受击
-    ///// </summary>
-    ///// <param name="data"></param>
-    //public virtual void OnBehit(DamageData data)
-    //{
-    //    // 闪避判断
-    //    int dodge = Ability.Dodge.FinalValue;
-    //    int targetHit = data.hit;
-    //    int randomValue = UnityEngine.Random.Range(0, 12);
-
-    //    Debug.Log("命中值" + targetHit + "随机值" + randomValue + "闪避值" + dodge);
-
-    //    if (targetHit + randomValue < dodge)
-    //    {
-    //        OnDodge(data);
-    //        return;
-    //    }
-
-    //    // 转身
-    //    ChangeFaceTo(data.dir);
-
-    //    // 受伤
-    //    OnInjured(data);
-    //}
     public void OnHealUp(float heal)
     {
         if(HealPoint + heal >= HealPoint_Max)
@@ -333,6 +308,15 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         var move = GetComponent<ActorMoveComponent>();
 
         var path = finder.SearchAndGetPathByEnforcedMove(transform.position, dir, dis, true);
+        move.StartForceMoveByPathList(finder.VectorPath2NodePath(path));
+    }
+
+    public void OnFallDown()
+    {
+        var finder = GetComponent<PathFinderComponent>();
+        var move = GetComponent<ActorMoveComponent>();
+
+        var path = finder.SearchAndGetPathByFallDown(transform.position, FaceDir.x > 0);
         move.StartForceMoveByPathList(finder.VectorPath2NodePath(path));
     }
 

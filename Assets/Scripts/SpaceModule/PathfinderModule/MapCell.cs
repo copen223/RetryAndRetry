@@ -46,5 +46,6 @@ namespace Assets.Scripts.SpaceModule.PathfinderModule
         public ObjectPassState PassState;
         public (int, int) IntPos;
         public int height;
+        public int fallHeight;  //  下降时的高度
     }
 }
