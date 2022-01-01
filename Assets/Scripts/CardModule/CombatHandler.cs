@@ -72,26 +72,45 @@ namespace Assets.Scripts.CardModule
             //RaycastHit2D[] hits = Physics2D.RaycastAll(startPos, atkDir, rayDistance);
 
             List<GameObject> beHitTargets = new List<GameObject>();     // 储存hit的对象，是1.发出射线的关键结果
+            int backgroundHitNum = 0;
 
             Vector2 rayEndPoint = startPos;   // 显示射线的终点位置
 
             foreach(var hit in hits)
             {
-                if (hit.collider == null) continue;
-                if (hit.collider.tag == "Obstacle" && !CheckLayerIfCanAttack(hit.collider.gameObject.layer)) { rayEndPoint = hit.point; break; }
+                if (hit.collider == null) 
+                    continue;
+                if (hit.collider.tag == "Obstacle" && !CheckLayerIfCanAttack(hit.collider.gameObject.layer)) 
+                { 
+                    rayEndPoint = hit.point;
+                    break; 
+                }
                 if (CheckLayerIfCanAttack(hit.collider.gameObject.layer))
                 {
                     var targetCon = hit.collider.transform.parent.GetComponent<ActorController>();
+                    var targetGo = hit.collider.transform.parent.gameObject;
 
                     if (targetCon.gameObject == atker) continue; // 是自己 跳过
 
                     //if (!(targetCon.group.IsPlayer ^ atkerCon.group.IsPlayer)) continue;    // 对象为友军，跳过
                     //if (targetCon.group.type == atkerCon.group.type) continue; // 对象为友军，跳过
 
-                    if (beHitTargets.Count < atkTrail.TargetNum)    // 添加该对象，并检查是否超过攻击允许对象数，若超过，结束检测
+
+                    // 环境物体的处理方式,Obstacle与actor相同处理，但是Background和Platform要进行特殊处理
+                    if (1 << targetGo.layer == LayerMask.GetMask("EnvirObject"))
+                    {
+                        if (targetGo.tag == "Background" || targetGo.tag == "Platform")
+                        {
+                            beHitTargets.Add(targetGo);
+                            backgroundHitNum += 1;
+                            continue;
+                        }
+                    }
+
+                    if (beHitTargets.Count < atkTrail.TargetNum + backgroundHitNum)    // 添加该对象，并检查是否超过攻击允许对象数，若超过，结束检测
                     {
                         beHitTargets.Add(targetCon.gameObject);
-                        if (beHitTargets.Count == atkTrail.TargetNum)
+                        if (beHitTargets.Count == atkTrail.TargetNum + backgroundHitNum)
                         {
                             rayEndPoint = hit.point;
                             break;
@@ -188,6 +207,7 @@ namespace Assets.Scripts.CardModule
                 }
             }
 
+            atkCard.OnDoMake(); // 卡牌使用完成
             endFunc(); // 结束调用endFunc
 
         }

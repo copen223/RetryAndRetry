@@ -23,7 +23,7 @@ namespace Assets.Scripts.CardModule.CardStates
                 ifFinishListenEvent = true;
             }
 
-            Controller.Card.situation = CardSituation.Focused;
+            Controller.Card.Situation = CardSituation.Focused;
             Controller.OnReset();
 
             if(Controller.ifMouseSelectThis)
@@ -85,7 +85,7 @@ namespace Assets.Scripts.CardModule.CardStates
             }
             if (Controller.Card != null)
             {
-                if (Controller.Card.situation == Assets.Scripts.CardModule.CardSituation.Focused)
+                if (Controller.Card.Situation == Assets.Scripts.CardModule.CardSituation.Focused)
                     return;
                 // 取消focus
                 if (Controller.Card.IfHasTrail)

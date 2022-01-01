@@ -40,6 +40,9 @@ namespace Assets.Scripts.CardModule.CardEffects
             var target = isAtking ? combat.Dfder : combat.Atker;
             var user = isAtking ? combat.Atker : combat.Dfder;
 
+            if (target.gameObject.tag == "Background")
+                return;
+
             dir = user.FaceDir;
             var finder = target.GetComponent<PathFinderComponent>();
             var path = finder.SearchAndGetPathByEnforcedMove(target.transform.position, dir, dis, true);

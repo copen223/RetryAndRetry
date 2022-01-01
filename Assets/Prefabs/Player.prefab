@@ -204,6 +204,8 @@ GameObject:
   - component: {fileID: 6375307661126261089}
   - component: {fileID: 6375307661126261102}
   - component: {fileID: 6375307661126261103}
+  - component: {fileID: 720519351}
+  - component: {fileID: 720519342}
   m_Layer: 10
   m_Name: Sprite
   m_TagString: Actor
@@ -289,9 +291,43 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.016593635, y: 0}
-  m_Size: {x: 0.755875, y: 1.3333334}
+  m_Offset: {x: -0.007329941, y: 0}
+  m_Size: {x: 0.6006899, y: 1.3333334}
   m_Direction: 0
+--- !u!50 &720519351
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375307661126261088}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &720519342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375307661126261088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 906433f2db214a342ab7724495277670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ifMouseStayOnSprite: 0
 --- !u!1 &6375307661498246656
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,7 +343,7 @@ GameObject:
   - component: {fileID: 6375307661498246665}
   m_Layer: 10
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Actor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -343,10 +379,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d530a43e0e45c3e4ead9f3010ff3bcef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  advantage: 0
+  advantage: 2
   SpriteFaceToRight: 0
-  HealPoint: 10
-  HealPoint_Max: 10
+  HealPoint: 100
+  HealPoint_Max: 100
   Ability: {fileID: 2185648682025472296}
   FocusCountUI_GO: {fileID: 0}
   focusTrails: []
@@ -357,7 +393,7 @@ MonoBehaviour:
   DeckInfo: {fileID: 11400000, guid: 89ed5809a8f0ebd408038dfd3f4d67a5, type: 2}
   UpChangeDeckInfo: {fileID: 11400000, guid: a000aaf7ec2ed3b4683382814cd7fa65, type: 2}
   ActionPoint_Max: 3
-  ActionPoint_Resume: 0
+  ActionPoint_Resume: 31
   MovePoint_Max: 30
   MovePoint_Resume: 30
   playerHandlersController: {fileID: 5839496408776841366}
@@ -365,7 +401,7 @@ MonoBehaviour:
   handList_debug: []
   discardList_debug: []
   upChangeList_debug: []
-  StatesChild: {fileID: 0}
+  StatesChild: {fileID: 1508275306}
 --- !u!114 &6375307661498246671
 MonoBehaviour:
   m_ObjectHideFlags: 0

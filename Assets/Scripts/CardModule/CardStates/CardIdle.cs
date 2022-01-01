@@ -24,7 +24,7 @@ namespace Assets.Scripts.CardModule.CardStates
                 }
             }
 
-            Controller.Card.situation = CardSituation.Idle;
+            Controller.Card.Situation = CardSituation.Idle;
             int index = 1;
             Controller.SpriteObject.GetComponent<CardViewController>().StartAnimation(index);
         }

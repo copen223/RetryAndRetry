@@ -9,6 +9,7 @@ TagManager:
   - Obstacle
   - Platform
   - Ladder
+  - Background
   layers:
   - Default
   - TransparentFX
@@ -43,8 +44,14 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BackGround
+    uniqueID: 3175569853
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 3002863825
     locked: 0
   - name: Ray
     uniqueID: 3090015919

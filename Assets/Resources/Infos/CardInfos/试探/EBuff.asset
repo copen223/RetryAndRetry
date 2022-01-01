@@ -9,12 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47964910c83d67e44be6304024e5ef00, type: 3}
-  m_Name: EDamage
+  m_Script: {fileID: 11500000, guid: b7954e8e844e65b4bad938b0cb1d5baa, type: 3}
+  m_Name: EBuff
   m_EditorClassIdentifier: 
   isAtking: 0
-  Trigger: 3
-  CombatPriority: 1
+  Trigger: 5
+  CombatPriority: 0
   DoPriority: 0
+  IfInactive: 0
   AdditionalEffects_List: []
-  damageValue: 0.8
+  buff: {fileID: 8578311633523080672, guid: 70cb0e48762bb764a95a40761e0a981d, type: 3}
+  IsTargetSelf: 0

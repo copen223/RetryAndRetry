@@ -200,7 +200,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     /// </summary>
     public virtual void OnTurnStart()
     {
-        
+        BuffCon.OnTurnStart();
     }
 
     #endregion
@@ -271,7 +271,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     /// <summary>
     /// 受伤
     /// </summary>
-    public void OnInjured(DamageData data)
+    public virtual void OnInjured(DamageData data)
     {
         // 伤害应用
         var damage = data.damage - Ability.Defense.FinalValue;
@@ -300,6 +300,17 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         //OnInjuredEvent?.Invoke(combat);
 
         EventInvoke(ActorEvent.OnBehit);
+
+        OnAfterInjured(data);
+    }
+
+    /// <summary>
+    /// 子类对伤害的不同响应
+    /// </summary>
+    /// <param name="data"></param>
+    protected virtual void OnAfterInjured(DamageData data)
+    {
+
     }
 
     public void OnBeatBack(Vector2 dir,int dis)
@@ -325,7 +336,10 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         Debug.Log(gameObject + "" + buff);
     }
 
-    public void OnDoAttack()
+    /// <summary>
+    /// 随机添加一个弱点
+    /// </summary>
+    public void OnAddWeakness()
     {
         var con = gameObject.GetComponent<ActorController>();
 

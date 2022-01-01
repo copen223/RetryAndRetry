@@ -47,7 +47,6 @@ public class CardActionController : MonoBehaviour
         {
             StartCoroutine(DrawFocusTrail());
         }
-
     }
 
     IEnumerator DrawAttackTrail() 
@@ -73,6 +72,7 @@ public class CardActionController : MonoBehaviour
             contactPoints.Clear();
             contactObjects.Clear();
             targets.Clear();
+            int backGroudhitNum = 0;
             combats.Clear();
             LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
             //--------------------------------------------//
@@ -122,10 +122,21 @@ public class CardActionController : MonoBehaviour
                     }
                     else if(CheckLayerIfCanAttack(hit.transform.gameObject.layer))  // 遇到可攻击对象
                     {
-                        if (targets.Count < trail.TargetNum)
+                        // 环境物体的处理方式,Obstacle与actor相同处理，但是Background和Platform要进行特殊处理
+                        if (1 << targetGo.layer == LayerMask.GetMask("EnvirObject"))
+                        {
+                            if(targetGo.tag == "Background" || targetGo.tag == "Platform")
+                            {
+                                targets.Add(targetGo);
+                                backGroudhitNum += 1;
+                                continue;
+                            }
+                        }
+
+                        if (targets.Count < trail.TargetNum + backGroudhitNum)
                         {
                             targets.Add(targetGo);   // 选中对象+1
-                            if (targets.Count == trail.TargetNum)
+                            if (targets.Count == trail.TargetNum + backGroudhitNum)
                             {
                                 endPos = hits[i].point;
                                 break;
@@ -146,7 +157,7 @@ public class CardActionController : MonoBehaviour
                 // 射中的目标激活专注轨迹，显示专注个数。专注轨迹的具体显示视情况而定
                 target.GetComponent<ActorController>().ActiveAllFocusTrail(true);
                 //target.GetComponent<ActorController>().ShowAllFocusTrail(false);
-                 target.GetComponent<ActorController>().ShowAllFocusTrail(true);
+                target.GetComponent<ActorController>().ShowAllFocusTrail(true);
                 target.GetComponent<ActorController>().ShowFocusTrailCount(true);
             }
 
@@ -195,6 +206,7 @@ public class CardActionController : MonoBehaviour
                         focusCards.Add(focusTrail.Card);
                     }
                 }
+
                 var combat = new Combat(Controller.Card,focusCards,Controller.holder,target);
                 combats.Add(combat);
             }
@@ -222,7 +234,10 @@ public class CardActionController : MonoBehaviour
             {
                 if (targets.Count > 0)
                 {
-                    foreach(var combat in combats)
+
+                    Controller.Card.OnDoMake();
+
+                    foreach (var combat in combats)
                     {
                         combat.StartDoCombat();
                     }

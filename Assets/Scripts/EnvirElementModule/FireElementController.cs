@@ -22,6 +22,7 @@ public class FireElementController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("sdfdsf");
         GameObject go = collision.gameObject.name == "Sprite" ? collision.transform.parent.gameObject : collision.gameObject;
         int layer = go.layer;
         if (MyTools.CheckLayerIfCanAttack(layer))

@@ -26,7 +26,7 @@ namespace Assets.Scripts.CardModule
             name = _name;
             type = _type;
             effects = _effects;
-            situation = CardSituation.Idle;
+            Situation = CardSituation.Idle;
             upChangeType = CardUpChangeType.Normal;
             cardLevel = 0;
         }
@@ -35,7 +35,7 @@ namespace Assets.Scripts.CardModule
             name = _name;
             type = _type;
             effects = _effects;
-            situation = CardSituation.Idle;
+            Situation = CardSituation.Idle;
             upChangeType = CardUpChangeType.Normal;
             cardLevel = 0;
             CardAction = action;
@@ -46,7 +46,7 @@ namespace Assets.Scripts.CardModule
             name = _name;
             type = _type;
             effects = _effects;
-            situation = CardSituation.Idle;
+            Situation = CardSituation.Idle;
             upChangeType = CardUpChangeType.Normal;
             cardLevel = upChangeLevel;
             CardAction = action;
@@ -54,7 +54,31 @@ namespace Assets.Scripts.CardModule
 
 
         public CardUseType type;               // 卡牌类型 主动型/被动型 主动型打出时会生效，被动型专注时会生效
-        public CardSituation situation;     // 表明卡牌在手牌中的状态，刷新时根据该项来决定显示层状态
+        public CardSituation Situation// 表明卡牌在手牌中的状态，刷新时根据该项来决定显示层状态
+        {
+            get
+            {
+                return situation;
+            }
+            set
+            {
+                if(situation == CardSituation.Focused && value == CardSituation.Idle)
+                {
+                    OnCancleFocusEvent?.Invoke();
+                }
+                situation = value;
+            }
+        }
+        private CardSituation situation;
+
+        #region 事件
+        public Action OnCancleFocusEvent;
+        #endregion
+
+
+
+
+
         public GameObject focusTrail;       // 卡牌专注轨迹，用途只有判断该卡牌是否有专注轨迹 不影响使用
         public CardUpChangeType upChangeType;
         public int cardLevel;
@@ -114,6 +138,24 @@ namespace Assets.Scripts.CardModule
                text += effect.GetDescriptionText()+" ";
             }
             return text;
+        }
+
+        /// <summary>
+        /// 此卡被打出时，调用该函数进行通知
+        /// </summary>
+        public void OnDoMake()
+        {
+            bool ifAddWeakness = false;
+            foreach(var effect in effects)
+            {
+                if(effect is CardEffects.NormalDamage)
+                {
+                    ifAddWeakness = true;
+                }
+            }
+
+            if(ifAddWeakness)
+                User.OnAddWeakness();
         }
         
     }

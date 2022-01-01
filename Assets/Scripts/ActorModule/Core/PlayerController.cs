@@ -127,6 +127,9 @@ public class PlayerController : ActorController
 
     public void AddCardToHand(Card card)
     {
+        if (hand.list.Count >= 5)
+            return;
+
         hand.AddCard(card);
         if(BattleManager.instance.CurActorObject == gameObject)
         {
@@ -136,8 +139,11 @@ public class PlayerController : ActorController
 
     public void FocusOneCard(Card card,Vector2 dir)
     {
+        if (!hand.list.Contains(card))
+            return;
+
         playerHandlersController.FocusTheCard(card, dir);
-        card.situation = CardSituation.Focused;
+        card.Situation = CardSituation.Focused;
         
     }
 

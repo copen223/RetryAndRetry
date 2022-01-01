@@ -15,6 +15,10 @@ namespace Assets.Scripts.ActorModule
         /// </summary>
         public DamageSource source = DamageSource.Normal;
         /// <summary>
+        /// 伤害元素类型
+        /// </summary>
+        public DamageElement element = DamageElement.None;
+        /// <summary>
         /// 伤害数值
         /// </summary>
         public float damage;
@@ -50,5 +54,14 @@ namespace Assets.Scripts.ActorModule
         Actor = 1,
         EnvirSurface = 2,
         EnvirObject = 4
+    }
+
+    /// <summary>
+    /// 伤害元素
+    /// </summary>
+    public enum DamageElement
+    {
+        None,
+        Fire
     }
 }

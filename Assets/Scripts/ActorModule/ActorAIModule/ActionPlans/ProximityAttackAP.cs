@@ -35,6 +35,22 @@ namespace ActorModule.AI
         private Vector2 focusDir1;    // 决定该单位的专注方向，参数1代表是否面朝方向专注，参数2代表是否上方专注
         private Vector2 focusDir2;
 
+        public enum AIMoveType
+        {
+            [InspectorName("坚守")]
+            Stay,
+            [InspectorName("警觉")]
+            Vigilance,
+            [InspectorName("追赶")]
+            Chase
+        }
+        [InspectorName("单位移动类型")]
+        public AIMoveType aiMoveType;
+
+        [SerializeField]
+        [InspectorName("是否进行攻击")]         // 如果能够攻击到目标是否进行攻击
+        private bool ifAttack = false;
+
         private void Start()
         {
             ifAttackUp = (Random.Range(0, 50f) <= 25f);
@@ -90,69 +106,85 @@ namespace ActorModule.AI
             EnemyController selfController = Actor.GetComponent<EnemyController>();
             PathFinderComponent pathFinder = Actor.GetComponent<PathFinderComponent>();
 
-            List<Node> canMoveNodes_list = pathFinder.SearchPathForm(selfGo.transform.position, CheckIfCanAttack2); // 从自己开始进行寻路搜索
-            var path = new List<Vector3>();
-            foreach (var node in canMoveNodes_list)
-            {
-                Vector3 nodeInWorld = pathFinder.CellToWorld((node.x, node.y));
-                path = pathFinder.GetPathFromTo(selfGo.transform.position, nodeInWorld);
-                if (path.Count >= 1)
-                    break;
-            }
 
-            // Cost限制移动
-            int surplus = 0;
-            int point = selfController.MovePoint;
-            while (true)
+            if (aiMoveType != AIMoveType.Stay)
             {
-                if (path.Count <= 0)
-                    break;
-                int cost = Mathf.FloorToInt(pathFinder.GetPathCostToNode(path[path.Count - 1]));
-                surplus = point - cost;
-                if (surplus < 0)
+                List<Node> canMoveNodes_list = pathFinder.SearchPathForm(selfGo.transform.position, CheckIfCanAttack2); // 从自己开始进行寻路搜索
+                var path = new List<Vector3>();
+                foreach (var node in canMoveNodes_list)
                 {
-                    path.RemoveAt(path.Count - 1);
-                    continue;
+                    Vector3 nodeInWorld = pathFinder.CellToWorld((node.x, node.y));
+                    path = pathFinder.GetPathFromTo(selfGo.transform.position, nodeInWorld);
+                    if (path.Count >= 1)
+                        break;
                 }
-                else
-                    break;
+
+                // Cost限制移动
+                bool ifCanArrive = true;
+                int surplus = 0;
+                int point = selfController.MovePoint;
+                while (true)
+                {
+                    if (path.Count <= 0)
+                        break;
+                    int cost = Mathf.FloorToInt(pathFinder.GetPathCostToNode(path[path.Count - 1]));
+                    surplus = point - cost;
+                    if (surplus < 0)
+                    {
+                        path.RemoveAt(path.Count - 1);
+                        ifCanArrive = false;
+                        continue;
+                    }
+                    else
+                        break;
+                }
+
+                do
+                {
+                    if (aiMoveType == AIMoveType.Vigilance && !ifCanArrive)
+                        break;
+
+                    selfController.StatesChild.GetComponent<ActorMoveByPath>().SetNodePath(pathFinder.VectorPath2NodePath(path));
+                    selfController.StatesChild.GetComponent<ActorActionIdle>().ChangeStateTo<ActorMoveByPath>();
+
+                } while (false);
+
+                //----------------等待移动完成---------------------
+
+                while (true)
+                {
+                    if (selfController.currentState is ActorActionIdle)
+                        break;
+
+                    yield return new WaitForSeconds(0.2f);
+                }
             }
-
-            selfController.StatesChild.GetComponent<ActorMoveByPath>().SetNodePath(pathFinder.VectorPath2NodePath(path));
-            selfController.StatesChild.GetComponent<ActorActionIdle>().ChangeStateTo<ActorMoveByPath>();
-
-            //----------------等待移动完成---------------------
-
-            while (true)
-            {
-                if (selfController.currentState is ActorActionIdle)
-                    break;
-               
-                yield return new WaitForSeconds(0.2f);
-            }
-
             //----------------开始攻击------------
-            AttackTrail trail = attackCard.CardAction as AttackTrail;
 
-            //Vector2 atkReferenceDir = target.GetComponent<ActorController>().CenterPos - selfController.CenterPos;
+            if (ifAttack)
+            {
+                AttackTrail trail = attackCard.CardAction as AttackTrail;
 
-            //Vector2 atkDir = Vector2.zero;
-            //AttackScanTarget(selfController.CenterPos, atkReferenceDir.normalized, trail.Distance_max, ifAttackUp, out atkDir);
+                var targetPos = attackTarget.GetComponent<ActorController>().CenterPos;
+                float maxY = attackTarget.GetComponent<ActorController>().Sprite.GetComponent<Collider2D>().bounds.size.y;
 
-            var targetPos = attackTarget.GetComponent<ActorController>().CenterPos;
-            float maxY = attackTarget.GetComponent<ActorController>().Sprite.GetComponent<Collider2D>().bounds.size.y;
+                Vector2 atkTargetPoint = Vector2.zero;
+                AttackScanTarget2(selfController.CenterPos, target.GetComponent<ActorController>().CenterPos, maxY, ifAttackUp, out atkTargetPoint);
 
-            Vector2 atkTargetPoint = Vector2.zero;
-            AttackScanTarget2(selfController.CenterPos, target.GetComponent<ActorController>().CenterPos, maxY, ifAttackUp, out atkTargetPoint);
+                if (atkTargetPoint == Vector2.zero)
+                {
+                    InvokeActionPlanOverEvent();
+                    yield break;
+                }
 
-            //if (atkDir == Vector2.zero) InvokeActionPlanOverEvent();
-            if (atkTargetPoint == Vector2.zero) InvokeActionPlanOverEvent();
-
-            var combatHandler = AI.GetComponent<CombatHandler>();
-            combatHandler.SetCombatHandler(Actor, attackCard, atkTargetPoint);
-            combatHandler.StartHandleCombat(InvokeActionPlanOverEvent);
-
-
+                var combatHandler = AI.GetComponent<CombatHandler>();
+                combatHandler.SetCombatHandler(Actor, attackCard, atkTargetPoint);
+                combatHandler.StartHandleCombat(InvokeActionPlanOverEvent);
+            }
+            else
+            {
+                InvokeActionPlanOverEvent();
+            }
             //----------------随机下次攻击方向和专注方向------------
             ifAttackUp = (Random.Range(0, 100f) <= 50f);
             yield return new WaitForEndOfFrame();
@@ -282,7 +314,7 @@ namespace ActorModule.AI
             int rayTargetPosCount = 10;
             float rayTargetPosIntervalY = sizeY / rayTargetPosCount; 
 
-            for(int i =0; i  < rayTargetPosCount; i++)
+            for(int i = 3; i  < rayTargetPosCount - 3; i++)
             {
                 float y = ifFromUp2Down ? targetPos.y + sizeY / 2 - rayTargetPosIntervalY * i : targetPos.y - sizeY / 2 + rayTargetPosIntervalY * i;
                 Vector3 pos = new Vector3(targetPos.x, y);

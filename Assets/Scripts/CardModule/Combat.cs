@@ -132,7 +132,7 @@ namespace Assets.Scripts.CardModule
 
 
         #region 一些效果处理接口
-        public void DoHit(ActorController target,DamageData damageData)
+        public bool DoHit(ActorController target,DamageData damageData)
         {
             // 伤害修正
             if(target == Atker)
@@ -154,15 +154,17 @@ namespace Assets.Scripts.CardModule
             if (targetHit + randomValue < dodge)
             {
                 target.OnDodge(damageData);
-                return;
+                return false;
             }
 
             // 转身
-            target.ChangeFaceTo(damageData.dir);
+            if(!(target is EnvirObjectController))
+                target.ChangeFaceTo(damageData.dir);
 
             // 受伤
             TouchOffEffect(EffectTrigger.OnDoDamage,true,AtkCard);
             target.OnInjured(damageData);
+            return true;
         }
 
         #endregion

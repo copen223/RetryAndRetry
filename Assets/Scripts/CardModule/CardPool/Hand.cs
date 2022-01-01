@@ -20,10 +20,10 @@ namespace Assets.Scripts.CardModule
         /// <param name="pool"></param>
         public override void TranslateCardTo(Card card, CardPool pool)
         {
-            if (card.situation == CardSituation.Focused)
+            if (card.Situation == CardSituation.Focused)
             {
                 // 遇到专注的卡牌要进行轨迹、卡牌、人物的解绑和销毁专注轨迹
-                card.situation = CardSituation.Idle;
+                card.Situation = CardSituation.Idle;
                 var focusObject = card.CancleFocusTrail();
                 Holder.RemoveFocusTrail(focusObject);
                 UnityEngine.GameObject.Destroy(focusObject);

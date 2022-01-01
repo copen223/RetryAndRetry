@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Scripts.BufferModule;
 
 namespace Assets.Scripts.CardModule.CardEffects
 {
@@ -55,11 +56,21 @@ namespace Assets.Scripts.CardModule.CardEffects
 
             ActorController target = isAtking ? combat.Dfder : combat.Atker;
 
-            combat.DoHit(target, new DamageData(finalDamage, dir, Card.User.Ability.Hit.FinalValue));
+            bool ifHitSuccess = combat.DoHit(target, new DamageData(finalDamage, dir, Card.User.Ability.Hit.FinalValue));
+
+            // 触发相应buff效果
+            if(ifHitSuccess)
+            {
+                BuffTouchOffEventArgs eventArgs = new BuffTouchOffEventArgs();
+                eventArgs.usedCard = Card;
+                eventArgs.combat = combat;
+                eventArgs.actor = Card.User;
+                Card.User.BuffCon.TouchOffBuff(BuffTriggerType.OnDoDamage, eventArgs);
+            }
 
             InitDamageValue();
 
-            Card.User.OnDoAttack();
+            //Card.User.OnAddWeakness();
 
             base.DoEffect(combat);
         }

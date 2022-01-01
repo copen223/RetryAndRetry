@@ -15,11 +15,12 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             base.StateStart();
 
-            // 为玩家增加1点行动点数
-            AddActionPointForPlayer();
+            AddActionPointForPlayer(); // 为玩家增加1点行动点数
 
             Controller.SpriteObject.SendMessage("StartAnimation", 8);
+
             SetEventProtect();
+            TouchOffEffectOnFocus();
         }
         public void AddActionPointForPlayer()
         {
@@ -31,6 +32,19 @@ namespace Assets.Scripts.CardModule.CardStates
             {
                 var player = actor as PlayerController;
                 player.ActionPoint += 1;
+            }
+        }
+
+        private void TouchOffEffectOnFocus()
+        {
+            var card = Controller.Card;
+
+            foreach(var effect in card.effects)
+            {
+                if(effect.Trigger == EffectTrigger.OnFocus)
+                {
+                    effect.DoEffect(new Combat(card.User, card.User));
+                }
             }
         }
 

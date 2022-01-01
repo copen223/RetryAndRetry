@@ -17,14 +17,14 @@ namespace Assets.Scripts.BufferModule.Buffs
         /// <param name="target"></param>
         public override void LauchBuff()
         {
-            Target.Ability.Attack.AddTheAddValue(DdgChangeValue);
-            OnBuffEndEvent += OnFinish;
+            Target.Ability.Dodge.AddTheAddValue(DdgChangeValue);
+            OnBuffEndEvent += OnFinishCallback;
         }
 
-        private void OnFinish()
+        private void OnFinishCallback()
         {
-            Target.Ability.Attack.AddTheAddValue(-DdgChangeValue);
-            OnBuffEndEvent -= OnFinish;
+            Target.Ability.Dodge.AddTheAddValue(-DdgChangeValue);
+            OnBuffEndEvent -= OnFinishCallback;
         }
 
         public void Init(int value, int time)

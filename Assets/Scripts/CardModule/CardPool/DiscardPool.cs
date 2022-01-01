@@ -22,7 +22,7 @@ namespace Assets.Scripts.CardModule
         public override void AddCard(Card card)
         {
             base.AddCard(card);
-            card.situation = CardSituation.Idle;    // 弃掉的卡牌状态重置
+            card.Situation = CardSituation.Idle;    // 弃掉的卡牌状态重置
         }
 
         public void TranslateAllCardTo(CardPool pool)

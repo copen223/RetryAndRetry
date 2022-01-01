@@ -272,7 +272,7 @@ public class CardViewController : MonoBehaviour
 
         Level.text = "" + card.cardLevel;
 
-        if (card.situation == CardSituation.Focused)
+        if (card.Situation == CardSituation.Focused)
             FocusMask.gameObject.SetActive(true);
         else
             FocusMask.gameObject.SetActive(false);

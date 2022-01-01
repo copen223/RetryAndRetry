@@ -42,7 +42,7 @@ namespace Assets.Scripts.CardModule
             //-------------基本信息-------------
             card.name = info.CardName;
             card.type = info.Type;
-            card.situation = CardSituation.Idle;
+            card.Situation = CardSituation.Idle;
             card.cardLevel = info.UpChangeLevel;
             card.upChangeType = info.CardUpChangeType;
             card.cardElement = info.CardElement;

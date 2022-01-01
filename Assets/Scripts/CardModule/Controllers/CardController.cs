@@ -109,9 +109,9 @@ public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,I
         SpriteObject.SetActive(true);
         if (card != null && currentState != null)
         {
-            if (card.situation == CardSituation.Idle)
+            if (card.Situation == CardSituation.Idle)
                 currentState.ChangeStateTo<CardIdle>();
-            if (card.situation == CardSituation.Focused)
+            if (card.Situation == CardSituation.Focused)
             {
                 //Debug.LogError("刷新时发现有专注状态卡牌，设为专注：" + card.name);
                 if (!(currentState is CardFocus))

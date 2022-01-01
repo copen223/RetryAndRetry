@@ -46,6 +46,7 @@ MonoBehaviour:
   DurationType: 0
   DurationTime: 1
   ActiveType: 0
+  buffUIImage: {fileID: 21300000, guid: bd51698df58ea4044b4cd75dbafa9220, type: 3}
   Target: {fileID: 0}
   controller: {fileID: 0}
   HitChangeValue: 0

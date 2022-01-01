@@ -42,7 +42,7 @@ namespace Assets.Scripts.CardModule
             //-------------基本信息-------------
             card.name = info.CardName;
             card.type = info.Type;
-            card.situation = CardSituation.Idle;
+            card.Situation = CardSituation.Idle;
             card.cardLevel = info.UpChangeLevel;
             card.upChangeType = info.CardUpChangeType;
             card.cardElement = info.CardElement;
@@ -147,8 +147,8 @@ namespace Assets.Scripts.CardModule
                     effect = new CardEffects.NormalBeatBack(int.Parse(value_string));break;
                 case "格挡":
                     effect = new CardEffects.NormalBlock(int.Parse(value_string));break;
-                case "毒":
-                    effect = new CardEffects.GiveBuff(trigger, "毒");break;
+                //case "毒":
+                //    effect = new CardEffects.GiveBuff(trigger, "毒");break;
                 default: effect = null;break;
             }
 

@@ -47,7 +47,7 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                if (Controller.Card.type == CardUseType.Passive)
+                if (Controller.Card.type == CardUseType.Passive && Controller.Card.CardAction != null)
                     ChangeStateTo<CardSetFocus>();
                 else
                     ChangeStateTo<CardPreFocus>();

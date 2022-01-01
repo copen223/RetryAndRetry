@@ -29,9 +29,7 @@ public class ActorAbility : MonoBehaviour
     public ActorAbilityValue HealPoint;
     #endregion
 
-    #region 能力加值与减值
 
-    #endregion
 
     private void UpdateValueByBase()
     {
