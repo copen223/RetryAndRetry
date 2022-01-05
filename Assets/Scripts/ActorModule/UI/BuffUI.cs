@@ -8,6 +8,9 @@ public class BuffUI : MonoBehaviour
     [SerializeField]
     private Text timeText = null;
 
+    [SerializeField]
+    public Text description = null;
+
     /// <summary>
     /// 歪脖根据buff储存的sprite进行修改
     /// </summary>

@@ -5,6 +5,11 @@ using Assets.Scripts.Tools.NewTools;
 
 public class UIManager : MonoBehaviour
 {
+    /// <summary>
+    /// 是否允许UI交互,UI响应时要读取该变量进行判断
+    /// </summary>
+    public bool IfActiveUIInteraction = true;
+
     // 漂浮UI
     TargetPool floatUIPool;
     public GameObject floatUIPrefab;

@@ -9,11 +9,11 @@ using System;
 public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,IPointerClickHandler
 {
     #region UI对象链接
-    [SerializeField] private Text cardName_text = null;
-    [SerializeField] private Text cardDes_text = null;
-    [SerializeField] private Text cardLevel_text = null;
     [SerializeField] private GameObject cardView_go = null;
     #endregion
+
+    public bool IsStatusMode;
+
 
     #region 储存信息
     private Card card;
@@ -43,13 +43,7 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     /// </summary>
     private void UpdateView()
     {
-        cardView_go.transform.localScale = new Vector3(1, 1, 1);
-        cardName_text.text = card.name;
-        cardDes_text.text = card.GetCardDescription();
-        if(card.cardLevel != 0)
-            cardLevel_text.text = card.cardLevel + "";
-        else
-            cardLevel_text.text = "";
+        cardView_go.GetComponent<CardViewController>().OnCardChanged(card);
     }
     private bool IfCanUpChange()
     {
@@ -75,6 +69,11 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if(IsStatusMode)
+        {
+            return;
+        }
+
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (IfCanUpChange())

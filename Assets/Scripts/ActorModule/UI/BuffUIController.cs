@@ -9,7 +9,7 @@ public class BuffUIController : MonoBehaviour
     private Transform buffUIsParent = null;
 
     [SerializeField]
-    private GameObject buffUIPrefab;
+    private GameObject buffUIPrefab = null;
 
     [SerializeField]
     private List<BuffUI> buffUIs = new List<BuffUI>();

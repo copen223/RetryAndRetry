@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.BattleModule.BattleStates
 {
@@ -17,7 +18,10 @@ namespace Assets.Scripts.BattleModule.BattleStates
             else
             {
                 if (Manager.CurActorObject.GetComponent<ActorController>().group.IsPlayer)
+                {
                     Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerActionStart);
+                    Camera.main.GetComponent<CameraController>().SetFreedomControl();
+                }
                 else
                 {
                     Manager.EventInvokeByState(BattleManager.BattleEvent.ComputerActionStart);

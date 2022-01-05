@@ -23,6 +23,14 @@ namespace Assets.Scripts.BufferModule
         public BuffActiveType ActiveType = BuffActiveType.Sustainable;
         [Header("触发类型")]
         public BuffTriggerType TriggerType = BuffTriggerType.None;
+       
+        /// <summary>
+        /// buff描述
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetDescription() { return "只是一个buff"; } 
+
+
 
         [HideInInspector]
         public ActorController Target;

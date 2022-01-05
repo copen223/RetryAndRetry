@@ -26,6 +26,9 @@ public class CardViewController : MonoBehaviour
     //--------------------------------------------------------------------------------------------------//
     //-----------------------------------------卡牌动画开始---------------------------------------------//
     //--------------------------------------------------------------------------------------------------//
+    [InspectorName("是否仅仅作为显示")]
+    public bool IfOnlyAsView;
+    
     public CardController controller;
     [Header("选中动画")]
     public float Time_Animation_Selected;
@@ -45,6 +48,9 @@ public class CardViewController : MonoBehaviour
 
     private void Start()
     {
+        if (IfOnlyAsView) 
+            return;
+
         controller = transform.parent.GetComponent<CardController>();
         DeckTransform = controller.transform.parent.transform.parent.GetComponent<HandController>().DeckObject.GetComponent<Transform>();
         DiscardTransform = controller.transform.parent.transform.parent.GetComponent<HandController>().DiscardObject.GetComponent<Transform>();

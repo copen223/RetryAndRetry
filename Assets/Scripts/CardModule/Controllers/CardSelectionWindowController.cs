@@ -7,6 +7,9 @@ using System.Linq;
 
 public class CardSelectionWindowController : MonoBehaviour
 {
+    [Header("是否作为StatusUI模块")]
+    public bool IsStatusMode;
+
     [SerializeField]
     private GameObject cardPrefab = null;
     [SerializeField] Transform cardParent = null;
@@ -81,7 +84,10 @@ public class CardSelectionWindowController : MonoBehaviour
     public void ShowCardSelectionWindow(List<Card> cards, GameObject player,bool ifSort)
     {
         gameObject.SetActive(true);
-        CloseButton.SetActive(true);
+
+        if(!IsStatusMode)
+            CloseButton.SetActive(true);
+
         int i = 0;
 
         List<Card> waitToShow = new List<Card>(cards);
@@ -102,11 +108,6 @@ public class CardSelectionWindowController : MonoBehaviour
                     return card1.name.CompareTo(card2.name);
                 }
                 );
-            //waitToShow.OrderBy(x => x.cardLevel).ThenBy(x => x.name);
-
-            //List<string> ooo = new List<string> { "打击", "闪避", "防御", "打击", "打击", "防御", "闪避" };
-
-            //ooo.OrderBy(x => x);
         }
 
         for (; i < waitToShow.Count; i++)
@@ -127,6 +128,7 @@ public class CardSelectionWindowController : MonoBehaviour
             var con = go.GetComponent<CardInWindowController>();
             con.SetCard(card);
             con.SetSelector(player);
+            con.IsStatusMode = IsStatusMode;
         }
         for (; i < cards_list.Count; i++)
         {

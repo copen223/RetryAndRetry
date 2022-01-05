@@ -150,6 +150,7 @@ public class HandController : MonoBehaviour
             if(card != gb && card.activeInHierarchy)
             {
                 card.GetComponent<CardController>().SetInteractActive(!isStart);
+                UIManager.instance.IfActiveUIInteraction = !isStart;
             }
         }
     }
