@@ -13,6 +13,8 @@ namespace Assets.Scripts.CardModule.CardActions
     {
         public float Distance_X;      // 放置轨迹的x距离
         public float Distance_Y;      // 放置轨迹的y距离
+
+        public bool IfSetXYByCollider;
         public FocusTrailRect(float x,float y)
         {
             Distance_X = x;
@@ -21,6 +23,12 @@ namespace Assets.Scripts.CardModule.CardActions
 
         public override List<Vector3> GetLineOffsetPoints(Vector2 setDir)
         {
+            if (IfSetXYByCollider)
+            {
+                float allowance = 0.1f;
+                Distance_Y = Actor.Sprite.GetComponent<CapsuleCollider2D>().size.y / 2 + allowance;
+                Distance_X = Actor.Sprite.GetComponent<CapsuleCollider2D>().size.x / 2 + allowance;
+            }
             float x = Distance_X * (setDir.x < 0 ? (-1) : 1);
             float y = Distance_Y * (setDir.y < 0 ? (-1) : 1);
 

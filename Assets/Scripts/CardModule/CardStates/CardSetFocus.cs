@@ -16,6 +16,8 @@ namespace Assets.Scripts.CardModule.CardStates
             base.StateStart();
             SetEventProtect();
 
+            Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, true);  //  告诉中央我在打出，其他的互动停止。
+            
             // 在actioncontroller中执行设置专注位置的行动
             Controller.ActionController.StartAction(Controller.Card.CardAction);
             Controller.ActionController.OnActionOverEvent += OnActionOver;
@@ -50,6 +52,7 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
+            Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);  //  告诉中央我在打出，其他的互动停止。
         }
 
         public void OnActionOver()

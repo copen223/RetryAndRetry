@@ -967,7 +967,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -5164,6 +5164,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: HealPoint
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
+      propertyPath: HealPoint_Max
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
 --- !u!1 &720519338 stripped
@@ -5646,6 +5654,14 @@ PrefabInstance:
     - target: {fileID: 8326774332111561597, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
       propertyPath: advantage
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8326774332111561597, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
+      propertyPath: HealPoint_Max
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8326774332111561597, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
+      propertyPath: HealPoint
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8326774332347964302, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
       propertyPath: attackCardInfo
@@ -6551,6 +6567,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8326774332111561597, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
+      propertyPath: HealPoint
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 8326774332111561597, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
+      propertyPath: HealPoint_Max
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 8326774332347964302, guid: 4fe3c37d569aed9478dc15407e448c46, type: 3}
       propertyPath: ifAttack
       value: 1
@@ -6778,7 +6802,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -7404,7 +7428,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

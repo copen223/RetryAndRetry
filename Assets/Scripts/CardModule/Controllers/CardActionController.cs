@@ -27,9 +27,7 @@ public class CardActionController : MonoBehaviour
     private List<Combat> combats = new List<Combat>();
 
     [SerializeField]private GameObject FocusTrailPrefab = null;     // 专注轨迹预组
-    private TargetPool focusTrailPool;      // 专注轨迹池
 
-    public void AddNewTrailToPool(GameObject gb) { focusTrailPool.AddToPool(gb); }
     // 控制参量
     public bool IsAction;
 
@@ -275,11 +273,12 @@ public class CardActionController : MonoBehaviour
     IEnumerator DrawFocusTrail()
     {
         List<Vector3> points = new List<Vector3>();
+        var gb = Instantiate(FocusTrailPrefab, Controller.holder.transform.Find("FocusTrails")); // 生成的focustrial对象
+
         while (true)
         {
             //-------------------每帧更新-------------------
             points.Clear();
-            focusTrailPool.ReSet();
             //-------------------计算位置和点集------------------
             var mouseScreenPos = Input.mousePosition;
             var mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
@@ -297,7 +296,6 @@ public class CardActionController : MonoBehaviour
             }
 
             //-------------------显示-------------------------
-            var gb = focusTrailPool.GetTarget(Controller.holder.transform.Find("FocusTrails"));
             gb.transform.localScale = new Vector3(1, 1, 1);
             gb.GetComponent<FocusTrailController>().IfShow = true;
             gb.GetComponent<FocusTrailController>().Seter = Controller.holder;
@@ -312,7 +310,6 @@ public class CardActionController : MonoBehaviour
                 Vector2 scale_x = Controller.holder.transform.localScale;
                 gb.GetComponent<FocusTrailController>().SetOffsetPoints(focusTrailOffsetPoints.ToArray());
                 gb.GetComponent<FocusTrailController>().SetColor(false);
-                focusTrailPool.RemoveFromPool(gb);
                 Controller.holder.GetComponent<ActorController>().AddFocusTrail(gb);
                 Controller.Card.SetFocusTrail(gb);
                 gb.GetComponent<FocusTrailController>().IfShow = false;
@@ -323,7 +320,7 @@ public class CardActionController : MonoBehaviour
             if(IfInputMouse1)
             {
                 // 取消输入
-                gb.SetActive(false);
+                Destroy(gb);
 
                 OnActionCancleEvent?.Invoke();    // 通知action结束
                 break;
@@ -360,8 +357,6 @@ public class CardActionController : MonoBehaviour
     {
         Controller = transform.parent.GetComponent<CardController>();
         contactPool = new TargetPool(ContactPrefab);
-
-        focusTrailPool = new TargetPool(FocusTrailPrefab);
     }
     void Update()
     {

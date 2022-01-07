@@ -95,4 +95,18 @@ public class BattleManager : MonoBehaviour
         }
 
     }
+
+    #region 外部通知
+    public void OnActorDeath(GameObject actorObject)
+    {
+        ActorList.Remove(actorObject);
+        ActorQueue.Remove(actorObject);
+
+        if(CurActorObject == actorObject)
+        {
+            CurActorIndex--;
+            currentState.ChangeStateTo<BattleTurnEnd>();
+        }
+    }
+    #endregion
 }

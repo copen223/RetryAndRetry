@@ -118,7 +118,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
     /// 将专注轨迹与自己解绑
     /// </summary>
     /// <param name="gb"></param>
-    public void RemoveFocusTrail(GameObject gb) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); }
+    public void RemoveFocusTrail(GameObject gb) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); Destroy(gb); }
     public void RemoveFocusTrail(GameObject gb,bool ifDestory) { focusTrails.Remove(gb); gb.GetComponent<FocusTrailController>().Actor = null; EventInvoke(ActorEvent.OnFoucusTrailChange); if (ifDestory) Destroy(gb); }
 
     /// <summary>
@@ -278,8 +278,6 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         if (damage < 0)
             damage = 0;
 
-        if (HealPoint - damage <= 0)
-            damage = HealPoint;
         HealPoint -= damage;
 
         // 如果存在格挡，则显示格挡
@@ -297,9 +295,16 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         float time = 1f;
         UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, damage + "");
 
-        //OnInjuredEvent?.Invoke(combat);
-
         EventInvoke(ActorEvent.OnBehit);
+
+        // 死亡
+        if(HealPoint <= 0)
+        {
+            HealPoint = 0;
+            UIManager.instance.CreatFloatUIAt(Sprite, Vector2.up, time * 2, Color.black, "死亡");
+
+            BattleManager.instance.OnActorDeath(gameObject);
+        }
 
         OnAfterInjured(data);
     }

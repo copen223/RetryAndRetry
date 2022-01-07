@@ -92,8 +92,6 @@ public class FocusTrailController : MonoBehaviour
         Vector3[] linePoints_arry = new Vector3[lineOffsetPoints.Length];
         for(int i =0;i<linePoints_arry.Length;i++)
         {
-            //Debug.LogError(transform.position + "player" + Actor.transform.position + " sprite" + Actor.transform.Find("Sprite").transform.position);
-            //linePoints_arry[i] = (transform.position + lineOffsetPoints[i]);
             var pos1 = pos; var pos2 = lineOffsetPoints[i]; var scale_x = Actor.transform.localScale.x; var selfScale_x = transform.localScale.x; 
             linePoints_arry[i] = new Vector3((pos1.x + pos2.x * scale_x * selfScale_x), pos1.y + pos2.y, pos1.z + pos2.z);
         }
@@ -101,16 +99,16 @@ public class FocusTrailController : MonoBehaviour
         lineRenderer.SetPositions(linePoints_arry);
     }
 
+    /// <summary>
+    /// 设置构成线段的点集，世界坐标,同时生成与之对应的碰撞体
+    /// </summary>
+    /// <param name="points"></param>
     public void SetPoints(List<Vector3> points)
     {
-        //if(lineRenderer == null)
-        //{
-        //    lineRenderer = gameObject.GetComponent<LineRenderer>();
-        //    collider2d = gameObject.GetComponent<PolygonCollider2D>();
-        //}
         linePoints = points.ToArray();
         lineRenderer.positionCount = linePoints.Length;
         lineRenderer.SetPositions(linePoints);  
+
         UpdateColliderByLinePoints();
         CheckIfOccupied();
     }

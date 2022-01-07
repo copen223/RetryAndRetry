@@ -65,7 +65,6 @@ namespace Assets.Scripts.CardModule.CardStates
                     var focusObject = Controller.Card.CancleFocusTrail();
                     Controller.holder.GetComponent<ActorController>().RemoveFocusTrail(focusObject);
                     focusObject.SetActive(false);
-                    Controller.ActionController.AddNewTrailToPool(focusObject);
                 }
             }
         }
@@ -93,7 +92,6 @@ namespace Assets.Scripts.CardModule.CardStates
                     var focusObject = Controller.Card.CancleFocusTrail();
                     Controller.holder.GetComponent<ActorController>().RemoveFocusTrail(focusObject);
                     focusObject.SetActive(false);
-                    Controller.ActionController.AddNewTrailToPool(focusObject);
                 }
             }
 

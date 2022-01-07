@@ -17,36 +17,6 @@ namespace Assets.Scripts.Tools
             prefab = _prefab;
         }
 
-        public int GetIndex(GameObject obj)
-        {
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (obj == list[i])
-                {
-                    return i;
-                }
-            }
-            return 0;
-        }
-        public GameObject GetTarget(out int index)
-        {
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].activeInHierarchy)
-                    continue;
-                else
-                {
-                    index = i;
-                    return list[i];
-                }
-            }
-            index = list.Count;
-            return CreatNewTarget();
-        }
-        public GameObject GetTarget(int index)
-        {
-            return list[index];
-        }
         /// <summary>
         /// 获取对象池中可用的一个对象
         /// </summary>

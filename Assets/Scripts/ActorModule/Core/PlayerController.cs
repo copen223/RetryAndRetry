@@ -137,6 +137,11 @@ public class PlayerController : ActorController
         }
     }
 
+    /// <summary>
+    /// 专注一张卡牌，控制层,自动完成
+    /// </summary>
+    /// <param name="card"></param>
+    /// <param name="dir"></param>
     public void FocusOneCard(Card card,Vector2 dir)
     {
         if (!hand.list.Contains(card))

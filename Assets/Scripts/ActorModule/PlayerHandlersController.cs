@@ -5,6 +5,9 @@ using Assets.Scripts.CardModule;
 
 public class PlayerHandlersController : MonoBehaviour
 {
+    /// <summary>
+    /// 执行者
+    /// </summary>
     public FocusTrailHandler FocusTrailHandler;
 
     public ActorController Actor;

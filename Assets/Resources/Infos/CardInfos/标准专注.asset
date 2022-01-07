@@ -16,3 +16,4 @@ MonoBehaviour:
   Actor: {fileID: 0}
   Distance_X: 0.5
   Distance_Y: 0.75
+  IfSetXYByCollider: 1

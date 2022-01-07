@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.Threading;
 
 namespace Assets.Scripts.ActorModule.ActorStates
 {
@@ -18,6 +19,8 @@ namespace Assets.Scripts.ActorModule.ActorStates
             pathfinderComponent = Controller.GetComponent<PathFinderComponent>();
             pathfinderComponent.SearchPathFrom(gameObject.transform.position);
             rayDrawer = Controller.GetComponent<ActorRayDrawer>();
+
+            UIManager.instance.IfActiveUIInteraction = false;
         }
         public override void StateUpdate()
         {
@@ -75,6 +78,15 @@ namespace Assets.Scripts.ActorModule.ActorStates
             var ui = UIManager.instance.transform.Find("PlayerResource").transform.Find("MovePoint").GetComponent<TextUIController>();
             ui.ChangeText((Controller as PlayerController).MovePoint + "", Color.black);
             rayDrawer.EndDraw();
+
+            DelayUIInteractionActiveAsync();
         }
+
+        private async void DelayUIInteractionActiveAsync()
+        {
+            await Task.Delay(1);
+            UIManager.instance.IfActiveUIInteraction = true;
+        }
+
     }
 }
