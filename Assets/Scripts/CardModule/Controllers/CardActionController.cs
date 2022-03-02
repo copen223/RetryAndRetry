@@ -25,6 +25,7 @@ public class CardActionController : MonoBehaviour
     private List<GameObject> contactObjects = new List<GameObject>();   // 接触的battleTrail
     private List<GameObject> targets = new List<GameObject>();  // 选中的对象
     private List<Combat> combats = new List<Combat>();
+    private List<Card> triggerCards_NoShow = new List<Card>();
 
     [SerializeField]private GameObject FocusTrailPrefab = null;     // 专注轨迹预组
 
@@ -59,6 +60,8 @@ public class CardActionController : MonoBehaviour
 
         AttackTrail trail = action as AttackTrail;  // 获取AttackTrail信息
 
+        targets.Clear();
+
         while (true)
         {
             //---------------每帧重置数据-----------------//
@@ -72,6 +75,7 @@ public class CardActionController : MonoBehaviour
             targets.Clear();
             int backGroudhitNum = 0;
             combats.Clear();
+            triggerCards_NoShow.Clear();
             LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
             //--------------------------------------------//
 
@@ -192,7 +196,7 @@ public class CardActionController : MonoBehaviour
                 }
             }
 
-            foreach(var target in targets)
+            foreach (var target in targets)
             {
                 // 获取每个对象触发的专注卡牌
                 List<Card> focusCards = new List<Card>();
@@ -202,6 +206,11 @@ public class CardActionController : MonoBehaviour
                     if (focusTrail.Actor == target)
                     {
                         focusCards.Add(focusTrail.Card);
+
+                        if (focusTrail.IfShow == false)
+                        {
+                            triggerCards_NoShow.Add(focusTrail.Card);
+                        }
                     }
                 }
 
@@ -213,7 +222,7 @@ public class CardActionController : MonoBehaviour
             //----------------------显示------------------------------//
 
             SetContactPointPos(true);                           // 显示接触点
-            //points = new List<Vector3> { startPos, endPos };
+            ShowTriggerCards(false);                            // 显示触发卡牌
 
             var points2d = trail.GetLinePoints(startPos, endPos);
             points = new List<Vector3>();
@@ -246,6 +255,7 @@ public class CardActionController : MonoBehaviour
                         target.GetComponent<ActorController>().ShowFocusTrailCount(false);
                     }
                     SetContactPointPos(false);                      // 清除标记
+                    UIManager.instance.ActorUI.OnOverShowTriggerCards();    // 清除显示卡牌
                     LineDrawer.instance.FinishAllDrawing(this);     // 清除上一帧的线
                     OnActionOverEvent?.Invoke();    //  结束Action返回消息
                     break;
@@ -261,6 +271,7 @@ public class CardActionController : MonoBehaviour
                     target.GetComponent<ActorController>().ShowFocusTrailCount(false);
                 }
                 SetContactPointPos(false);                      // 清除标记
+                UIManager.instance.ActorUI.OnOverShowTriggerCards();    // 清除显示卡牌
                 LineDrawer.instance.FinishAllDrawing(this);
                 OnActionCancleEvent?.Invoke();    //  结束Action返回消息
                 break;
@@ -349,6 +360,34 @@ public class CardActionController : MonoBehaviour
             var contactGb = contactPool.GetTarget(GameObject.Find("Canvas").transform);
             contactGb.SetActive(active);
             contactGb.transform.position = screenPos;
+        }
+    }
+
+    private void ShowTriggerCards(bool ifIncludeNoShowCard)
+    {
+        UIManager.instance.ActorUI.OnOverShowTriggerCards();
+
+        foreach(var combat in combats)
+        {
+            List<Card> showCards = new List<Card>();
+            if (ifIncludeNoShowCard)
+            {
+                showCards.AddRange(combat.DfdCards);
+            }
+            else
+            {
+                foreach(var card in combat.DfdCards)
+                {
+                    if(!triggerCards_NoShow.Contains(card))
+                    {
+                        showCards.Add(card);
+                    }
+                }
+            }
+
+            bool ifSetLeft = combat.Dfder.transform.position.x - combat.Atker.transform.position.x <= 0;
+
+            UIManager.instance.ActorUI.OnShowTriggerCards(showCards, combat.Dfder, ifSetLeft);
         }
     }
 

@@ -80,9 +80,24 @@ namespace ActorModule.AI
                 attackCard.User = ActionMode.Actor.GetComponent<ActorController>();
                 focusCard = builder2.CreatCardByName(focusCardInfo);
                 focusCard.User = ActionMode.Actor.GetComponent<ActorController>();
+                Actor.GetComponent<EnemyController>().AICards = new List<Card> { attackCard, focusCard };
             }
             StartCoroutine(DoPlanCoroutine());
         }
+
+        public override void SetHandCards()
+        {
+            if (attackCard == null || focusCard == null)
+            {
+                CardBuilder2 builder2 = new CardBuilder2();
+                attackCard = builder2.CreatCardByName(attackCardInfo);
+                attackCard.User = ActionMode.Actor.GetComponent<ActorController>();
+                focusCard = builder2.CreatCardByName(focusCardInfo);
+                focusCard.User = ActionMode.Actor.GetComponent<ActorController>();
+                Actor.GetComponent<EnemyController>().AICards = new List<Card> { attackCard, focusCard };
+            }
+        }
+
 
         private IEnumerator DoPlanCoroutine()
         {

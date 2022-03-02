@@ -6,6 +6,7 @@ using Assets.Scripts.ActorModule.ActorStates;
 using Assets.Scripts.Tools;
 using ActorModule.AI;
 using Assets.Scripts.CardModule;
+using System.Threading.Tasks;
 
 /// <summary>
 /// 人物对象控制器，player和enemy控制器都继承自它，都实现了可交互对象接口
@@ -44,6 +45,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
 
     #region 属性相关
     [Header("属性设置")]
+    public string Name = "Actor";
     public float HealPoint;
     public float HealPoint_Max;
 
@@ -254,6 +256,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         Vector3 textMove = new Vector3(-data.dir.x/2, 1f, 0);
         float time = 1f;
         UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.green, "闪避");
+        UIManager.instance.MessagesConsoler.ConsoleMessage(Name + "<color=green>闪避</color>成功！");
     }
 
     private void OnBlock(DamageData data)
@@ -266,6 +269,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         Vector3 textMove = new Vector3(data.dir.x / 4, 1f, 0);
         float time = 1f;
         UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.blue, "格挡");
+        UIManager.instance.MessagesConsoler.ConsoleMessage(Name + "<color=blue>格挡</color>成功！受到<color=red>" + data.damage + "</color>点伤害");
     }
 
     /// <summary>
@@ -279,6 +283,8 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
             damage = 0;
 
         HealPoint -= damage;
+        if (HealPoint < 0)
+            HealPoint = 0;
 
         // 如果存在格挡，则显示格挡
         if (ifBlock)
@@ -295,19 +301,39 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         float time = 1f;
         UIManager.instance.CreatFloatUIAt(Sprite, textMove, time, Color.red, damage + "");
 
+        UIManager.instance.MessagesConsoler.ConsoleMessage(Name + "受到<color=red>" + data.damage + "</color>点伤害！");
+
         EventInvoke(ActorEvent.OnBehit);
 
         // 死亡
-        if(HealPoint <= 0)
+        if(HealPoint == 0)
         {
-            HealPoint = 0;
-            UIManager.instance.CreatFloatUIAt(Sprite, Vector2.up, time * 2, Color.black, "死亡");
-
-            BattleManager.instance.OnActorDeath(gameObject);
+            OnDeath();
         }
 
         OnAfterInjured(data);
     }
+
+    private async void DelayTimeToDestoryThisGOAsync(float time)
+    {
+        await Task.Delay((int)time * 1000);
+        OnDeathEvent?.Invoke(gameObject);     // 通知UI变化
+        Destroy(gameObject);
+    }
+
+    public void OnDeath()
+    {
+        UIManager.instance.CreatFloatUIAt(Sprite, Vector2.up, 2, Color.black, "重伤");
+
+        UIManager.instance.MessagesConsoler.ConsoleMessage(Name + "<color=red>重伤</color>！");
+
+        BattleManager.instance.OnActorDeath(gameObject);
+
+        DelayTimeToDestoryThisGOAsync(1f);  //  1s后删除该对象
+    }
+
+    public event System.Action<GameObject> OnDeathEvent;
+
 
     /// <summary>
     /// 子类对伤害的不同响应

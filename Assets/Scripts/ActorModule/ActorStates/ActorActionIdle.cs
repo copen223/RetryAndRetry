@@ -24,16 +24,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
             {
                 var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-                //实例化点击事件
-                PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-                //将点击位置的屏幕坐标赋值给点击事件
-                eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
-                List<RaycastResult> results = new List<RaycastResult>();
-                //向点击处发射射线
-                EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-
-                if (results.Count > 0)
+                if (UIManager.instance.IfMouseOnUI)
                     return;
 
 

@@ -83,10 +83,15 @@ public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,I
         SetInteractActive(true);
     }
 
+    /// <summary>
+    /// 是否可交互
+    /// </summary>
+    /// <param name="active"></param>
     public void SetInteractActive(bool active)
     {
         canInteract = active;
     }
+
 
 
     #region 状态切换事件
@@ -98,6 +103,7 @@ public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,I
 
     public void OnDiscard()
     {
+        Debug.Log(card.name + "discard");
         currentState.ChangeStateTo<CardDiscard>();
     }
 

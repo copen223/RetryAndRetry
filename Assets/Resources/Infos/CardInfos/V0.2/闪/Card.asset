@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01fd95731d104b44da9dd2a4c0365f34, type: 3}
+  m_Name: Card
+  m_EditorClassIdentifier: 
+  CardName: "\u95EA"
+  Type: 2
+  UpChangeLevel: 1
+  CardUpChangeType: 0
+  CardElement: 1
+  Effects: 
+  ActionType: 0
+  ActionValues: []

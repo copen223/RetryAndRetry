@@ -68,8 +68,9 @@ namespace Assets.Scripts.CardModule.CardStates
             {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    ReduceActionPoint();
+                    // ReduceActionPoint();
                     ChangeStateTo<CardDiscard>();
+                    AddActionPoint();
                 }
             }
 
@@ -131,7 +132,10 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             Controller.ActionController.OnActionOverEvent -= OnCardActionOver;
             Controller.ActionController.OnActionCancleEvent -= OnCancleMake;
-            ReduceActionPoint();
+            
+            // 如果在槽内就能打出的话
+            // ReduceActionPoint();
+
             ChangeStateTo<CardDiscard>();
         }
 
@@ -148,6 +152,15 @@ namespace Assets.Scripts.CardModule.CardStates
             if(player != null)
             {
                 player.ActionPoint -= 1;
+            }
+        }
+
+        private void AddActionPoint()
+        {
+            var player = Controller.holder.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.ActionPoint += 1;
             }
         }
 

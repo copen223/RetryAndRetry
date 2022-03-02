@@ -10,9 +10,10 @@ using Assets.Scripts.BattleModule.BattleStates;
 public class HandController : MonoBehaviour
 {
     public static HandController instance;
-    [Header("挂载所有卡牌对象")]
+    [Header("挂载所有卡牌对象（实际上在手牌上的）")]
     public List<GameObject> CardObjects_list = new List<GameObject>();
     public List<GameObject> ContainerObjects_list = new List<GameObject>();
+    // public List<GameObject> HiddenCardObjects = new List<GameObject>();
 
     public GameObject CardPrefab;
     public GameObject ContainerPrefab;
@@ -23,6 +24,7 @@ public class HandController : MonoBehaviour
     [Header("UI布局信息")]
     public Vector2 FirstPos;
     public float Spacing;
+    public float FloatingSpacing;
     public Vector2 ContainerOffset;
     public Transform CardsParent;
     public Transform ContainersParent;
@@ -50,6 +52,10 @@ public class HandController : MonoBehaviour
     public List<string> HandNameList = new List<string>();
     public List<string> DeckNameList = new List<string>();
     public List<string> DiscardNameList = new List<string>();
+
+    [Header("其他数值")]
+    public int LastSiblingIndex = 0;
+
 
     void Awake()
     {
@@ -83,12 +89,30 @@ public class HandController : MonoBehaviour
                 StartCoroutine(MoveHand(MoveHandCoroutines[0]));
             }
         }
+
+        //HandNameList.Clear();
+        //foreach (var card in hand.list) { HandNameList.Add(card.name); }
+        //DeckNameList.Clear();
+        //foreach (var card in deck.list) { DeckNameList.Add(card.name); }
+        //DiscardNameList.Clear();
+        //foreach (var card in discard.list) { DiscardNameList.Add(card.name); }
+
     }
 
     #region 卡牌布局相关
     private Vector3 GetCorrectCardPos(int index)
     {
+
         var pos = new Vector3(FirstPos.x + Spacing * index, FirstPos.y, 0);
+
+        if (index >= containers.Count)
+        {// 没有卡槽的情况
+            int newIndex = index - containers.Count;
+            Vector3 basePos = new Vector3(FirstPos.x + Spacing * containers.Count, FirstPos.y, 0);
+
+            pos = basePos + Vector3.right * FloatingSpacing * newIndex;
+        }
+
         return pos;
     }
     private void InitLayout(bool ifInit)
@@ -112,15 +136,7 @@ public class HandController : MonoBehaviour
     {
         deck.TranslateCardTo(deck.GetFirstCard(),hand);
 
-        for(int i=0;i<CardObjects_list.Count;i++)
-        {
-            if(CardObjects_list[i].GetComponent<CardController>().currentState is CardInactive)
-            {
-                CardObjects_list[i].GetComponent<CardController>().Card = hand.list[i];
-                CardObjects_list[i].SendMessage("Active");
-                return;
-            }
-        }
+        ResetHandCards();
     }
 
     private void DiscardCard(Card card)
@@ -129,15 +145,6 @@ public class HandController : MonoBehaviour
         player.DiscardCard(card);
     }
 
-    /// <summary>
-    /// 卡牌被丢弃的时候，从列表的最开始放到列表的最后
-    /// </summary>
-    /// <param name="gb"></param>
-    private void OnCardDisappear(GameObject gb)
-    {
-        CardObjects_list.Remove(gb);
-        CardObjects_list.Add(gb);
-    }
     /// <summary>
     /// 当正在处理某张卡时，你希望冻结其他卡的交互请使用这个方法,记得要解冻
     /// </summary>
@@ -156,15 +163,17 @@ public class HandController : MonoBehaviour
     }
 
     /// <summary>
-    /// 卡牌对象被丢弃时调用该方法告诉hand进行队列的切换
+    /// 卡牌对象被丢弃时调用该方法告诉hand进行队列的移除、手卡数据的改动
     /// </summary>
     /// <param name="gb"></param>
     public void OnCardDiscard(GameObject gb)
     {
         //---------------数据---------------//
         DiscardCard(gb.GetComponent<CardController>().Card);
+
+        //print(gb.GetComponent<CardController>().Card.name + "数据层丢弃");
         //---------------显示---------------//
-        OnCardDisappear(gb);
+        CardObjects_list.Remove(gb);
         InitLayout(false);
     }
     #endregion
@@ -226,9 +235,11 @@ public class HandController : MonoBehaviour
 
             var card = CardObjects_list[i];
 
+            card.transform.SetSiblingIndex(i);
             card.GetComponent<CardController>().Card = hand.list[i];
             card.GetComponent<CardController>().OnReset();
         }
+        LastSiblingIndex = hand.list.Count - 1;
     }
     /// <summary>
     /// 上述函数的另一个声明
@@ -302,15 +313,19 @@ public class HandController : MonoBehaviour
     public void OnPlayerTurnDrawCallBack()
     {
         bool isChanging = false;
+
+        var player = BattleManager.instance.CurActorObject.GetComponent<PlayerController>();
+
         // 先弃掉不在卡槽中的卡
         for (int j = ContainerObjects_list.Count; j < CardObjects_list.Count; j++)
         {
-            // 数据层
-            var player = BattleManager.instance.CurActorObject.GetComponent<PlayerController>();
-            DiscardCard(CardObjects_list[j].GetComponent<CardController>().Card);
             // 显示层
-            CardObjects_list[j].GetComponent<CardController>().OnDiscard();
-            CardObjects_list.RemoveAt(j);                   // 移出显示对象
+            CardObjects_list[j].GetComponent<CardController>().OnDiscard(); // 这里的状态切换也完成了数据层操作
+            
+            // 丢弃后，被丢弃的卡牌对象放到列表最后，所以要j-- 转移到新的对象
+            //Debug.Log(CardObjects_list[j].GetComponent<CardController>().Card.name);
+            //CardObjects_list.RemoveAt(j);                   // 移出显示对象
+
             j--;
         }
 
@@ -361,12 +376,7 @@ public class HandController : MonoBehaviour
             card.GetComponent<CardController>().SetInteractActive(true);
         }
 
-        HandNameList.Clear();
-        foreach (var card in hand.list) { HandNameList.Add(card.name); }
-        DeckNameList.Clear();
-        foreach (var card in deck.list) { DeckNameList.Add(card.name); }
-        DiscardNameList.Clear();
-        foreach (var card in discard.list) { DiscardNameList.Add(card.name); }
+        
 
 
         // 返回信息

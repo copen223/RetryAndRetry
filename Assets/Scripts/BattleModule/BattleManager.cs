@@ -99,13 +99,23 @@ public class BattleManager : MonoBehaviour
     #region 外部通知
     public void OnActorDeath(GameObject actorObject)
     {
+        // 当前的对象
+        var curActor = CurActorObject;
+        
         ActorList.Remove(actorObject);
         ActorQueue.Remove(actorObject);
 
-        if(CurActorObject == actorObject)
+
+        // 如果当前回合对象死亡
+        if(curActor == actorObject)
         {
             CurActorIndex--;
             currentState.ChangeStateTo<BattleTurnEnd>();
+        }
+        // 其他对象死亡
+        else
+        {
+            CurActorIndex = ActorQueue.IndexOf(curActor);
         }
     }
     #endregion

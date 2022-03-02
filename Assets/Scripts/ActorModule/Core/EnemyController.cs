@@ -16,6 +16,8 @@ public class EnemyController : ActorController
     [Header("存放状态机的子物体")]
     public Transform StatesChild = null;
 
+    [Header("可能使用的卡牌")]
+    public List<Card> AICards = new List<Card>();
 
     void Awake()
     {

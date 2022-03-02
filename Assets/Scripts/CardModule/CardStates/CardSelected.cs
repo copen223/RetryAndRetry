@@ -10,9 +10,20 @@ namespace Assets.Scripts.CardModule.CardStates
 {
     class CardSelected: CardState,IPointerExitHandler,IPointerClickHandler
     {
+        public int siblingIndex = 0;
+
         public override void StateStart()
         {
             base.StateStart();
+
+            // 遮挡关系
+            siblingIndex = transform.GetSiblingIndex();
+
+            int lastSiblingIndex = Controller.Hand.GetComponent<HandController>().LastSiblingIndex;
+            
+            transform.SetSiblingIndex(lastSiblingIndex);
+
+
             int index = 0;
             Controller.SpriteObject.SendMessage("StartAnimation", index);
             SetEventProtect();
@@ -25,6 +36,8 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
+            transform.SetSiblingIndex(siblingIndex);
+
             base.StateExit();
         }
 
@@ -47,32 +60,57 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                if (Controller.Card.type == CardUseType.Passive && Controller.Card.CardAction != null)
-                    ChangeStateTo<CardSetFocus>();
+                if (CheckIfCanFocus())
+                {
+                    if (Controller.Card.type == CardUseType.Passive && Controller.Card.CardAction != null)
+                        ChangeStateTo<CardSetFocus>();
+                    else
+                        ChangeStateTo<CardPreFocus>();
+                }
                 else
-                    ChangeStateTo<CardPreFocus>();
+                {
+                    Debug.Log("不在卡槽内，不能使用");
+                }
             }
             if (eventData.button == PointerEventData.InputButton.Left)
             {
                 if (CheckIfCanMake())
                     ChangeStateTo<CardPreMake>();
                 else
-                    Debug.Log("没有足够的行动点数");
+                    Debug.Log("不在卡槽内，不能使用");
             }
         }
 
         private bool CheckIfCanMake()
         {
-            var actor = Controller.holder.GetComponent<ActorController>();
-            if(actor is PlayerController)
+            // 如果打出的条件是在卡槽内？
+            if (Controller.Card.Container != null)
             {
-                PlayerController player = actor as PlayerController;
-                if (player.ActionPoint >= 1)
-                    return true;
-                else
-                    return false;
+                return true;
             }
-            return false;
+            else
+                return false;
+
+            //var actor = Controller.holder.GetComponent<ActorController>();
+            //if(actor is PlayerController)
+            //{
+            //    PlayerController player = actor as PlayerController;
+            //    if (player.ActionPoint >= 1)
+            //        return true;
+            //    else
+            //        return false;
+            //}
+            //return false;
+        }
+
+        private bool CheckIfCanFocus()
+        {
+            if (Controller.Card.Container != null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

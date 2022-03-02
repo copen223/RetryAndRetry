@@ -25,6 +25,9 @@ public class FocusTrailController : MonoBehaviour
 
     //------------------标志参量---------------
     public bool IfOccupied;
+    /// <summary>
+    /// 是否显示
+    /// </summary>
     public bool IfShow;
     /// <summary>
     /// 是否能截断射线，以达到不触发后方轨迹的目的

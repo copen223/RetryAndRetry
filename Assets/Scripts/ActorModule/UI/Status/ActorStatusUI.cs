@@ -31,6 +31,8 @@ public class ActorStatusUI : MonoBehaviour, IDragHandler, IBeginDragHandler
     private void OnEnable()
     {
         Ability.SetActive(true);
+        Card.SetActive(false);
+        Buff.SetActive(false);
     }
 
     public void UpdateValueByActor(ActorController actor)

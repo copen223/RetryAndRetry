@@ -14,6 +14,12 @@ namespace ActorModule.AI
         private ProximityAttackAP attackPlan { get {return transform.Find("ActionPlans").GetComponent<ProximityAttackAP>(); } }
         private ActionPlan curPlan;
 
+        private void Start()
+        {
+            curPlan = SelectPlan();
+            curPlan.SetHandCards();
+        }
+
         #region 行动流程
 
 

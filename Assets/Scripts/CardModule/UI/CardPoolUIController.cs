@@ -34,7 +34,7 @@ public class CardPoolUIController : MonoBehaviour
             case PoolType.UpChange:cardsToShow = player.upChangeDeck.list; break;
         }
 
-        windowCon.ShowCardSelectionWindow(cardsToShow, gameObject, ifSort);
+        windowCon.ShowCardSelectionWindow(cardsToShow, ifSort);
 
 
     }

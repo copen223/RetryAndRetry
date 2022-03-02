@@ -72,6 +72,7 @@ namespace Assets.Scripts.CardModule
             gb.GetComponent<FocusTrailController>().SetOffsetPoints(focusTrailOffsetPoints.ToArray());
             focuser.GetComponent<ActorController>().AddFocusTrail(gb);
             focusCard.SetFocusTrail(gb);
+            focusCard.Situation = CardSituation.Focused;
 
             yield return new WaitForSeconds(focusTime);
 

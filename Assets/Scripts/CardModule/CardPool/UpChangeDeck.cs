@@ -21,27 +21,30 @@ namespace Assets.Scripts.CardModule
         /// </summary>
         /// <param name="card"></param>
         /// <returns></returns>
-        public List<Card> GetWuXingChangeCardList(Card baseCard,WuxingChangeType type)
+        public List<Card> GetWuXingChangeCardList(Card baseCard,WuxingChangeType type,int maxlevelChange)
         {
             List<Card> upChangeCards = new List<Card>();
             int baseLevel = baseCard.cardLevel;
             int targetLevel = -1;
-            if (type == WuxingChangeType.Sheng) targetLevel = baseLevel += 1;
-            else if (type == WuxingChangeType.NiKe) targetLevel = baseLevel -= 1;
+            if (type == WuxingChangeType.Sheng) targetLevel = baseLevel + maxlevelChange;
+            else if (type == WuxingChangeType.NiKe) targetLevel = baseLevel - maxlevelChange;
+
+            if (targetLevel <= 0)
+                targetLevel = 0;
 
 
             foreach(var card in list)
             {
                 if (type == WuxingChangeType.Sheng)
                 {
-                    if (card.cardLevel == targetLevel && CheckWuXingSheng(baseCard, card))
+                    if (card.cardLevel <= targetLevel && card.cardLevel >= baseLevel && CheckWuXingSheng(baseCard, card))
                     {
                         upChangeCards.Add(card);
                     }
                 }
                 else if (type == WuxingChangeType.NiKe)
                 {
-                    if (card.cardLevel == targetLevel && CheckWuxingKe(card, baseCard))
+                    if (card.cardLevel >= targetLevel && card.cardLevel <= baseLevel && CheckWuxingKe(card, baseCard))
                     {
                         upChangeCards.Add(card);
                     }

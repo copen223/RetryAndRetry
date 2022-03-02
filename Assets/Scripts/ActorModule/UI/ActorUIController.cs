@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Tools;
+using Assets.Scripts.CardModule;
 
+/// <summary>
+/// 统一管理所有actor的ui
+/// 包括fitui status
+/// </summary>
 public class ActorUIController : MonoBehaviour
 {
     // 对象池
@@ -26,6 +31,7 @@ public class ActorUIController : MonoBehaviour
 
         //abillityPool = new TargetPool(AbillityUIPrefab);
         statusPool = new TargetPool(StatusUIPrefab);
+        triggerCardsUIPool = new TargetPool(TriggerCardsUIPrefab);
     }
 
     private void Update()
@@ -36,19 +42,20 @@ public class ActorUIController : MonoBehaviour
                 return;
 
             var worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            var hit = Physics2D.Raycast(worldPos, Vector2.zero);
-            if (hit.collider == null)
-                return;
-            //Debug.Log(hit.collider.gameObject);
-
-            //Debug.Log(hit.collider.transform.parent.tag);
-
-            var screenUIPos = Camera.main.WorldToScreenPoint(worldPos += new Vector3(1, 0, 0));
-            if (hit.collider.transform.parent.tag == "Actor")
+            var hits = Physics2D.RaycastAll(worldPos, Vector2.zero);
+            foreach (var hit in hits)
             {
-                var con = hit.collider.transform.parent.GetComponent<ActorController>();
-               // OnShowActorAbillity(screenUIPos, con.Ability);
-                OnShowActorStatus(screenUIPos, con);
+                if (hit.collider == null)
+                    return;
+
+
+                var screenUIPos = Camera.main.WorldToScreenPoint(worldPos += new Vector3(1, 0, 0));
+                if (hit.collider.transform.parent.tag == "Actor")
+                {
+                    var con = hit.collider.transform.parent.GetComponent<ActorController>();
+
+                    OnShowActorStatus(screenUIPos, con);
+                }
             }
         }
     }
@@ -118,7 +125,7 @@ public class ActorUIController : MonoBehaviour
         var controller = gb.GetComponent<ActorStatusUI>();
         gb.SetActive(true);
 
-        controller.UpdateValueByActor(actor);
+        controller.UpdateValueByActor(actor); // 重点
 
         controller.OnCloseWindowEvent += CloseActorStatusUICallBack;
         actorsShowingStatus.Add(actor);
@@ -130,6 +137,51 @@ public class ActorUIController : MonoBehaviour
         who.OnCloseWindowEvent -= CloseActorStatusUICallBack;
         actorsShowingStatus.Remove(who.Actor);
     }
+    #endregion
+
+    #region 该单位触发卡牌
+    public GameObject TriggerCardsUIPrefab;
+    TargetPool triggerCardsUIPool;
+    public Transform TriggerCardsUIParent;
+
+    /// <summary>
+    /// 显示触发的卡牌时每帧调用，每帧第一次显示前先调用Over函数进行清除
+    /// </summary>
+    /// <param name="cards"></param>
+    /// <param name="actor"></param>
+    /// <param name="ifSetLeft"></param>
+    public void OnShowTriggerCards(List<Card> cards,ActorController actor,bool ifSetLeft)
+    {
+        if (cards.Count <= 0)
+            return;
+
+        var gb = triggerCardsUIPool.GetTarget(TriggerCardsUIParent);
+
+        Vector3 dir = Vector3.zero;
+        if (ifSetLeft)
+            dir = Vector3.left;
+        else
+            dir = Vector3.right;
+
+        Vector3 worldPos = actor.Sprite.transform.position + dir * actor.Sprite.GetComponent<Collider2D>().bounds.size.x;
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+
+        gb.transform.position = screenPos;
+
+        var cardSelectionWindowController = gb.GetComponent<CardSelectionWindowController>();
+        cardSelectionWindowController.ShowCardSelectionWindow(cards, false);
+    }
+
+    /// <summary>
+    /// 结束显示触发的卡牌时调用
+    /// </summary>
+    public void OnOverShowTriggerCards()
+    {
+        triggerCardsUIPool.ReSet();
+    }
+
+
+
     #endregion
 
 }

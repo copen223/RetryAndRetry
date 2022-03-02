@@ -20,7 +20,7 @@ namespace Assets.Scripts.CardModule.CardStates
             selectionWindow = Controller.SelectionWindow.GetComponent<CardSelectionWindowController>();
             player = Controller.holder.GetComponent<PlayerController>();
             var upChangeDeck = player.upChangeDeck;
-            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetWuXingChangeCardList(Controller.Card, WuxingChangeType.Sheng),OnFinishSelectCardCallBack, player.gameObject);
+            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetWuXingChangeCardList(Controller.Card, WuxingChangeType.Sheng, player.ActionPoint),OnFinishSelectCardCallBack, player.gameObject);
             
             selectionWindow.CancleUpChangeEvent += OnCancleUpChangeCallBack;
 

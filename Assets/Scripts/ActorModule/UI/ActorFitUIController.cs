@@ -35,6 +35,8 @@ public class ActorFitUIController : MonoBehaviour,ITargetInPool
         UpdateChildPoisitionAndScale();
 
         actor.FocusCountUI_GO = FocusCountUIObject;
+
+        actor.OnDeathEvent += OnActorDeathCallBack;
     }
     /// <summary>
     /// 移除委托调用
@@ -98,6 +100,13 @@ public class ActorFitUIController : MonoBehaviour,ITargetInPool
     public void ActiveUI(GameObject gb)
     {
 
+    }
+
+    // 回调函数
+    private void OnActorDeathCallBack(GameObject actorGO)
+    {
+        actorGO.GetComponent<ActorController>().OnDeathEvent -= OnActorDeathCallBack;
+        gameObject.SetActive(false);    //  设置为false 等待对象池调用
     }
 
 }

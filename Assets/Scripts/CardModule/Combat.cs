@@ -93,7 +93,7 @@ namespace Assets.Scripts.CardModule
             for(int i = 0;i<CombatEffects.Count;i++)    // 效果依次对该Combat进行处理
             {
                 var effect = CombatEffects[i];
-                Debug.Log(effect.ToString() + "-" + i);
+                //Debug.Log(effect.ToString() + "-" + i);
                 if (!effect.IfInactive)
                 {
                     effect.DoEffect(this);
@@ -149,7 +149,11 @@ namespace Assets.Scripts.CardModule
             int targetHit = damageData.hit;
             int randomValue = UnityEngine.Random.Range(1, 12);
 
-            Debug.Log("命中值" + targetHit + "随机值" + randomValue + "闪避值" + dodge);
+            // Debug.Log("命中值" + targetHit + "随机值" + randomValue + "闪避值" + dodge);
+            //"<color=blue>" + target.Name + "</color>" + "受到攻击!" + 
+            if (!(target is EnvirObjectController))
+            UIManager.instance.MessagesConsoler.ConsoleMessage("<color=yellow>" + targetHit + "</color>+" + "<color=yellow>" + randomValue + "</color>" + "对抗" + "<color=green>" + dodge + "</color>");
+
 
             if (targetHit + randomValue < dodge)
             {

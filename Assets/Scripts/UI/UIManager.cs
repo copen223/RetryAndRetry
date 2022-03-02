@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Tools.NewTools;
+using UnityEngine.EventSystems;
 
 public class UIManager : MonoBehaviour
 {
@@ -10,6 +11,44 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public bool IfActiveUIInteraction = true;
 
+    /// <summary>
+    /// 鼠标是否位于UI对象上
+    /// </summary>
+    public bool IfMouseOnUI
+    {
+        get 
+        {
+            PointerEventData eventdata = new PointerEventData(EventSystem.current)
+            {
+                position = new Vector2(Input.mousePosition.x, Input.mousePosition.y)
+            };
+
+            var results = new List<RaycastResult>();
+
+            EventSystem.current.RaycastAll(eventdata, results);
+
+            return results.Count > 0;
+        }
+    }
+
+    /// <summary>
+    /// 鼠标位于的UI对象
+    /// </summary>
+    /// <returns></returns>
+    public List<RaycastResult> UIsHitByMouse()
+    {
+        PointerEventData eventdata = new PointerEventData(EventSystem.current)
+        {
+            position = new Vector2(Input.mousePosition.x, Input.mousePosition.y)
+        };
+
+        var results = new List<RaycastResult>();
+
+        EventSystem.current.RaycastAll(eventdata, results);
+
+        return results;
+    }
+
     // 漂浮UI
     TargetPool floatUIPool;
     public GameObject floatUIPrefab;
@@ -17,6 +56,7 @@ public class UIManager : MonoBehaviour
 
     // 其他链接
     public ActorUIController ActorUI { get { return transform.Find("Actor").GetComponent<ActorUIController>(); } }
+    public BattleMessagesConsoler MessagesConsoler { get { return transform.Find("BattleMessages").GetComponent<BattleMessagesConsoler>(); } }
 
     public static UIManager instance;
     // Start is called before the first frame update

@@ -22,6 +22,11 @@ namespace ActorModule.AI
         }
 
         /// <summary>
+        /// 设置手卡卡牌 以展示行动意图
+        /// </summary>
+        public virtual void SetHandCards() { }
+
+        /// <summary>
         /// 计划执行结束时触发的事件，通常用于通知ActionMode行动完毕可以结束回合了。
         /// </summary>
         public event Action ActionPlanOverEvent;

@@ -20,7 +20,12 @@ public class ActorStatusUI_Card : MonoBehaviour
         if (actor is PlayerController)
         {
             var player = actor as PlayerController;
-            cardSelectionWindow.ShowCardSelectionWindow(player.hand.list, player.gameObject, false);
+            cardSelectionWindow.ShowCardSelectionWindow(player.hand.list, false);
+        }
+        else if(actor is EnemyController)
+        {
+            var enemy = actor as EnemyController;
+            cardSelectionWindow.ShowCardSelectionWindow(enemy.AICards, true);
         }
     }
 }

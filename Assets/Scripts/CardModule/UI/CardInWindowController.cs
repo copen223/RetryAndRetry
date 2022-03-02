@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Assets.Scripts.CardModule;
 using UnityEngine.EventSystems;
 using System;
+using Assets.Scripts.CardModule.CardActions;
 
 public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,IPointerClickHandler
 {
@@ -13,6 +14,8 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     #endregion
 
     public bool IsStatusMode;
+    public bool IsTriggerMode;
+
 
 
     #region 储存信息
@@ -22,6 +25,8 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     /// </summary>
     private GameObject selector;
 
+    private ActorController user;
+
 
     #endregion
 
@@ -29,6 +34,7 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     public void SetCard(Card card)
     {
         this.card = card;
+        this.user = card.User;
         UpdateView();
     }
     public void SetSelector(GameObject selector)
@@ -57,19 +63,39 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     #region 事件
     public void OnPointerEnter(PointerEventData eventData)
     {
-        cardView_go.transform.localScale = new Vector3(1.2f, 1.2f, 1);
+        if(!IsTriggerMode)
+            cardView_go.transform.localScale = new Vector3(1.2f, 1.2f, 1);
+        
+        if(IsStatusMode)
+        {
+            if (card.focusTrail != null)
+            {
+                card.focusTrail.GetComponent<FocusTrailController>().IfShow = true;
+                card.focusTrail.SetActive(true);
+            }
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        cardView_go.transform.localScale = new Vector3(1, 1, 1);
+        if (!IsTriggerMode)
+            cardView_go.transform.localScale = new Vector3(1, 1, 1);
+
+        if (IsStatusMode)
+        {
+            if (card.focusTrail != null)
+            {
+                card.focusTrail.GetComponent<FocusTrailController>().IfShow = false;
+                card.focusTrail.SetActive(false);
+            }
+        }
     }
 
     public event Action<Card> OnCardDoSelectedEvent;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(IsStatusMode)
+        if(IsStatusMode || IsTriggerMode)
         {
             return;
         }

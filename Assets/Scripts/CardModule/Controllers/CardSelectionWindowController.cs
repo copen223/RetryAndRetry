@@ -81,7 +81,7 @@ public class CardSelectionWindowController : MonoBehaviour
     /// </summary>
     /// <param name="cards"></param>
     /// <param name="player"></param>
-    public void ShowCardSelectionWindow(List<Card> cards, GameObject player,bool ifSort)
+    public void ShowCardSelectionWindow(List<Card> cards, bool ifSort)
     {
         gameObject.SetActive(true);
 
@@ -127,7 +127,6 @@ public class CardSelectionWindowController : MonoBehaviour
 
             var con = go.GetComponent<CardInWindowController>();
             con.SetCard(card);
-            con.SetSelector(player);
             con.IsStatusMode = IsStatusMode;
         }
         for (; i < cards_list.Count; i++)

@@ -28,7 +28,8 @@ namespace Assets.Scripts.CardModule
         }
         public Card CreatCardByName(string cardName)
         {
-            string path = "Infos/CardInfos/" + cardName+"/Card";
+            // 在这里改版本号
+            string path = "Infos/CardInfos/" + "V0.1/" + cardName+"/Card";
             var info = Resources.Load<CardInfo2>(path);
             return CreatCardByInfo(info);
         }
