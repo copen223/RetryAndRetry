@@ -6,6 +6,11 @@ using UnityEngine.EventSystems;
 
 public class UIManager : MonoBehaviour
 {
+    //------------链接----------------
+    public PlayerResourceUI UI_PlayerResource;
+
+
+
     /// <summary>
     /// 是否允许UI交互,UI响应时要读取该变量进行判断
     /// </summary>

@@ -31,7 +31,7 @@ public class CardSelectionWindowController : MonoBehaviour
     /// 显示卡牌选择界面
     /// </summary>
     /// <param name="cards"></param>
-    public void ShowCardSelectionWindow(List<Card> cards, Action<Card> finishSelectFunc, GameObject player)
+    public void ShowCardChangeSelectionWindow(List<Card> cards, Action<Card> finishSelectFunc, GameObject player,Card basedCard)
     {
         gameObject.SetActive(true);
         CloseButton.SetActive(false);
@@ -53,8 +53,7 @@ public class CardSelectionWindowController : MonoBehaviour
             }
 
             var con = go.GetComponent<CardInWindowController>();
-            con.SetCard(card);
-            con.SetSelector(player);
+            con.Init(card, basedCard, player);
             con.OnCardDoSelectedEvent += finishSelectFunc;
         }
         for (; i < cards_list.Count; i++)

@@ -22,16 +22,18 @@ namespace Assets.Scripts.CardModule.CardStates
             SetEventProtect();
             TouchOffEffectOnFocus();
         }
+
+        /// <summary>
+        /// 打出阴牌时的点数返还
+        /// </summary>
         public void AddActionPointForPlayer()
         {
             if (Controller.Card.type == CardUseType.Passive)
                 return;
 
-            var actor = Controller.holder.GetComponent<ActorController>();
-            if (actor is PlayerController)
+            if (Controller.holder.TryGetComponent(out PlayerController player))
             {
-                var player = actor as PlayerController;
-                player.ActionPoint += 1;
+                player.ActionPoint += Controller.Card.cardLevel;
             }
         }
 

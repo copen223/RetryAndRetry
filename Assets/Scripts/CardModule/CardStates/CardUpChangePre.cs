@@ -20,7 +20,7 @@ namespace Assets.Scripts.CardModule.CardStates
             selectionWindow = Controller.SelectionWindow.GetComponent<CardSelectionWindowController>();
             player = Controller.holder.GetComponent<PlayerController>();
             var upChangeDeck = player.upChangeDeck;
-            selectionWindow.ShowCardSelectionWindow(upChangeDeck.GetWuXingChangeCardList(Controller.Card, WuxingChangeType.Sheng, player.ActionPoint),OnFinishSelectCardCallBack, player.gameObject);
+            selectionWindow.ShowCardChangeSelectionWindow(upChangeDeck.GetWuXingChangeCardList(Controller.Card, WuxingChangeType.Sheng, player.ActionPoint),OnFinishSelectCardCallBack, player.gameObject,Controller.Card);
             
             selectionWindow.CancleUpChangeEvent += OnCancleUpChangeCallBack;
 
@@ -42,9 +42,9 @@ namespace Assets.Scripts.CardModule.CardStates
         public void OnFinishSelectCardCallBack(Card selectedCard)
         {
             // 数据层变动
+            player.ActionPoint -= (selectedCard.cardLevel - Controller.Card.cardLevel);
             player.upChangeDeck.TranslateCardTo(selectedCard, player.hand, player.hand.GetIndex(Controller.Card));
 
-            player.ActionPoint -= selectedCard.cardLevel;
 
             OnExitFocusEvent?.Invoke();
 

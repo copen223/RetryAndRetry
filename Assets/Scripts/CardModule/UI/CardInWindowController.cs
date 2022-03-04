@@ -12,14 +12,20 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     #region UI对象链接
     [SerializeField] private GameObject cardView_go = null;
     #endregion
-
+    /// <summary>
+    /// 是否用于查看状态
+    /// </summary>
     public bool IsStatusMode;
+    /// <summary>
+    /// 是否点击后存在比例变化
+    /// </summary>
     public bool IsTriggerMode;
 
 
 
     #region 储存信息
     private Card card;
+    private Card basedCard;
     /// <summary>
     /// 正在进行选择的单位
     /// </summary>
@@ -31,6 +37,20 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     #endregion
 
     #region 对外方法
+    /// <summary>
+    /// 显示的卡牌，由哪张卡牌升级，设置者的go
+    /// </summary>
+    /// <param name="card"></param>
+    /// <param name="basedCard"></param>
+    /// <param name="selector"></param>
+    public void Init(Card card,Card basedCard,GameObject selector)
+    {
+        this.card = card;
+        this.user = card.User;
+        this.selector = selector;
+        this.basedCard = basedCard;
+        UpdateView();
+    }
     public void SetCard(Card card)
     {
         this.card = card;
@@ -51,13 +71,7 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     {
         cardView_go.GetComponent<CardViewController>().OnCardChanged(card);
     }
-    private bool IfCanUpChange()
-    {
-        var playerCon = selector.GetComponent<PlayerController>();
-        if (playerCon.ActionPoint >= card.cardLevel)
-            return true;
-        return false;
-    }
+
     #endregion
 
     #region 事件
@@ -74,6 +88,12 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
                 card.focusTrail.SetActive(true);
             }
         }
+        else
+        {
+            int surplusAP = (user as PlayerController).ActionPoint - (card.cardLevel - basedCard.cardLevel);
+            Color color = (card.cardLevel - basedCard.cardLevel) > 0 ? Color.red : Color.green;
+            UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", color);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -89,6 +109,11 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
                 card.focusTrail.SetActive(false);
             }
         }
+        else
+        {
+            int surplusAP = (user as PlayerController).ActionPoint;
+            UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.black);
+        }
     }
 
     public event Action<Card> OnCardDoSelectedEvent;
@@ -102,10 +127,13 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
 
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (IfCanUpChange())
-                OnCardDoSelectedEvent?.Invoke(card);
-            else
-                UIManager.instance.CreatFloatUIAt(selector, Vector2.zero, 2f, Color.black, "行动点数不足！");
+            int surplusAP = (user as PlayerController).ActionPoint;
+            UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.black);
+
+
+            OnCardDoSelectedEvent?.Invoke(card);
+            //else
+            //    UIManager.instance.CreatFloatUIAt(selector, Vector2.zero, 2f, Color.black, "行动点数不足！");
         }
     }
     #endregion

@@ -16,6 +16,9 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             base.StateStart();
 
+            // 显示消耗
+            CheckIfCanMake(false);
+
             // 遮挡关系
             siblingIndex = transform.GetSiblingIndex();
 
@@ -36,6 +39,12 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
+            if (Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
+            {
+                int surplusAP = player.ActionPoint;
+                UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.black);
+            }
+
             transform.SetSiblingIndex(siblingIndex);
 
             base.StateExit();
@@ -67,29 +76,52 @@ namespace Assets.Scripts.CardModule.CardStates
                     else
                         ChangeStateTo<CardPreFocus>();
                 }
-                else
-                {
-                    Debug.Log("不在卡槽内，不能使用");
-                }
             }
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                if (CheckIfCanMake())
+                if (CheckIfCanMake(true))
                     ChangeStateTo<CardPreMake>();
-                else
-                    Debug.Log("不在卡槽内，不能使用");
+                   
             }
         }
 
-        private bool CheckIfCanMake()
+        private bool CheckIfCanMake(bool ifPrint)
         {
             // 如果打出的条件是在卡槽内？
             if (Controller.Card.Container != null)
             {
-                return true;
+                if(Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
+                {
+                    if (Controller.Card.type == CardUseType.Passive)
+                    {
+                        int surplusAP = player.ActionPoint + Controller.Card.cardLevel;
+                        surplusAP = surplusAP > player.ActionPoint_Max ? player.ActionPoint_Max : surplusAP;
+
+                        UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.green);
+
+                        return true;
+                    }
+                    if (player.ActionPoint >= Controller.Card.cardLevel)
+                    {
+                        int surplusAP = player.ActionPoint - Controller.Card.cardLevel;
+                        UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.red);
+
+                        return true;
+                    }
+                    else if (ifPrint)
+                    {
+                        print("点数不足");
+                        UIManager.instance.CreatFloatUIAt(player.gameObject, Vector2.zero, 2f, Color.black, "行动点数不足！");
+                    }
+                }
             }
-            else
-                return false;
+            else if(ifPrint)
+            {
+                print("不在卡槽中");
+                UIManager.instance.CreatFloatUIAt(Controller.Card.User.gameObject, Vector2.zero, 2f, Color.black, "不在卡槽中，不能打出");
+            }
+            
+            return false;
 
             //var actor = Controller.holder.GetComponent<ActorController>();
             //if(actor is PlayerController)
@@ -110,7 +142,11 @@ namespace Assets.Scripts.CardModule.CardStates
                 return true;
             }
             else
+            {
+                print("不在卡槽中，不能专注");
+                UIManager.instance.CreatFloatUIAt(Controller.Card.User.gameObject, Vector2.zero, 2f, Color.black, "不在卡槽中，不能专注");
                 return false;
+            }
         }
     }
 }

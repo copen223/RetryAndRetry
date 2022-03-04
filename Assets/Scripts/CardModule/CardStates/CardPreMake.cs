@@ -64,13 +64,14 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateUpdate()
         {
+            // 阴牌 打出时返还点数
             if (!IsActiveCard)
             {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     // ReduceActionPoint();
                     ChangeStateTo<CardDiscard>();
-                    AddActionPoint();
+                    AddActionPointByLevel();
                 }
             }
 
@@ -132,9 +133,9 @@ namespace Assets.Scripts.CardModule.CardStates
         {
             Controller.ActionController.OnActionOverEvent -= OnCardActionOver;
             Controller.ActionController.OnActionCancleEvent -= OnCancleMake;
-            
+
             // 如果在槽内就能打出的话
-            // ReduceActionPoint();
+            ReduceActionPointByLevel();
 
             ChangeStateTo<CardDiscard>();
         }
@@ -146,21 +147,19 @@ namespace Assets.Scripts.CardModule.CardStates
             effectIndex += 1;
         }
 
-        private void ReduceActionPoint()
+        private void ReduceActionPointByLevel()
         {
-            var player = Controller.holder.GetComponent<PlayerController>();
-            if(player != null)
+            if(Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
             {
-                player.ActionPoint -= 1;
+                player.ActionPoint -= Controller.Card.cardLevel;
             }
         }
 
-        private void AddActionPoint()
+        private void AddActionPointByLevel()
         {
-            var player = Controller.holder.GetComponent<PlayerController>();
-            if (player != null)
+            if (Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
             {
-                player.ActionPoint += 1;
+                player.ActionPoint += Controller.Card.cardLevel;
             }
         }
 
