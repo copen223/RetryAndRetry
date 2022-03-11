@@ -27,7 +27,7 @@ public class ActorUIController : MonoBehaviour
     {
         fitsPool = new TargetPool(FitUIPrefab);
 
-        BattleManager.instance.AddEventObserver(BattleManager.BattleEvent.ActorQueueCountChange, OnActorChanged);   // 添加监听
+        BattleManager.instance.ActorQueueChangeEvent += OnActorChanged;
 
         //abillityPool = new TargetPool(AbillityUIPrefab);
         statusPool = new TargetPool(StatusUIPrefab);

@@ -7,6 +7,12 @@ public class DrawButtonController : MonoBehaviour
     public GameObject Hand;
     public void Draw()
     {
-        Hand.SendMessage("DrawCard");
+        HandController.instance.DrawCard();
     }
+
+    public void Return()
+    {
+        HandController.instance.ReturnCard();
+    }
+
 }

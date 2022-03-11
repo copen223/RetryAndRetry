@@ -8,6 +8,11 @@ using Assets.Scripts.Tools;
 
 public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,IPointerExitHandler
 {
+    #region Debug
+    public GameObject Container;
+    #endregion
+    
+    
     public bool ifMouseSelectThis = false;
 
     [Header("链接")]
@@ -60,6 +65,20 @@ public class CardController : MonoBehaviour,ITargetInPool,IPointerEnterHandler,I
     private void Update()
     {
         currentState.StateUpdate();
+
+        // debug内容
+        if(card != null)
+        {
+            foreach(var container in HandController.instance.ContainerObjects_list)
+            {
+                if(container.GetComponent<ContainerController>().Container == card.Container)
+                {
+                    Container = container;
+                }
+            }
+        }    
+
+
     }
 
     //---------------------事件--------------------//

@@ -132,9 +132,18 @@ public class HandController : MonoBehaviour
     #endregion
 
     #region 卡牌行为例如抽卡,还有冻结方法
+    // UnityEvent触发
     public void DrawCard()
     {
         deck.TranslateCardTo(deck.GetFirstCard(),hand);
+
+        ResetHandCards();
+    }
+
+    // UnityEvent触发
+    public void ReturnCard()
+    {
+        discard.RandomReturnCardToHand(hand);
 
         ResetHandCards();
     }

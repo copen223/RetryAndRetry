@@ -30,6 +30,8 @@ public class BuffController : MonoBehaviour
         var newBuff = Instantiate(buffPrefab,buffParent);
         newBuff.controller = this;
         newBuff.Target = transform.parent.GetComponent<ActorController>();
+        newBuff.Init();
+
         buffs.Add(newBuff);
 
         if (newBuff.ActiveType == BuffActiveType.Sustainable)
@@ -47,6 +49,8 @@ public class BuffController : MonoBehaviour
         var newBuff = Instantiate(buffPrefab, buffParent);
         newBuff.controller = this;
         newBuff.Target = transform.parent.GetComponent<ActorController>();
+        newBuff.Init();
+
         buffs.Add(newBuff);
 
         if (newBuff.DurationType == BuffDurationType.Focus)
@@ -103,12 +107,16 @@ public class BuffController : MonoBehaviour
 
 
     /// <summary>
+    /// 触发buff1
     /// 该单位回合开始时调用，触发回合生效型buff，持续回合数-1
     /// </summary>
     public void OnTurnStart()
     {
         for(int i =0;i<buffs.Count;i++)
         {
+            if (!buffs[i].IfAcitve)
+                continue;
+
             if (buffs[i].ActiveType == BuffActiveType.Turn)
                 buffs[i].LauchBuff();
 
@@ -118,6 +126,7 @@ public class BuffController : MonoBehaviour
     }
 
     /// <summary>
+    /// 触发buff2
     /// 按照时点buffTriggerType进行buff触发
     /// </summary>
     /// <param name="buffTriggerType"></param>
@@ -126,6 +135,9 @@ public class BuffController : MonoBehaviour
     {
         foreach(var buff in buffs)
         {
+            if (!buff.IfAcitve)
+                return;
+
             if(buff.TriggerType == buffTriggerType)
             {
                 buff.CheckAndTouchOffBuff(eventArgs);

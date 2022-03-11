@@ -17,6 +17,9 @@ public class ActorStatusUI_Buff : MonoBehaviour
         ClearBuffUIs();
         foreach (var buff in buffCon.buffs)
         {
+            if (!buff.IfAcitve)
+                continue;
+
             var go = Instantiate(buffUIPrefab,buffUIParent);
             buffUIs.Add(go);
 

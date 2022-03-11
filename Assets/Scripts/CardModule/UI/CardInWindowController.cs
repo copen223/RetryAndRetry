@@ -13,13 +13,17 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
     [SerializeField] private GameObject cardView_go = null;
     #endregion
     /// <summary>
-    /// 是否用于查看状态
+    /// 是否用于Status面板
     /// </summary>
     public bool IsStatusMode;
     /// <summary>
     /// 是否点击后存在比例变化
     /// </summary>
     public bool IsTriggerMode;
+    /// <summary>
+    /// 是否点击后拥有反馈
+    /// </summary>
+    public bool IfCallBackMode;
 
 
 
@@ -80,7 +84,8 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
         if(!IsTriggerMode)
             cardView_go.transform.localScale = new Vector3(1.2f, 1.2f, 1);
         
-        if(IsStatusMode)
+
+        if (IsStatusMode)
         {
             if (card.focusTrail != null)
             {
@@ -88,12 +93,14 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
                 card.focusTrail.SetActive(true);
             }
         }
-        else
+
+        if(IfCallBackMode)
         {
             int surplusAP = (user as PlayerController).ActionPoint - (card.cardLevel - basedCard.cardLevel);
             Color color = (card.cardLevel - basedCard.cardLevel) > 0 ? Color.red : Color.green;
             UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", color);
         }
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -109,7 +116,8 @@ public class CardInWindowController : MonoBehaviour, IPointerEnterHandler, IPoin
                 card.focusTrail.SetActive(false);
             }
         }
-        else
+
+        if(IfCallBackMode)
         {
             int surplusAP = (user as PlayerController).ActionPoint;
             UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.black);

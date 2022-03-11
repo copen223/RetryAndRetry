@@ -45,9 +45,10 @@ namespace Assets.Scripts.CardModule
 
 
             //-------------------计算位置和点集------------------
+            var actor = focuser.GetComponent<ActorController>();
 
             FocusTrail trail = focusCard.CardAction as FocusTrail;
-            trail.Actor = focuser.GetComponent<ActorController>();
+            trail.Actor = actor;
 
             List<Vector3> focusTrailOffsetPoints = trail.GetLineOffsetPoints(focusWorldDir);
             List<Vector3> focusTrailWorldPoints = new List<Vector3>();
@@ -71,6 +72,7 @@ namespace Assets.Scripts.CardModule
             Vector2 scale_x = focuser.transform.localScale;
             gb.GetComponent<FocusTrailController>().SetOffsetPoints(focusTrailOffsetPoints.ToArray());
             focuser.GetComponent<ActorController>().AddFocusTrail(gb);
+            
             focusCard.SetFocusTrail(gb);
             focusCard.Situation = CardSituation.Focused;
 

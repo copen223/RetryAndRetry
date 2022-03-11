@@ -40,6 +40,13 @@ namespace Assets.Scripts.BufferModule
         private Card linkedCard;
 
 
+        public bool IfAcitve { private set; get; }
+
+        public void Init()
+        {
+                IfAcitve = true;
+        }
+
 
         /// <summary>
         /// 对target对象启用该buff
@@ -50,7 +57,7 @@ namespace Assets.Scripts.BufferModule
 
         }
         /// <summary>
-        /// Buff结束时调用，通常用于永续buff将影响清除
+        /// Buff结束时调用，通常用于 永续buff将影响清除
         /// </summary>
         protected event System.Action OnBuffEndEvent;
 
@@ -73,13 +80,19 @@ namespace Assets.Scripts.BufferModule
         }
 
         /// <summary>
-        /// 作为绑定卡牌取消专注后的回调函数
+        /// 作为绑定卡牌取消专注后的回调函数,同时意味着该BUFF清除
         /// </summary>
         private void CancleLinkCallback()
         {
             linkedCard.OnCancleFocusEvent -= CancleLinkCallback;
+            linkedCard.OnContainerChangeEvent -= CardContainerChangeCallback;
             FinishThisBuff();
 
+        }
+
+        private void CardContainerChangeCallback(bool fromNull2Exist)
+        {
+            IfAcitve = fromNull2Exist;
         }
 
         /// <summary>
@@ -89,6 +102,11 @@ namespace Assets.Scripts.BufferModule
         {
             card.OnCancleFocusEvent += CancleLinkCallback;
             linkedCard = card;
+
+            if (card.IfInContainer)
+                IfAcitve = true;
+            else
+                IfAcitve = false;
         }
 
         /// <summary>

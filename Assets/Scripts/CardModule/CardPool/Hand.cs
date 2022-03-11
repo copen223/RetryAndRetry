@@ -44,6 +44,27 @@ namespace Assets.Scripts.CardModule
             else
                 card.Container = null;
         }
+
+        public override void PushCard(Card card)
+        {
+            if (card == null)
+                return;
+
+            base.PushCard(card);
+
+            for(int i = 0; i < list.Count; i++)
+            {
+                var cur = list[i];
+                if (i < Containers.Count)
+                {
+                    cur.Container = Containers[i];
+                }
+                else
+                    cur.Container = null;
+            }
+        }
+
+
         /// <summary>
         /// 外部应用translate！
         /// </summary>

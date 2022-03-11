@@ -33,6 +33,18 @@ namespace Assets.Scripts.CardModule
             card.User = Holder; // 更新使用者
         }
 
+        /// <summary>
+        /// 压入卡牌
+        /// </summary>
+        /// <param name="card"></param>
+        public virtual void PushCard(Card card)
+        {
+            if (card.ifDisapear)
+                return;
+            list.Insert(0, card);
+            card.User = Holder;
+        }
+
         public virtual void RemoveCard(Card card)
         {
             list.Remove(card);

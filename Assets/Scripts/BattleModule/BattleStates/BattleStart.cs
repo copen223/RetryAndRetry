@@ -14,7 +14,9 @@ namespace Assets.Scripts.BattleModule.BattleStates
             // 排列对象
             Manager.ActorQueue = new List<GameObject>(Manager.ActorList.ToArray());
             Manager.ActorQueue.Sort(new ActorSortByAdvantage());
-            Manager.EventInvokeByState(BattleManager.BattleEvent.ActorQueueCountChange);
+
+            Manager.InvokeActorQueueChangeEventByState();
+
             Manager.CurActorIndex = 0;
             // 洗牌
             foreach(var actor in Manager.ActorList)

@@ -19,6 +19,22 @@ namespace Assets.Scripts.CardModule
             else
                 base.TranslateCardTo(card, pool);
         }
+
+        /// <summary>
+        /// 随机将一张卡牌以push方式返还手卡
+        /// </summary>
+        /// <param name="hand"></param>
+        public void RandomReturnCardToHand(CardPool hand)
+        {
+            Random random = new Random();
+            int cardIndex = random.Next(0, list.Count - 1);
+
+            Card card = list[cardIndex];
+            list.Remove(card);
+
+            hand.PushCard(card);
+        }
+        
         public override void AddCard(Card card)
         {
             base.AddCard(card);

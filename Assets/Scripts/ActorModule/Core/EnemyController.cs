@@ -52,7 +52,7 @@ public class EnemyController : ActorController
         base.OnTurnStart();
         currentState.ChangeStateTo<ActorActionIdle>();
         RemoveAllFocusTrail();  // 清除所有专注
-        MovePoint = MaxMovePoint;   // 恢复点数
+        // MovePoint = MaxMovePoint;   // 恢复点数
     }
 
     public override void OnTurnEnd()

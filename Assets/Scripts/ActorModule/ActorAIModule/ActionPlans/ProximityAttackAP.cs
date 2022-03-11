@@ -103,6 +103,7 @@ namespace ActorModule.AI
         {
             //------------进行专注--------------
             FocusTrailHandler focusHandler = AI.GetComponent<FocusTrailHandler>();
+            focusCard.Container = new Container(CardUseType.Passive);
             focusHandler.SetFocusTrailHandler(Actor, focusCard, focusDir1);
             yield return focusHandler.StartHandleFocusTrail();
 

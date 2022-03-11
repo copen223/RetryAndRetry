@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.BattleModule.BattleStates;
+using System;
 
 public class BattleManager : MonoBehaviour
 {
@@ -65,7 +66,6 @@ public class BattleManager : MonoBehaviour
     public event VoidHandle EventObserver_TurnEnd;
     public event VoidHandle EventObserver_ComputerTurnStart;
     public event VoidHandle EventObserver_ComputerActionStart;
-    public event VoidHandle EventObserver_ActorQueueCountChange;
 
     public void AddEventObserver(BattleEvent battleEvent,VoidHandle handle)
     {
@@ -77,7 +77,6 @@ public class BattleManager : MonoBehaviour
             case BattleEvent.TurnEnd: EventObserver_TurnEnd += handle; break;
             case BattleEvent.ComputerTurnStart: EventObserver_ComputerTurnStart += handle; break;
             case BattleEvent.ComputerActionStart: EventObserver_ComputerActionStart += handle; break;
-            case BattleEvent.ActorQueueCountChange:EventObserver_ActorQueueCountChange += handle;break;
         }        
     }
 
@@ -91,10 +90,13 @@ public class BattleManager : MonoBehaviour
             case BattleEvent.TurnEnd: EventObserver_TurnEnd?.Invoke(); break;
             case BattleEvent.ComputerTurnStart: EventObserver_ComputerTurnStart?.Invoke(); break;
             case BattleEvent.ComputerActionStart: EventObserver_ComputerActionStart?.Invoke(); break;
-            case BattleEvent.ActorQueueCountChange: EventObserver_ActorQueueCountChange?.Invoke(); break;
         }
 
     }
+
+    public event Action ActorQueueChangeEvent;
+    public void InvokeActorQueueChangeEventByState() { ActorQueueChangeEvent?.Invoke(); }
+
 
     #region 外部通知
     public void OnActorDeath(GameObject actorObject)

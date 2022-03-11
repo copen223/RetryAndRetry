@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.BufferModule;
+using System.Linq;
 
 public class BuffUIController : MonoBehaviour
 {
@@ -15,7 +16,11 @@ public class BuffUIController : MonoBehaviour
     private List<BuffUI> buffUIs = new List<BuffUI>();
     public void UpdateBuffUIs(BuffController buffcon)
     {
-        List<Buff> buffs = buffcon.buffs;
+        List<Buff> buffs = new List<Buff>(
+                           from buff in buffcon.buffs
+                           where buff.IfAcitve
+                           select buff
+                           );
 
         for(int i = 0;i<buffs.Count;i++)
         {

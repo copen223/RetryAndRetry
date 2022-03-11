@@ -29,15 +29,23 @@ public class FocusTrailController : MonoBehaviour
     /// 是否显示
     /// </summary>
     public bool IfShow;
+    
     /// <summary>
     /// 是否能截断射线，以达到不触发后方轨迹的目的
     /// </summary>
+    
     public bool CanCutOff;
+    
+    /// <summary>
+    /// 是否有效
+    /// </summary>
+    public bool IfActive;
 
     private void Awake()
     {
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         collider2d = gameObject.GetComponent<PolygonCollider2D>();
+        IfActive = true;
 
         gameObject.SetActive(true);
 
@@ -58,6 +66,17 @@ public class FocusTrailController : MonoBehaviour
         if(lineOffsetPoints.Length > 1)
         {
             UpdateLineViewByPos();
+        }
+
+        if(!IfActive)
+        {
+            if (collider2d.isActiveAndEnabled)
+                collider2d.enabled = false;
+        }
+        else
+        {
+            if (!collider2d.isActiveAndEnabled)
+                collider2d.enabled = true;
         }
     }
 

@@ -393,6 +393,7 @@ public class ActorController : MonoBehaviour,ICanBeHitObject
         else if(con is EnemyController)
         {
             var enemy = con as EnemyController;
+            weaknessCard.Container = new Container(CardUseType.Active); //  确保在卡槽中
             enemy.FocusOneCard(weaknessCard, thisDir);
         }
     }

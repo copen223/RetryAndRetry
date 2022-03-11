@@ -55,6 +55,7 @@ public class CardSelectionWindowController : MonoBehaviour
             var con = go.GetComponent<CardInWindowController>();
             con.Init(card, basedCard, player);
             con.OnCardDoSelectedEvent += finishSelectFunc;
+            con.IfCallBackMode = true;
         }
         for (; i < cards_list.Count; i++)
         {
@@ -127,6 +128,7 @@ public class CardSelectionWindowController : MonoBehaviour
             var con = go.GetComponent<CardInWindowController>();
             con.SetCard(card);
             con.IsStatusMode = IsStatusMode;
+            con.IfCallBackMode = false;
         }
         for (; i < cards_list.Count; i++)
         {

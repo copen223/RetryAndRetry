@@ -29,6 +29,7 @@ namespace Assets.Scripts.CardModule
             Situation = CardSituation.Idle;
             upChangeType = CardUpChangeType.Normal;
             cardLevel = 0;
+            IfInContainer = true;
         }
         public Card(string _name, CardUseType _type, List<CardEffect> _effects,CardAction action)
         {
@@ -39,6 +40,7 @@ namespace Assets.Scripts.CardModule
             upChangeType = CardUpChangeType.Normal;
             cardLevel = 0;
             CardAction = action;
+            IfInContainer = true;
         }
 
         public Card(string _name, CardUseType _type, List<CardEffect> _effects, CardAction action,int upChangeLevel)
@@ -50,6 +52,7 @@ namespace Assets.Scripts.CardModule
             upChangeType = CardUpChangeType.Normal;
             cardLevel = upChangeLevel;
             CardAction = action;
+            IfInContainer = true;
         }
 
 
@@ -72,6 +75,9 @@ namespace Assets.Scripts.CardModule
         private CardSituation situation;
 
         #region 事件
+        /// <summary>
+        /// 卡牌取消专注时的事件，丢弃也会触发专注取消
+        /// </summary>
         public Action OnCancleFocusEvent;
         #endregion
 
@@ -79,7 +85,7 @@ namespace Assets.Scripts.CardModule
 
 
 
-        public GameObject focusTrail;       // 卡牌专注轨迹，用途只有判断该卡牌是否有专注轨迹 不影响使用
+        public GameObject focusTrail;       // 卡牌专注轨迹对象
         public CardUpChangeType upChangeType;
         public int cardLevel;
         public CardElement cardElement;
@@ -89,6 +95,30 @@ namespace Assets.Scripts.CardModule
         /// 丢弃后消失
         /// </summary>
         public bool ifDisapear = false;
+
+        /// <summary>
+        /// 卡牌是否位于卡槽中
+        /// </summary>
+        public bool IfInContainer { 
+            private set
+            {
+                if (ifInContainer != value)
+                {
+                    ifInContainer = value;
+                    OnContainerChangeEvent?.Invoke(value);
+                }
+            } 
+            get 
+            {
+                return ifInContainer;
+            }
+        }
+        private bool ifInContainer;
+
+        /// <summary>
+        /// ture代表从无到有，false代表从有到无
+        /// </summary>
+        public event Action<bool> OnContainerChangeEvent;
 
         /// <summary>
         /// 仅仅显示该卡牌的专注轨迹，没有实际作用
@@ -101,6 +131,17 @@ namespace Assets.Scripts.CardModule
         }
 
         /// <summary>
+        /// 是否能通过专注轨迹触发该卡牌,即专注轨迹是否生效
+        /// 例如，卡槽外的专注卡牌的专注轨迹不会生效
+        /// </summary>
+        /// <param name="ifActive"></param>
+        public void ActiveFocusTrail(bool ifActive)
+        {
+            if (focusTrail != null)
+                focusTrail.GetComponent<FocusTrailController>().IfActive = ifActive;
+        }
+
+        /// <summary>
         /// 设置专注轨迹，同时把专注轨迹的卡牌设置为该卡牌
         /// 即链接彼此
         /// </summary>
@@ -110,6 +151,16 @@ namespace Assets.Scripts.CardModule
             focusTrail = gb;
             gb.GetComponent<FocusTrailController>().Card = this;
             gb.GetComponent<FocusTrailController>().CanCutOff = (CardAction as FocusTrail).CanCutOff;
+
+
+            if (ifInContainer)
+            {
+                ActiveFocusTrail(true);
+            }
+            else
+            {
+                ActiveFocusTrail(false);
+            }
         }
         /// <summary>
         /// 取消专注轨迹，即把两者的链接全部设为null,解绑
@@ -127,7 +178,30 @@ namespace Assets.Scripts.CardModule
         public List<CardEffect> effects;    // 卡牌效果列表
         public CardAction CardAction;       // 卡牌如何使用，是射线选择，还是直接选择目标，还是自动完成
         //----------卡槽-------------
-        public Container Container { get { return container; } set { container = value;if(value!=null && value.Card!=this)value.Card = this; } }
+        public Container Container 
+        { 
+            get
+            { 
+                return container; 
+            } 
+            set 
+            { 
+                container = value;
+                if(value != null && value.Card!=this)
+                    value.Card = this;
+                // 卡槽变化，根据是否在卡槽中进行专注轨迹的激活
+                if(value != null)
+                {
+                    IfInContainer = true;
+                    ActiveFocusTrail(true);
+                }
+                else
+                {
+                    IfInContainer = false;
+                    ActiveFocusTrail(false);
+                }
+            }
+        }
         private Container container;
         //---------------------------
         public virtual string GetCardDescription() 
