@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
 using UnityEngine;
 
-namespace Assets.Scripts.BufferModule.Buffs
+namespace BufferModule.Buffs
 {
     /// <summary>
     /// 改变hit人物的hit属性
@@ -23,7 +22,7 @@ namespace Assets.Scripts.BufferModule.Buffs
 
         private void OnFinish()
         {
-            Target.OnInjured(new ActorModule.DamageData(HpChangeValue, Vector2.zero, 99));
+            Target.OnInjured(new DamageData(HpChangeValue, Vector2.zero, 99));
             OnBuffEndEvent -= OnFinish;
         }
 

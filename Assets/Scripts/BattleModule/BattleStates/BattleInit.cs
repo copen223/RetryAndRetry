@@ -1,18 +1,15 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ActorModule.Core;
 using UnityEngine;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     // 战斗初始化
     class BattleInit:BattleState
     {
         [Header("预设战斗人员列表")]
-        public List<GameObject> ActorsInBattle_list = new List<GameObject>();
+        public List<ActorController> ActorsInBattle_list = new List<ActorController>();
 
         public override void StateStart()
         {

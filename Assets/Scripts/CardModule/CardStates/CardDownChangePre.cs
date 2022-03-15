@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ActorModule.Core;
+using CardModule.CardPool;
+using CardModule.Controllers;
+using UI.ActionTip;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     public class CardDownChangePre : CardState
     {
@@ -13,9 +13,14 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public event Action OnExitFocusEvent;
 
+        private ActionTipsUI actionTipsUI = null;
+        
         public override void StateStart()
         {
             base.StateStart();
+            
+            actionTipsUI.SetActionTip(ActionTipType.Right,"取消",true);
+            
             // 呼出选择界面
             selectionWindow = Controller.SelectionWindow.GetComponent<CardSelectionWindowController>();
             player = Controller.holder.GetComponent<PlayerController>();
@@ -55,6 +60,9 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
+            
+            actionTipsUI.SetAllActionTipsActive(false);
+            
             selectionWindow.CancleUpChangeEvent -= OnCancleUpChangeCallBack;
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);
             selectionWindow.EndWindowShow(OnFinishSelectCardCallBack);

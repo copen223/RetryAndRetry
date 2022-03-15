@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ActorModule.Core;
 using UnityEngine;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     class BattleStart : BattleState
     {
         public override void StateStart()
         {
             // 排列对象
-            Manager.ActorQueue = new List<GameObject>(Manager.ActorList.ToArray());
+            Manager.ActorQueue = new List<ActorController>(Manager.ActorList.ToArray());
             Manager.ActorQueue.Sort(new ActorSortByAdvantage());
 
             Manager.InvokeActorQueueChangeEventByState();
@@ -41,13 +38,13 @@ namespace Assets.Scripts.BattleModule.BattleStates
         }
 
         // 排序方法
-        private class ActorSortByAdvantage : IComparer<GameObject>
+        private class ActorSortByAdvantage : IComparer<ActorController>
         {
-            public int Compare(GameObject x, GameObject y)
+            public int Compare(ActorController x, ActorController y)
             {
-                if (x.GetComponent<ActorController>().advantage > y.GetComponent<ActorController>().advantage)
+                if (x.advantage > y.advantage)
                     return -1;
-                else if (x.GetComponent<ActorController>().advantage == y.GetComponent<ActorController>().advantage)
+                else if (x.advantage == y.advantage)
                     return 0;
                 else
                     return 1;

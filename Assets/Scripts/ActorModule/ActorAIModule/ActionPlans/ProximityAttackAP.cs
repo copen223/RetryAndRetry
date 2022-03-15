@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Assets.Scripts.CardModule;
-using Assets.Scripts.CardModule.CardEffects;
 using System.Linq;
-using Assets.Scripts.SpaceModule.PathfinderModule;
-using Assets.Scripts.ActorModule.ActorStates;
-using Assets.Scripts.CardModule.CardActions;
-using Assets.Scripts.Physics;
+using ActorModule.ActorStates;
+using ActorModule.Core;
+using BattleModule;
+using CardModule;
+using CardModule.CardActions;
+using Physics;
+using SpaceModule.PathfinderModule;
+using UnityEngine;
 
-namespace ActorModule.AI
+namespace ActorModule.ActorAIModule.ActionPlans
 {
     /// <summary>
     /// 就近攻击行动方案
@@ -227,10 +228,13 @@ namespace ActorModule.AI
         private void UpdateHeatLevels()
         {
             heatLevelOfEnemies_dic.Clear();
-            foreach(var go in BattleManager.instance.ActorQueue)
+            foreach(var actor in BattleManager.instance.ActorQueue)
             {
-                if(go.GetComponent<ActorController>().group.type != Actor.GetComponent<ActorController>().group.type)
-                    heatLevelOfEnemies_dic.Add(go, UpdateHeatLevel(go));
+                if(actor.group.type != Actor.GetComponent<ActorController>().group.type)
+                {
+                    var o = actor.gameObject;
+                    heatLevelOfEnemies_dic.Add(o, UpdateHeatLevel(o));
+                }
             }
         }
 

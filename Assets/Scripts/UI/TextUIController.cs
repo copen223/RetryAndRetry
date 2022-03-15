@@ -1,34 +1,35 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class TextUIController : MonoBehaviour
+namespace UI
 {
-    // 改变该值以改变文本值
-    public int TextValue { set { ChangeValue(value); } }
-
-    private Text text;
-
-    // Start is called before the first frame update
-    void Start()
+    public class TextUIController : MonoBehaviour
     {
-        text = transform.Find("Text").GetComponent<Text>();
-    }
+        // 改变该值以改变文本值
+        public int TextValue { set { ChangeValue(value); } }
 
-    // Update is called once per frame
-    void Update()
-    {
+        private Text text;
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            text = transform.Find("Text").GetComponent<Text>();
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
         
-    }
+        }
 
-    public void ChangeValue(int val)
-    {
-        text.text = val + "";
-    }
+        public void ChangeValue(int val)
+        {
+            text.text = val + "";
+        }
 
-    public void ChangeText(string txt,Color color)
-    {
-        text.text = txt; text.color = color;
+        public void ChangeText(string txt,Color color)
+        {
+            text.text = txt; text.color = color;
+        }
     }
 }

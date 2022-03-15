@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using Assets.Scripts.CardModule.CardActions;
-using Assets.Scripts.Tools;
 using System.Collections;
-using Assets.Scripts.Physics;
+using System.Collections.Generic;
+using ActorModule.Core;
+using CardModule.CardActions;
+using CardModule.Controllers;
+using OtherControllers;
+using Physics;
+using Tools;
+using UnityEngine;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule
 {
     public class CombatHandler:MonoBehaviour
     {

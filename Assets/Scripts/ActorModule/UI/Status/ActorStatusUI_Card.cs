@@ -1,31 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
+using CardModule.Controllers;
 using UnityEngine;
-using Assets.Scripts.CardModule;
-using System;
 
-public class ActorStatusUI_Card : MonoBehaviour
+namespace ActorModule.UI.Status
 {
-    [SerializeField]
-    private CardSelectionWindowController cardSelectionWindow = null;
-
-    /// <summary>
-    /// 设置该UI
-    /// </summary>
-    /// <param name="cards"></param>
-    /// <param name="finishSelectFunc"></param>
-    /// <param name="player"></param>
-    public void UpdateThisUI(ActorController actor)
+    public class ActorStatusUI_Card : MonoBehaviour
     {
-        if (actor is PlayerController)
+        [SerializeField]
+        private CardSelectionWindowController cardSelectionWindow = null;
+
+        /// <summary>
+        /// 设置该UI
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="finishSelectFunc"></param>
+        /// <param name="player"></param>
+        public void UpdateThisUI(ActorController actor)
         {
-            var player = actor as PlayerController;
-            cardSelectionWindow.ShowCardSelectionWindow(player.hand.list, false);
-        }
-        else if(actor is EnemyController)
-        {
-            var enemy = actor as EnemyController;
-            cardSelectionWindow.ShowCardSelectionWindow(enemy.AICards, true);
+            if (actor is PlayerController)
+            {
+                var player = actor as PlayerController;
+                cardSelectionWindow.ShowCardSelectionWindow(player.hand.list, false);
+            }
+            else if(actor is EnemyController)
+            {
+                var enemy = actor as EnemyController;
+                cardSelectionWindow.ShowCardSelectionWindow(enemy.AICards, true);
+            }
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ActorModule.Core;
+using CardModule;
+using CardModule.CardPool;
 using UnityEngine;
-using Assets.Scripts.CardModule;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     // 战斗准备阶段 主要是用卡牌构造器从对象的卡组信息进行卡组实例的初始化
     public class BattleReady:BattleState
@@ -32,7 +30,7 @@ namespace Assets.Scripts.BattleModule.BattleStates
 
         private void AddActorIntoBattle(GameObject gb)
         {
-            Manager.ActorList.Add(gb);
+            Manager.ActorList.Add(gb.GetComponent<ActorController>());
         }
     }
 }

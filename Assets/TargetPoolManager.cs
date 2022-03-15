@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Tools;
 using UnityEngine;
-using Assets.Scripts.Tools;
 
 public class TargetPoolManager : MonoBehaviour
 {

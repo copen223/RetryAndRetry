@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using ActorModule.Core;
+using SpaceModule.PathfinderModule;
+using UI;
 using UnityEngine;
-using System.Threading;
 
-namespace Assets.Scripts.ActorModule.ActorStates
+namespace ActorModule.ActorStates
 {
     public class ActorSelectMoveTarget : ActorState
     {

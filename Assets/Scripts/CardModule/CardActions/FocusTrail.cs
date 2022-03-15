@@ -1,12 +1,8 @@
-﻿using Assets.Scripts.CardModule.CardEffects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ActorModule.Core;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule.CardActions
+namespace CardModule.CardActions
 {
     public abstract class FocusTrail : CardAction
     {

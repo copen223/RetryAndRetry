@@ -1,18 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using CardModule.Controllers;
 using UnityEngine;
 
-public class DrawButtonController : MonoBehaviour
+namespace OtherControllers
 {
-    public GameObject Hand;
-    public void Draw()
+    public class DrawButtonController : MonoBehaviour
     {
-        HandController.instance.DrawCard();
-    }
+        public GameObject Hand;
+        public void Draw()
+        {
+            HandController.instance.DrawCard();
+        }
 
-    public void Return()
-    {
-        HandController.instance.ReturnCard();
-    }
+        public void Return()
+        {
+            HandController.instance.ReturnCard();
+        }
 
+    }
 }

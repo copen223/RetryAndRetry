@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
 using UnityEngine;
-using Assets.Scripts.ActorModule;
 
-public abstract class EnvirObjectBeHitHandler : MonoBehaviour
+namespace EnvirObjcetModule
 {
-    public abstract void HandlerBehit(DamageData data);
+    public abstract class EnvirObjectBeHitHandler : MonoBehaviour
+    {
+        public abstract void HandlerBehit(DamageData data);
+    }
 }

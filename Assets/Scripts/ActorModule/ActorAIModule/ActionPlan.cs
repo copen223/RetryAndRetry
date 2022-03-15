@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using System;
 
-namespace ActorModule.AI
+namespace ActorModule.ActorAIModule
 {
     // 行动方案父类，具体的行动方案都派生自该类
     public class ActionPlan : MonoBehaviour

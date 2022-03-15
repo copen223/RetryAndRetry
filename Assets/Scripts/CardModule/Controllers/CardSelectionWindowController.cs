@@ -1,149 +1,150 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using CardModule.UI;
 using UnityEngine;
-using Assets.Scripts.CardModule;
-using System;
-using System.Linq;
 
-public class CardSelectionWindowController : MonoBehaviour
+namespace CardModule.Controllers
 {
-    [Header("是否作为StatusUI模块")]
-    public bool IsStatusMode;
-
-    [SerializeField]
-    private GameObject cardPrefab = null;
-    [SerializeField] Transform cardParent = null;
-    [SerializeField] GameObject CloseButton = null;
-
-    List<GameObject> cards_list = new List<GameObject>();
-
-    public event Action CancleUpChangeEvent;
-
-    private void Update()
+    public class CardSelectionWindowController : MonoBehaviour
     {
-        if(Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            CancleUpChangeEvent?.Invoke();
-        }
-    }
+        [Header("是否作为StatusUI模块")]
+        public bool IsStatusMode;
 
-    /// <summary>
-    /// 显示卡牌选择界面
-    /// </summary>
-    /// <param name="cards"></param>
-    public void ShowCardChangeSelectionWindow(List<Card> cards, Action<Card> finishSelectFunc, GameObject player,Card basedCard)
-    {
-        gameObject.SetActive(true);
-        CloseButton.SetActive(false);
+        [SerializeField]
+        private GameObject cardPrefab = null;
+        [SerializeField] Transform cardParent = null;
+        [SerializeField] GameObject CloseButton = null;
 
-        int i = 0;
-        for (; i < cards.Count; i++)
+        List<GameObject> cards_list = new List<GameObject>();
+
+        public event Action CancleUpChangeEvent;
+
+        private void Update()
         {
-            var card = cards[i];
-            GameObject go;
-            if (i < cards_list.Count)
+            if(Input.GetKeyDown(KeyCode.Mouse1))
             {
-                go = cards_list[i];
-                go.SetActive(true);
+                CancleUpChangeEvent?.Invoke();
             }
-            else
+        }
+
+        /// <summary>
+        /// 显示卡牌选择界面
+        /// </summary>
+        /// <param name="cards"></param>
+        public void ShowCardChangeSelectionWindow(List<Card> cards, Action<Card> finishSelectFunc, GameObject player,Card basedCard)
+        {
+            gameObject.SetActive(true);
+            CloseButton.SetActive(false);
+
+            int i = 0;
+            for (; i < cards.Count; i++)
             {
-                go = Instantiate(cardPrefab, cardParent);
-                cards_list.Add(go);
-            }
-
-            var con = go.GetComponent<CardInWindowController>();
-            con.Init(card, basedCard, player);
-            con.OnCardDoSelectedEvent += finishSelectFunc;
-            con.IfCallBackMode = true;
-        }
-        for (; i < cards_list.Count; i++)
-        {
-            cards_list[i].SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// 结束选择窗口的同时，结束监听
-    /// </summary>
-    /// <param name="finishSelectFunc"></param>
-    public void EndWindowShow(Action<Card> finishSelectFunc)
-    {
-        gameObject.SetActive(false);
-        foreach(var card in cards_list)
-        {
-            card.GetComponent<CardInWindowController>().OnCardDoSelectedEvent -= finishSelectFunc;
-        }
-    }
-
-    /// <summary>
-    /// 仅作查看时使用
-    /// </summary>
-    /// <param name="cards"></param>
-    /// <param name="player"></param>
-    public void ShowCardSelectionWindow(List<Card> cards, bool ifSort)
-    {
-        gameObject.SetActive(true);
-
-        if(!IsStatusMode)
-            CloseButton.SetActive(true);
-
-        int i = 0;
-
-        List<Card> waitToShow = new List<Card>(cards);
-
-        if (ifSort)
-        {
-            waitToShow.Sort(
-                (Card card1, Card card2) => 
+                var card = cards[i];
+                GameObject go;
+                if (i < cards_list.Count)
                 {
-                    if (card1.cardLevel == card2.cardLevel) return 0;
-                    if (card1.cardLevel > card2.cardLevel) return 1;
-                    else return -1;
+                    go = cards_list[i];
+                    go.SetActive(true);
                 }
-                );
-            waitToShow.Sort(
-                (Card card1, Card card2) =>
+                else
                 {
-                    return card1.name.CompareTo(card2.name);
+                    go = Instantiate(cardPrefab, cardParent);
+                    cards_list.Add(go);
                 }
+
+                var con = go.GetComponent<CardInWindowController>();
+                con.Init(card, basedCard, player);
+                con.OnCardDoSelectedEvent += finishSelectFunc;
+                con.IfCallBackMode = true;
+            }
+            for (; i < cards_list.Count; i++)
+            {
+                cards_list[i].SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 结束选择窗口的同时，结束监听
+        /// </summary>
+        /// <param name="finishSelectFunc"></param>
+        public void EndWindowShow(Action<Card> finishSelectFunc)
+        {
+            gameObject.SetActive(false);
+            foreach(var card in cards_list)
+            {
+                card.GetComponent<CardInWindowController>().OnCardDoSelectedEvent -= finishSelectFunc;
+            }
+        }
+
+        /// <summary>
+        /// 仅作查看时使用
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="player"></param>
+        public void ShowCardSelectionWindow(List<Card> cards, bool ifSort)
+        {
+            gameObject.SetActive(true);
+
+            if(!IsStatusMode)
+                CloseButton.SetActive(true);
+
+            int i = 0;
+
+            List<Card> waitToShow = new List<Card>(cards);
+
+            if (ifSort)
+            {
+                waitToShow.Sort(
+                    (Card card1, Card card2) => 
+                    {
+                        if (card1.cardLevel == card2.cardLevel) return 0;
+                        if (card1.cardLevel > card2.cardLevel) return 1;
+                        else return -1;
+                    }
                 );
-        }
-
-        for (; i < waitToShow.Count; i++)
-        {
-            var card = waitToShow[i];
-            GameObject go;
-            if (i < cards_list.Count)
-            {
-                go = cards_list[i];
-                go.SetActive(true);
-            }
-            else
-            {
-                go = Instantiate(cardPrefab, cardParent);
-                cards_list.Add(go);
+                waitToShow.Sort(
+                    (Card card1, Card card2) =>
+                    {
+                        return card1.name.CompareTo(card2.name);
+                    }
+                );
             }
 
-            var con = go.GetComponent<CardInWindowController>();
-            con.SetCard(card);
-            con.IsStatusMode = IsStatusMode;
-            con.IfCallBackMode = false;
+            for (; i < waitToShow.Count; i++)
+            {
+                var card = waitToShow[i];
+                GameObject go;
+                if (i < cards_list.Count)
+                {
+                    go = cards_list[i];
+                    go.SetActive(true);
+                }
+                else
+                {
+                    go = Instantiate(cardPrefab, cardParent);
+                    cards_list.Add(go);
+                }
+
+                var con = go.GetComponent<CardInWindowController>();
+                con.SetCard(card);
+                con.IsStatusMode = IsStatusMode;
+                con.IfCallBackMode = false;
+            }
+            for (; i < cards_list.Count; i++)
+            {
+                cards_list[i].SetActive(false);
+            }
+
+
         }
-        for (; i < cards_list.Count; i++)
+
+
+        /// <summary>
+        /// 关闭按钮触发
+        /// </summary>
+        public void EndWindowShow()
         {
-            cards_list[i].SetActive(false);
+            gameObject.SetActive(false);
         }
-
-
-    }
-
-
-    /// <summary>
-    /// 关闭按钮触发
-    /// </summary>
-    public void EndWindowShow()
-    {
-        gameObject.SetActive(false);
     }
 }

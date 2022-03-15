@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ActorModule.Core;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     class BattleTurnDraw : BattleState
     {
@@ -12,7 +8,7 @@ namespace Assets.Scripts.BattleModule.BattleStates
         {
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
 
-            if (GameManager.instance.IfDebug)
+            if (GameManager.GameManager.instance.IfDebug)
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerDrawStart);
             else
             {

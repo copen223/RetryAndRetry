@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ActorModule.Core;
+using CardModule.Controllers;
 using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     class CardIdle: CardState,IPointerEnterHandler
     {

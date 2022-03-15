@@ -1,58 +1,60 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Assets.Scripts.BufferModule;
+﻿using System.Collections.Generic;
 using System.Linq;
+using BufferModule;
+using UnityEngine;
 
-public class BuffUIController : MonoBehaviour
+namespace ActorModule.UI
 {
-    [SerializeField]
-    private Transform buffUIsParent = null;
-
-    [SerializeField]
-    private GameObject buffUIPrefab = null;
-
-    [SerializeField]
-    private List<BuffUI> buffUIs = new List<BuffUI>();
-    public void UpdateBuffUIs(BuffController buffcon)
+    public class BuffUIController : MonoBehaviour
     {
-        List<Buff> buffs = new List<Buff>(
-                           from buff in buffcon.buffs
-                           where buff.IfAcitve
-                           select buff
-                           );
+        [SerializeField]
+        private Transform buffUIsParent = null;
 
-        for(int i = 0;i<buffs.Count;i++)
+        [SerializeField]
+        private GameObject buffUIPrefab = null;
+
+        [SerializeField]
+        private List<BuffUI> buffUIs = new List<BuffUI>();
+        public void UpdateBuffUIs(BuffController buffcon)
         {
-            if( i > buffUIs.Count - 1)
+            List<Buff> buffs = new List<Buff>(
+                from buff in buffcon.buffs
+                where buff.IfAcitve
+                select buff
+            );
+
+            for(int i = 0;i<buffs.Count;i++)
             {
-                buffUIs.Add(GameObject.Instantiate(buffUIPrefab, buffUIsParent).GetComponent<BuffUI>());
+                if( i > buffUIs.Count - 1)
+                {
+                    buffUIs.Add(GameObject.Instantiate(buffUIPrefab, buffUIsParent).GetComponent<BuffUI>());
+                }
+
+                if (buffs[i].DurationType == BuffDurationType.Turn)
+                    buffUIs[i].Time = buffs[i].DurationTime;
+                else
+                    buffUIs[i].Time = -1;
+
+                buffUIs[i].buffImage.sprite = buffs[i].buffUIImage;
+
             }
 
-            if (buffs[i].DurationType == BuffDurationType.Turn)
-                buffUIs[i].Time = buffs[i].DurationTime;
-            else
-                buffUIs[i].Time = -1;
-
-            buffUIs[i].buffImage.sprite = buffs[i].buffUIImage;
-
+            for(int i= buffs.Count;i < buffUIs.Count;)
+            {
+                Destroy(buffUIs[i].gameObject);
+                buffUIs.RemoveAt(i);
+            }
         }
-
-        for(int i= buffs.Count;i < buffUIs.Count;)
+        // Start is called before the first frame update
+        void Start()
         {
-            Destroy(buffUIs[i].gameObject);
-            buffUIs.RemoveAt(i);
+        
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // Update is called once per frame
+        void Update()
+        {
         
+        }
     }
 }

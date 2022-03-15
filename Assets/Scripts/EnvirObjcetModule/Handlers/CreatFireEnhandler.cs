@@ -1,9 +1,8 @@
-﻿using Assets.Scripts.ActorModule;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ActorModule.Core;
 using UnityEngine;
 
-namespace Assets.Scripts.EnvirObjectModule.Handlers
+namespace EnvirObjcetModule.Handlers
 {
     public class CreatFireEnhandler : EnvirObjectBeHitHandler
     {

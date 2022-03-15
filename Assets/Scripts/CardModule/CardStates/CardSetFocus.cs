@@ -1,21 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.EventSystems;
+﻿using System.Collections.Generic;
+using CardModule.Controllers;
+using UI;
+using UI.ActionTip;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     // 设置专注位置的状态
     class CardSetFocus : CardState
     {
+        private ActionTipsUI actionTipsUI = null;
+
+        private void Start()
+        {
+            actionTipsUI = UIManager.instance.UI_ActionTips;
+        }
+        
         public override void StateStart()
         {
             base.StateStart();
             SetEventProtect();
-
+            
+            actionTipsUI.SetActionTip(ActionTipType.Left,"确认位置",true);
+            actionTipsUI.SetActionTip(ActionTipType.Right,"取消",true);
+            
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, true);  //  告诉中央我在打出，其他的互动停止。
             
             // 在actioncontroller中执行设置专注位置的行动
@@ -52,6 +61,7 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
+            actionTipsUI.SetAllActionTipsActive(false);
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);  //  告诉中央我在打出，其他的互动停止。
         }
 

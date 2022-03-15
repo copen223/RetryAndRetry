@@ -1,9 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using ActorModule.ActorAIModule.ActionPlans;
+using BattleModule;
+using BattleModule.BattleStates;
 using UnityEngine;
-using Assets.Scripts.BattleModule.BattleStates;
 
-namespace ActorModule.AI
+namespace ActorModule.ActorAIModule.ActionModes
 {
     /// <summary>
     /// 肉搏模式AM，总是寻找最近的目标进行攻击

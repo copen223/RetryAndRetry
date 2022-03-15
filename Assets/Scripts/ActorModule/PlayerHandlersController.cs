@@ -1,31 +1,36 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using ActorModule.Core;
+using BattleModule;
+using CardModule;
+using CardModule.Controllers;
 using UnityEngine;
-using Assets.Scripts.CardModule;
 
-public class PlayerHandlersController : MonoBehaviour
+namespace ActorModule
 {
-    /// <summary>
-    /// 执行者
-    /// </summary>
-    public FocusTrailHandler FocusTrailHandler;
+    public class PlayerHandlersController : MonoBehaviour
+    {
+        /// <summary>
+        /// 执行者
+        /// </summary>
+        public FocusTrailHandler FocusTrailHandler;
 
-    public ActorController Actor;
+        public ActorController Actor;
     
-    public void FocusTheCard(Card card,Vector2 dir)
-    {
-        FocusTrailHandler.SetFocusTrailHandler(Actor.gameObject, card, dir);
-        StartCoroutine(StartFocusTheCardCallBack());
-    }
-
-    IEnumerator StartFocusTheCardCallBack()
-    {
-        yield return FocusTrailHandler.StartHandleFocusTrail();
-
-        if (BattleManager.instance.CurActorObject == Actor.gameObject)
+        public void FocusTheCard(Card card,Vector2 dir)
         {
-            HandController.instance.ResetHandCards();
+            FocusTrailHandler.SetFocusTrailHandler(Actor.gameObject, card, dir);
+            StartCoroutine(StartFocusTheCardCallBack());
         }
-    }
 
+        IEnumerator StartFocusTheCardCallBack()
+        {
+            yield return FocusTrailHandler.StartHandleFocusTrail();
+
+            if (BattleManager.instance.CurActorObject == Actor.gameObject)
+            {
+                HandController.instance.ResetHandCards();
+            }
+        }
+
+    }
 }

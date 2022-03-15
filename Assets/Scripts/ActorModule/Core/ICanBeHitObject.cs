@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Assets.Scripts.ActorModule
+﻿namespace ActorModule.Core
 {
     /// <summary>
     /// 可交互对象接口，该对象能被交互

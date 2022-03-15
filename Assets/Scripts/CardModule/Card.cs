@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.Scripts.CardModule.CardActions;
+using ActorModule.Core;
+using CardModule.CardActions;
+using CardModule.CardEffects;
+using CardModule.Controllers;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule
 {
     public class Card
     {
@@ -102,11 +102,9 @@ namespace Assets.Scripts.CardModule
         public bool IfInContainer { 
             private set
             {
-                if (ifInContainer != value)
-                {
-                    ifInContainer = value;
-                    OnContainerChangeEvent?.Invoke(value);
-                }
+                if (ifInContainer == value) return;
+                ifInContainer = value;
+                OnContainerChangeEvent?.Invoke(value);
             } 
             get 
             {

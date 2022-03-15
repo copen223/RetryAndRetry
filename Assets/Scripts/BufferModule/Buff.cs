@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
+using CardModule;
 using UnityEngine;
-using Assets.Scripts.CardModule;
 
-namespace Assets.Scripts.BufferModule
+namespace BufferModule
 {
     /// <summary>
     /// 挂载于一个buff物体对象上

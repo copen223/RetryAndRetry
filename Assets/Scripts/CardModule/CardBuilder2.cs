@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using CardModule.CardEffects;
+using Resources.Infos;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule
 {
     public class CardBuilder2
     {
@@ -30,7 +27,7 @@ namespace Assets.Scripts.CardModule
         {
             // 在这里改版本号
             string path = "Infos/CardInfos/" + "V0.1/" + cardName+"/Card";
-            var info = Resources.Load<CardInfo2>(path);
+            var info = UnityEngine.Resources.Load<CardInfo2>(path);
             return CreatCardByInfo(info);
         }
         public Card CreatCardByInfo(CardInfo2 info)

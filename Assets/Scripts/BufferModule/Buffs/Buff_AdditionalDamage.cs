@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
 using UnityEngine;
-using Assets.Scripts.CardModule;
-using Assets.Scripts.ActorModule;
 
-namespace Assets.Scripts.BufferModule.Buffs
+namespace BufferModule.Buffs
 {
     /// <summary>
     /// 附带伤害

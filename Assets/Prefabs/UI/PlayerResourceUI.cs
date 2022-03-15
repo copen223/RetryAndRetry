@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UI;
 using UnityEngine;
 
-public class PlayerResourceUI : MonoBehaviour
+namespace Prefabs.UI
 {
-    public TextUIController ActionPointUI;
+    public class PlayerResourceUI : MonoBehaviour
+    {
+        public TextUIController ActionPointUI;
+    }
 }

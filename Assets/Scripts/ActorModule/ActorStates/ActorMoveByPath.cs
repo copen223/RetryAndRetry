@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using SpaceModule.PathfinderModule;
 using UnityEngine;
-using Assets.Scripts.SpaceModule.PathfinderModule;
 
-namespace Assets.Scripts.ActorModule.ActorStates
+namespace ActorModule.ActorStates
 {
     public class ActorMoveByPath : ActorState
     {

@@ -1,20 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.EventSystems;
+﻿using ActorModule.Core;
+using CardModule.Controllers;
+using UI;
+using UI.ActionTip;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     class CardSelected: CardState,IPointerExitHandler,IPointerClickHandler
     {
         public int siblingIndex = 0;
+        private ActionTipsUI actionTipsUI = null;
+
+        private void Start()
+        {
+            actionTipsUI = UIManager.instance.UI_ActionTips;
+        }
 
         public override void StateStart()
         {
             base.StateStart();
+            
+            // 提示窗口
+            actionTipsUI.SetAllActionTipsActive(false);
+            actionTipsUI.SetActionTip(ActionTipType.Left,"打出",true);
+            actionTipsUI.SetActionTip(ActionTipType.Right,"专注",true);
 
             // 显示消耗
             CheckIfCanMake(false);
@@ -39,11 +49,8 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public override void StateExit()
         {
-            if (Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
-            {
-                int surplusAP = player.ActionPoint;
-                UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.black);
-            }
+            
+            actionTipsUI.SetAllActionTipsActive(false);
 
             transform.SetSiblingIndex(siblingIndex);
 
@@ -94,18 +101,10 @@ namespace Assets.Scripts.CardModule.CardStates
                 {
                     if (Controller.Card.type == CardUseType.Passive)
                     {
-                        int surplusAP = player.ActionPoint + Controller.Card.cardLevel;
-                        surplusAP = surplusAP > player.ActionPoint_Max ? player.ActionPoint_Max : surplusAP;
-
-                        UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.green);
-
                         return true;
                     }
                     if (player.ActionPoint >= Controller.Card.cardLevel)
                     {
-                        int surplusAP = player.ActionPoint - Controller.Card.cardLevel;
-                        UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.red);
-
                         return true;
                     }
                     else if (ifPrint)

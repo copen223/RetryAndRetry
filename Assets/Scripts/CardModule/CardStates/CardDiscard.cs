@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CardModule.Controllers;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     class CardDiscard : CardState
     {

@@ -1,30 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
 using UnityEngine;
 
-public class ActorState : MonoBehaviour
+namespace ActorModule.ActorStates
 {
-    public ActorController Controller;
-
-    public virtual void StateStart() { }
-    public virtual void StateUpdate() { }
-
-    public virtual void StateExit() { }
-
-    public void ChangeStateTo<T>()
+    public class ActorState : MonoBehaviour
     {
-        foreach (ActorState actorState in Controller.ActorStates)
+        public ActorController Controller;
+
+        public virtual void StateStart() { }
+        public virtual void StateUpdate() { }
+
+        public virtual void StateExit() { }
+
+        public void ChangeStateTo<T>()
         {
-            if (actorState is T)
+            foreach (ActorState actorState in Controller.ActorStates)
             {
-                Controller.currentState.StateExit();
-                Controller.currentState = actorState;
-                Controller.currentState.StateStart();
+                if (actorState is T)
+                {
+                    Controller.currentState.StateExit();
+                    Controller.currentState = actorState;
+                    Controller.currentState.StateStart();
+                }
             }
         }
-    }
 
-    private void Start()
-    {
+        private void Start()
+        {
+        }
     }
 }

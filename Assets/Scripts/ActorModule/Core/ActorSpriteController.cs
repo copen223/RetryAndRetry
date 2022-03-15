@@ -1,64 +1,64 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using System;
-using UnityEngine.EventSystems;
 
-public class ActorSpriteController : MonoBehaviour
+namespace ActorModule.Core
 {
-    public event Action MouseEnterEvent;
-    public event Action MouseExitEvent;
-
-    public bool ifMouseStayOnSprite = false;
-
-    void Update()
+    public class ActorSpriteController : MonoBehaviour
     {
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var hits = Physics2D.OverlapPointAll(mousePosition);
-        foreach(var hit in hits)
+        public event Action MouseEnterEvent;
+        public event Action MouseExitEvent;
+
+        public bool ifMouseStayOnSprite = false;
+
+        void Update()
         {
-            if(hit == null)
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var hits = Physics2D.OverlapPointAll(mousePosition);
+            foreach(var hit in hits)
             {
-                continue;
-            }
-            if(hit.gameObject == gameObject)
-            {
-                if(!ifMouseStayOnSprite)
+                if(hit == null)
                 {
-                    MouseEnterEvent?.Invoke();
+                    continue;
                 }
-                ifMouseStayOnSprite = true;
-                return;
+                if(hit.gameObject == gameObject)
+                {
+                    if(!ifMouseStayOnSprite)
+                    {
+                        MouseEnterEvent?.Invoke();
+                    }
+                    ifMouseStayOnSprite = true;
+                    return;
+                }
             }
+
+            if(ifMouseStayOnSprite)
+            {
+                MouseExitEvent?.Invoke();
+            }
+
+            ifMouseStayOnSprite = false;
         }
 
-        if(ifMouseStayOnSprite)
-        {
-            MouseExitEvent?.Invoke();
-        }
 
-        ifMouseStayOnSprite = false;
+
+        //public void OnMouseExit()
+        //{
+        //    MouseExitEvent?.Invoke();
+        //}
+
+        //public void OnPointerEnter(PointerEventData eventData)
+        //{
+        //    MouseEnterEvent?.Invoke();
+        //}
+
+        //public void OnPointerExit(PointerEventData eventData)
+        //{
+        //    MouseExitEvent?.Invoke();
+        //}
+
+        //private void OnMouseEnter()
+        //{
+        //    MouseEnterEvent?.Invoke();
+        //}
     }
-
-
-
-    //public void OnMouseExit()
-    //{
-    //    MouseExitEvent?.Invoke();
-    //}
-
-    //public void OnPointerEnter(PointerEventData eventData)
-    //{
-    //    MouseEnterEvent?.Invoke();
-    //}
-
-    //public void OnPointerExit(PointerEventData eventData)
-    //{
-    //    MouseExitEvent?.Invoke();
-    //}
-
-    //private void OnMouseEnter()
-    //{
-    //    MouseEnterEvent?.Invoke();
-    //}
 }

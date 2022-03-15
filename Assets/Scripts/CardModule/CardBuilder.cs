@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using CardModule.CardEffects;
+using Resources.Infos;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule
 {
     public class CardBuilder
     {
@@ -29,7 +27,7 @@ namespace Assets.Scripts.CardModule
         public Card CreatCardByName(string cardName)
         {
             string path = "Infos/CardInfos/" + cardName;
-            var info = Resources.Load<CardInfo>(path);
+            var info = UnityEngine.Resources.Load<CardInfo>(path);
             return CreatCardByInfo(info);
         }
         public Card CreatCardByInfo(CardInfo info)

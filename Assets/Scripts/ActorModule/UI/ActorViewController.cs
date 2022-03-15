@@ -1,59 +1,61 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ActorViewController : MonoBehaviour
+namespace ActorModule.UI
 {
-    [Header("攻击动画插值曲线")]
-    public AnimationCurve AttackAnimationCurve;
-    public float AttackAnimation_Time;
-
-    public bool IsAnimating;
-
-
-
-    public enum ActorAnimationName
+    public class ActorViewController : MonoBehaviour
     {
-        AttackLeft,
-        AttackRight,
-        AttackDown,
-        AttackUp
-    }
+        [Header("攻击动画插值曲线")]
+        public AnimationCurve AttackAnimationCurve;
+        public float AttackAnimation_Time;
 
-    public void StartAnimation(ActorAnimationName animationName)
-    {
-        IsAnimating = true;
-        switch (animationName)
+        public bool IsAnimating;
+
+
+
+        public enum ActorAnimationName
         {
-            case ActorAnimationName.AttackDown:StartCoroutine(AttackAnimation(Vector3.down, 0.7f));break;
-            case ActorAnimationName.AttackUp: StartCoroutine(AttackAnimation(Vector3.up, 0.7f)); break;
-            case ActorAnimationName.AttackRight: StartCoroutine(AttackAnimation(Vector3.right, 1)); break;
-            case ActorAnimationName.AttackLeft: StartCoroutine(AttackAnimation(Vector3.left, 1)); break;
+            AttackLeft,
+            AttackRight,
+            AttackDown,
+            AttackUp
         }
+
+        public void StartAnimation(ActorAnimationName animationName)
+        {
+            IsAnimating = true;
+            switch (animationName)
+            {
+                case ActorAnimationName.AttackDown:StartCoroutine(AttackAnimation(Vector3.down, 0.7f));break;
+                case ActorAnimationName.AttackUp: StartCoroutine(AttackAnimation(Vector3.up, 0.7f)); break;
+                case ActorAnimationName.AttackRight: StartCoroutine(AttackAnimation(Vector3.right, 1)); break;
+                case ActorAnimationName.AttackLeft: StartCoroutine(AttackAnimation(Vector3.left, 1)); break;
+            }
         
-    }
-
-    IEnumerator AttackAnimation(Vector3 dir,float dis)
-    {
-        dir = dir.normalized;
-        float x = 0;
-        float timer = 0;
-        while(timer < AttackAnimation_Time)
-        {
-            float t = timer / AttackAnimation_Time;
-            x = AttackAnimationCurve.Evaluate(t) * dis;
-            var dirWithDis = dir * x;
-            transform.localPosition = dirWithDis;
-            timer += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
         }
 
-        OnAnimationOver();
-    }
+        IEnumerator AttackAnimation(Vector3 dir,float dis)
+        {
+            dir = dir.normalized;
+            float x = 0;
+            float timer = 0;
+            while(timer < AttackAnimation_Time)
+            {
+                float t = timer / AttackAnimation_Time;
+                x = AttackAnimationCurve.Evaluate(t) * dis;
+                var dirWithDis = dir * x;
+                transform.localPosition = dirWithDis;
+                timer += Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
 
-    void OnAnimationOver()
-    {
-        IsAnimating = false;
-    }
+            OnAnimationOver();
+        }
 
+        void OnAnimationOver()
+        {
+            IsAnimating = false;
+        }
+
+    }
 }

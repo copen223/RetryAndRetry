@@ -1,12 +1,7 @@
-﻿using Assets.Scripts.ActorModule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UI;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule.CardEffects
+namespace CardModule.CardEffects
 {
 
     [CreateAssetMenu(fileName = "EWeakPoint", menuName = "MyInfo/效果/弱点")]

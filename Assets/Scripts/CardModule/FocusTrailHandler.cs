@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ActorModule.Core;
+using CardModule.CardActions;
+using CardModule.Controllers;
 using UnityEngine;
-using Assets.Scripts.Tools;
-using Assets.Scripts.CardModule.CardActions;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule
 {
     public class FocusTrailHandler : MonoBehaviour
     {

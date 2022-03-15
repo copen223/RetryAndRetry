@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ActorModule.Core;
+using CardModule.CardPool;
+using CardModule.Controllers;
+using UI;
+using UI.ActionTip;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     class CardUpChangePre : CardState
     {
@@ -13,9 +14,19 @@ namespace Assets.Scripts.CardModule.CardStates
 
         public event Action OnExitFocusEvent;
 
+        private ActionTipsUI actionTipsUI = null;
+
+        private void Start()
+        {
+            actionTipsUI = UIManager.instance.UI_ActionTips;
+        }
+
         public override void StateStart()
         {
             base.StateStart();
+            
+            actionTipsUI.SetActionTip(ActionTipType.Right,"取消",true);
+            
             // 呼出选择界面
             selectionWindow = Controller.SelectionWindow.GetComponent<CardSelectionWindowController>();
             player = Controller.holder.GetComponent<PlayerController>();
@@ -33,7 +44,6 @@ namespace Assets.Scripts.CardModule.CardStates
         public void OnCancleUpChangeCallBack()
         {
             ChangeStateTo<CardFocus>();
-
         }
         /// <summary>
         /// 确定选择对象，进行上转，监听CardInWindowController.OnCardDoSelectedEvent
@@ -56,6 +66,9 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
+            
+            actionTipsUI.SetAllActionTipsActive(false);
+            
             selectionWindow.CancleUpChangeEvent -= OnCancleUpChangeCallBack;
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);
             selectionWindow.EndWindowShow(OnFinishSelectCardCallBack);

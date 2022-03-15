@@ -372,6 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd9de3d98c274044b2c646c7a12a2db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Container: {fileID: 0}
   ifMouseSelectThis: 0
   CardStates: []
   currentState: {fileID: 0}
@@ -411,6 +412,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Controller: {fileID: 1936907623240386321}
   IsEventProtecting: 0
+  siblingIndex: 0
 --- !u!114 &1936907623240386410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6ba988ee12bbdb4381a860008bf5496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controller: {fileID: 0}
+  Controller: {fileID: 1936907623240386321}
   IsEventProtecting: 0
 --- !u!114 &1936907623240386409
 MonoBehaviour:
@@ -563,7 +565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 242dfc2290a9efa4f92db91a794669bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controller: {fileID: 0}
+  Controller: {fileID: 1936907623240386321}
   IsEventProtecting: 0
 --- !u!114 &7346879008960344803
 MonoBehaviour:
@@ -577,7 +579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daf7790c07c8b5a45bdc0710e1413274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controller: {fileID: 0}
+  Controller: {fileID: 1936907623240386321}
   IsEventProtecting: 0
 --- !u!1 &1936907623898211412
 GameObject:
@@ -676,6 +678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bbcaa8110392a74eb3169b6cea28729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IfOnlyAsView: 0
   controller: {fileID: 0}
   Time_Animation_Selected: 0.2
   OffsetY_Animation_selected: 100

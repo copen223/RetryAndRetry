@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.ActorModule.ActorStates
+namespace ActorModule.ActorStates
 {
 
     // 战斗中轮到该玩家行动时的idle状态
@@ -20,7 +15,7 @@ namespace Assets.Scripts.ActorModule.ActorStates
         {
             if (Controller.currentState != this)
                 return;
-            if(Input.GetKeyDown(KeyCode.Mouse0) && (Controller.group.IsPlayer || GameManager.instance.IfDebug))
+            if(Input.GetKeyDown(KeyCode.Mouse0) && (Controller.group.IsPlayer || GameManager.GameManager.instance.IfDebug))
             {
                 var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

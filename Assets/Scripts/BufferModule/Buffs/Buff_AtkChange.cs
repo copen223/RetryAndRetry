@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Assets.Scripts.BufferModule.Buffs
+﻿namespace BufferModule.Buffs
 {
     /// <summary>
     /// 改变hit人物的hit属性

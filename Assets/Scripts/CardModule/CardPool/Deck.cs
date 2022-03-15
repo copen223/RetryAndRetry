@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ActorModule.Core;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule.CardPool
 {
     public class Deck : CardPool
     {

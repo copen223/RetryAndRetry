@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ActorModule.Core;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     class BattleTurnEnd : BattleState
     {
         public override void StateStart()
         {
-            Manager.EventInvokeByState(BattleManager.BattleEvent.TurnEnd);
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
             actor.OnTurnEnd();
 
             Manager.CurActorIndex += 1;
             if (Manager.CurActorIndex >= Manager.ActorQueue.Count) Manager.CurActorIndex = 0;
+
+            Manager.InvokeTurnEndEventEventByState();
+            
             ChangeStateTo<BattleTurnStart>();
             // 一轮结束
         }

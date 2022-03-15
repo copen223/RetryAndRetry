@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-
-namespace ActorModule.AI
+namespace ActorModule.ActorAIModule
 {
     // 行动模式父类，其他行动模式都派生自该类
     public class ActionModeInBattle : MonoBehaviour

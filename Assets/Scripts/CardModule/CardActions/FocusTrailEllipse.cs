@@ -1,12 +1,7 @@
-﻿using Assets.Scripts.CardModule.CardEffects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule.CardActions
+namespace CardModule.CardActions
 {
     [CreateAssetMenu(fileName = "FocusTrailEllipse", menuName = "MyInfo/使用形式/专注轨迹_椭圆")]
     public class FocusTrailEllipse : FocusTrail

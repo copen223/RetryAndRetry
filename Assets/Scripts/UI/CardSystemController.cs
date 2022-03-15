@@ -1,28 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CardSystemController : MonoBehaviour
+namespace UI
 {
-    public void SetAllButtonActive(bool ifAcive)
+    public class CardSystemController : MonoBehaviour
     {
-        int childCount = transform.childCount;
-        for(int i = 0; i<childCount;i++)
+        public void SetAllButtonActive(bool ifAcive)
         {
-            transform.GetChild(i).gameObject.SetActive(ifAcive);
+            int childCount = transform.childCount;
+            for(int i = 0; i<childCount;i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(ifAcive);
+            }
+            transform.Find("SelectionWindow").gameObject.SetActive(false);
         }
-        transform.Find("SelectionWindow").gameObject.SetActive(false);
-    }
     
-    public void OnEnterBattle()
-    {
-        SetAllButtonActive(true);
-    }
+        public void OnEnterBattle()
+        {
+            SetAllButtonActive(true);
+        }
 
-    private void Start()
-    {
-        SetAllButtonActive(false);
-        GameManager.instance.AddListener(GameManager.GameEvent.EnterBattle, OnEnterBattle);
-    }
+        private void Start()
+        {
+            SetAllButtonActive(false);
+            GameManager.GameManager.instance.AddListener(GameManager.GameManager.GameEvent.EnterBattle, OnEnterBattle);
+        }
 
+    }
 }

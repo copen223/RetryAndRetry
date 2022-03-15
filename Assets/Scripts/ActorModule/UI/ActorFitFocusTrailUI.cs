@@ -1,16 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ActorModule.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ActorFitFocusTrailUI : ActorFitUI
+namespace ActorModule.UI
 {
-    public Text FocusTrailCountText;
-
-    public void OnFocusTrailCountChanged(GameObject gb)
+    public class ActorFitFocusTrailUI : ActorFitUI
     {
-        var actor = gb.GetComponent<ActorController>();
-        int count = actor.FocusTrailCount;
-        FocusTrailCountText.text = count+"";
+        public Text FocusTrailCountText;
+
+        public void OnFocusTrailCountChanged(GameObject gb)
+        {
+            var actor = gb.GetComponent<ActorController>();
+            int count = actor.FocusTrailCount;
+            FocusTrailCountText.text = count+"";
+        }
     }
 }

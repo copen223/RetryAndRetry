@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ActorModule;
+using SpaceModule.PathfinderModule;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule.CardEffects
+namespace CardModule.CardEffects
 {
 
     [CreateAssetMenu(fileName = "Effect", menuName = "MyInfo/效果/冲刺")]

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.Scripts.CardModule;
+using ActorModule.Core;
+using CardModule.CardEffects;
+using EnvirObjcetModule;
+using UI;
 using UnityEngine;
-using Assets.Scripts.ActorModule;
 
-namespace Assets.Scripts.CardModule
+namespace CardModule
 {
     public class Combat
     {

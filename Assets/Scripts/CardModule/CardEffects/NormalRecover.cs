@@ -1,12 +1,8 @@
-﻿using Assets.Scripts.ActorModule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ActorModule.Core;
 using UnityEngine;
 
-namespace Assets.Scripts.CardModule.CardEffects
+namespace CardModule.CardEffects
 {
 
     [CreateAssetMenu(fileName = "恢复效果", menuName = "MyInfo/效果/恢复")]

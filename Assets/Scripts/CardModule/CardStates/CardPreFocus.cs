@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.EventSystems;
-using UnityEngine;
+﻿using ActorModule.Core;
+using CardModule.CardEffects;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     /// 专注动画状态1
     class CardPreFocus : CardState

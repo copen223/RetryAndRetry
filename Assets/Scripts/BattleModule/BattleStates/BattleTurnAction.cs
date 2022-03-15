@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ActorModule.Core;
+using OtherControllers;
 using UnityEngine;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     class BattleTurnAction : BattleState
     {
@@ -13,7 +10,7 @@ namespace Assets.Scripts.BattleModule.BattleStates
         {
             base.StateStart();
 
-            if (GameManager.instance.IfDebug)
+            if (GameManager.GameManager.instance.IfDebug)
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerActionStart);
             else
             {

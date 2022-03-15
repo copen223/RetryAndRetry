@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets.Scripts.BufferModule
+namespace BufferModule
 {
     /// <summary>
     /// 提供buff触发条件检测函数的接口，一般用于提供buffscriptableObject

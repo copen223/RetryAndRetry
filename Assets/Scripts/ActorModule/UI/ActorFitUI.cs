@@ -1,25 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ActorFitUI : MonoBehaviour
+namespace ActorModule.UI
 {
-    [Header("UI相对位移")]
-    public Vector3 Offset;
-
-    public void UpdatePosition()
+    public class ActorFitUI : MonoBehaviour
     {
-        transform.localPosition = Offset;
-    }
+        [Header("UI相对位移")]
+        public Vector3 Offset;
 
-    void Start()
-    {
+        public void UpdatePosition()
+        {
+            transform.localPosition = Offset;
+        }
+
+        void Start()
+        {
         
-    }
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // Update is called once per frame
+        void Update()
+        {
         
+        }
     }
 }

@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.EventSystems;
+﻿using System.Collections.Generic;
+using ActorModule.Core;
+using CardModule.CardEffects;
+using CardModule.Controllers;
+using UI;
+using UI.ActionTip;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     class CardPreMake : CardState
     {
@@ -25,6 +26,13 @@ namespace Assets.Scripts.CardModule.CardStates
         bool isActing;  // 效果选定/发动/处理中
         bool isFirst;   // 正在处理第一队列
 
+        private ActionTipsUI actionTipsUI = null;
+
+        private void Start()
+        {
+            actionTipsUI = UIManager.instance.UI_ActionTips;
+        }
+        
 
         public override void StateStart()
         {
@@ -33,6 +41,9 @@ namespace Assets.Scripts.CardModule.CardStates
             isActing = false;
             isFirst = true;
             //-----------------------------------
+            
+            actionTipsUI.SetActionTip(ActionTipType.Left,"确定",true);
+            actionTipsUI.SetActionTip(ActionTipType.Right,"取消",true);
 
 
             base.StateStart();
@@ -51,6 +62,22 @@ namespace Assets.Scripts.CardModule.CardStates
                 Controller.ActionController.StartAction(card.CardAction);
                 Controller.ActionController.OnActionOverEvent += OnCardActionOver;
                 Controller.ActionController.OnActionCancleEvent += OnCancleMake;
+            }
+
+            if (Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
+            {
+                if (IsActiveCard)
+                {
+                    int surplusAP = player.ActionPoint - Controller.Card.cardLevel;
+                    UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.red);
+                }
+                else
+                {
+                    int surplusAP = player.ActionPoint + Controller.Card.cardLevel;
+                    surplusAP = surplusAP > player.ActionPoint_Max ? player.ActionPoint_Max : surplusAP;
+
+                    UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.green);
+                }
             }
         }
 
@@ -124,7 +151,15 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
-
+            
+            if (Controller.holder.TryGetComponent<PlayerController>(out PlayerController player))
+            {
+                int surplusAP = player.ActionPoint;
+                UIManager.instance.UI_PlayerResource.ActionPointUI.ChangeText(surplusAP + "", Color.black);
+            }
+            
+            actionTipsUI.SetAllActionTipsActive(false);
+            
             Controller.Hand.GetComponent<HandController>().OnCardMakeDo(gameObject, false);  //  告诉中央我打出了，其他的互动可进行。
         }
 

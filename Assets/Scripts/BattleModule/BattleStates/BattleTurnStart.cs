@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ActorModule.Core;
+using OtherControllers;
 using UnityEngine;
 
-namespace Assets.Scripts.BattleModule.BattleStates
+namespace BattleModule.BattleStates
 {
     class BattleTurnStart : BattleState
     {
@@ -17,7 +14,7 @@ namespace Assets.Scripts.BattleModule.BattleStates
             // 判断对象
             var actor = Manager.CurActorObject.GetComponent<ActorController>();
 
-            if (GameManager.instance.IfDebug)
+            if (GameManager.GameManager.instance.IfDebug)
             {
                 Manager.EventInvokeByState(BattleManager.BattleEvent.PlayerTurnStart);
                 actor.OnTurnStart();

@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.EventSystems;
+﻿using ActorModule.Core;
+using UI;
+using UI.ActionTip;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.CardModule.CardStates
+namespace CardModule.CardStates
 {
     // 卡牌专注时的状态，点击右键可以取消还原
     class CardFocus : CardState, IPointerClickHandler,IPointerEnterHandler,IPointerExitHandler
     {
         private bool ifFinishListenEvent = false;
+
+        private ActionTipsUI actionTipsUI = null;
+        private void Start()
+        {
+            actionTipsUI = UIManager.instance.UI_ActionTips;
+        }
 
         public override void StateStart()
         {
@@ -74,7 +78,9 @@ namespace Assets.Scripts.CardModule.CardStates
         public override void StateExit()
         {
             base.StateExit();
-
+            
+            actionTipsUI.SetAllActionTipsActive(false);
+            
             Controller.Card.ShowFocusTrail(false);
 
             if (ifUpChange)
@@ -84,7 +90,7 @@ namespace Assets.Scripts.CardModule.CardStates
             }
             if (Controller.Card != null)
             {
-                if (Controller.Card.Situation == Assets.Scripts.CardModule.CardSituation.Focused)
+                if (Controller.Card.Situation == CardSituation.Focused)
                     return;
                 // 取消focus
                 if (Controller.Card.IfHasTrail)
@@ -139,6 +145,12 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (IsEventProtecting)
                 return;
+
+            var actionTipsUI = UIManager.instance.UI_ActionTips;
+            actionTipsUI.SetAllActionTipsActive(false);
+            actionTipsUI.SetActionTip(ActionTipType.Left,"下转",true);
+            actionTipsUI.SetActionTip(ActionTipType.Right,"上转",true);
+            
             Controller.SpriteController.StartAnimation(0);
 
             Controller.Card.User.ActiveAllFocusTrail(true);
@@ -153,6 +165,9 @@ namespace Assets.Scripts.CardModule.CardStates
                 return;
             if (IsEventProtecting)
                 return;
+            
+            actionTipsUI.SetAllActionTipsActive(false);
+            
             Controller.SpriteController.StartAnimation(1);
 
             Controller.Card.User.ActiveAllFocusTrail(false);
