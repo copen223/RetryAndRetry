@@ -14,6 +14,7 @@ namespace BattleModule
 
         public static BattleManager instance;
 
+        [ContextMenu("Awake")]
         private void Awake()
         {
             instance = this;

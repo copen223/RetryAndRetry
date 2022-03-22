@@ -344,7 +344,7 @@ GameObject:
   m_Layer: 10
   m_Name: Player
   m_TagString: Actor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -381,9 +381,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   advantage: 2
   SpriteFaceToRight: 0
+  Name: Actor
   HealPoint: 100
   HealPoint_Max: 100
   Ability: {fileID: 2185648682025472296}
+  Token: {fileID: 0}
   FocusCountUI_GO: {fileID: 0}
   focusTrails: []
   currentState: {fileID: 0}

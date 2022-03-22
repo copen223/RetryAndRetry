@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ActorModule.ActorAIModule;
 using ActorModule.ActorStates;
 using BattleModule;
+using BattleModule.BattleStates;
 using BufferModule;
 using CardModule;
 using CardModule.Controllers;
@@ -406,6 +407,18 @@ namespace ActorModule.Core
         }
 
         #endregion
+
+        [ContextMenu("将该单位添加到队列中")]
+        private void AddToBattleActorsList()
+        {
+            BattleManager.instance.GetComponent<BattleInit>().ActorsInBattle_list.Add(this);
+        }
+        [ContextMenu("将该单位从战斗队列移除")]
+        private void RemoveFromBattleActorsList()
+        {
+            BattleManager.instance.GetComponent<BattleInit>().ActorsInBattle_list.Remove(this);
+        }
+        
 
         #region 遗留的老事件系统
 

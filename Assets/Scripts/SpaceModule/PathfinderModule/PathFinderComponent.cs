@@ -20,11 +20,14 @@ namespace SpaceModule.PathfinderModule
         private Gragh gragh; // 根据map生成的图
         private Dijkstra dijkstra;
 
+        private Collider2D collider2d;
+        private ActorController actor;
+
         //--------属性值配置--------//
-        private int CostPerUnit_Walk = 4;
+        private int CostPerUnit_Walk = 1;
         private int CostPerUnit_Climb = 1;
         private int CostPerUnit_JumpV = 1;
-        private int CostPerUnit_JumpH = 8;
+        private int CostPerUnit_JumpH = 1;
         private int CostPerUnit_PassE = 24;
         private int CostPerUnit_PassF = 8;
 
@@ -36,13 +39,14 @@ namespace SpaceModule.PathfinderModule
 
         public Vector2 cellSize { get { return grid.cellSize; } }
 
-
         private void Start()
         {
             groundTilemap = GameObject.Find("GroundTilemap").GetComponent<Tilemap>();
             platformTilemap = GameObject.Find("PlatformTilemap").GetComponent<Tilemap>();
             ladderTilemap = GameObject.Find("LadderTilemap").GetComponent<Tilemap>();
             grid = groundTilemap.layoutGrid;
+            actor = GetComponent<ActorController>();
+            collider2d = actor.Sprite.GetComponent<Collider2D>();
         }
 
         /// <summary>
@@ -67,8 +71,10 @@ namespace SpaceModule.PathfinderModule
 
             Grid gridLayout = groundTilemap.layoutGrid;
 
+            List<MapCell> actorCells = new List<MapCell>();
+
             // 创建cell，填充type
-            foreach(var pos in bounds.allPositionsWithin)
+            foreach (var pos in bounds.allPositionsWithin)
             {
                 MapCell cell = new MapCell((pos.x,pos.y));
                 var rayPos = gridLayout.GetCellCenterWorld(pos);
@@ -101,14 +107,43 @@ namespace SpaceModule.PathfinderModule
                     }
                     else if(actor != self)
                         cell.Type = MapCellType.FriendActor;
+
+                    actorCells.Add(cell);
                 }
 
                 map.map_dic[(pos.x, pos.y)] = cell;
             
             }
 
+            // 将Actor对象的临近点设为Actor，防止碰撞
+            float self_x = collider2d.bounds.size.x;
+            int checkCellCount = (int)(self_x / 0.5f);
+            Debug.LogError(self_x + " " +checkCellCount);
+
+            foreach (var mapCell in actorCells)
+            {
+                var actorType = mapCell.Type;
+                int x = mapCell.IntPos.Item1, y = mapCell.IntPos.Item2;
+
+                if (map.map_dic[(x - 1, y)].Type == MapCellType.Empty)
+                {
+                    for (int i = 1;i <= checkCellCount;i ++)
+                    {
+                        map.map_dic[(x - i, y)].Type = actorType;
+                    }
+                }
+
+                if (map.map_dic[(x + 1, y)].Type == MapCellType.Empty)
+                {
+                    for (int i = 1; i <= checkCellCount; i++)
+                    {
+                        map.map_dic[(x + i, y)].Type = actorType;
+                    }
+                }
+            }
+
             // 判断Cell的单位停留类型
-            foreach(var mapCell in map.map_dic)
+            foreach (var mapCell in map.map_dic)
             {
                 MapCell cell = mapCell.Value;
                 (int, int) pos = mapCell.Key;
@@ -154,6 +189,8 @@ namespace SpaceModule.PathfinderModule
                     }
                 }
             }
+
+            
         
 
         }
@@ -506,7 +543,7 @@ namespace SpaceModule.PathfinderModule
                 if (map.map_dic.ContainsKey(pos))
                 {
                     MapCell link = map.map_dic[pos];
-                    if (link.StayState == ObjectStayState.Stand)
+                    if (link.StayState == ObjectStayState.Stand || link.Type == MapCellType.Ladder)
                     {
                         // 周边节点的建立与读取
                         Node linkNode = GetNode((pos.Item1, pos.Item2));
@@ -653,35 +690,31 @@ namespace SpaceModule.PathfinderModule
             foreach (var offset_pos in jumpPos_list)
             {
                 int offset_x = offset_pos.Item1; int offset_y = offset_pos.Item2;
-                (int, int) pos = (x + offset_x * 2, y + offset_y * 2);
-
-                if (map.map_dic.ContainsKey(pos))
+                int jumpDistanceMax = 4;
+                
+                // 向左右最多搜索4格
+                for (int i = 1; i <= jumpDistanceMax; i++)
                 {
-                    MapCell target = map.map_dic[pos];
-                    if (target.StayState == ObjectStayState.Stand)
+                    (int, int) middlePos = (x + offset_x * i, y + offset_y * i);
+                    if (map.map_dic.ContainsKey(middlePos))
                     {
-                        bool canJump = true;
-                        (int, int) middlePos = (x + offset_x, y + offset_y);
-                        if (map.map_dic.ContainsKey(middlePos))
+                        MapCell middle = map.map_dic[middlePos];
+                        // 轨迹中含有障碍或者不可容纳本来就是可行走路径，则不创建edge
+                        if (middle.Type == MapCellType.Ground || middle.StayState == ObjectStayState.CantHold)
+                            break;
+                        else if (i > 1 && middle.StayState == ObjectStayState.Stand)
                         {
-                            MapCell middle = map.map_dic[middlePos];
-                            // 轨迹中含有障碍或者不可容纳本来就是可行走路径，则不创建edge
-                            if(middle.Type == MapCellType.Ground || middle.StayState == ObjectStayState.Stand 
-                                                                 || middle.StayState== ObjectStayState.CantHold)
-                            {
-                                canJump = false;
-                                continue;
-                            }
-                        }
-                        if (canJump)
-                        {
-                            Node targetNode = GetNode((pos.Item1, pos.Item2));
+                            // 找到终点
+                            Node targetNode = GetNode((middlePos.Item1, middlePos.Item2));
                             targetNode.ActionToNode = ActorActionToNode.JumpH;
 
                             // 添加edge
-                            Edge edge = new Edge(curNode, targetNode, CostPerUnit_JumpH);
+                            Edge edge = new Edge(curNode, targetNode, CostPerUnit_JumpH * i);
                             gragh.AddEdge(edge);
+                            break;
                         }
+                        else
+                            continue;
                     }
                 }
             }
@@ -1014,6 +1047,14 @@ namespace SpaceModule.PathfinderModule
 
             return nodes;
         }
+
+        //private bool IfCanStayByColliderCheck(Vector3 worldPos)
+        //{
+        //    var hits[] = Physics2D.OverlapBoxNonAlloc(worldPos,)
+            
+        //    return false;
+        //}
+        
     
         [ContextMenu("重置该单位位置")]
         public void ResetMyPosition()

@@ -108,9 +108,6 @@ namespace ActorModule.ActorAIModule.ActionPlans
             focusHandler.SetFocusTrailHandler(Actor, focusCard, focusDir1);
             yield return focusHandler.StartHandleFocusTrail();
 
-            //focusHandler.SetFocusTrailHandler(Actor, focusCard, focusDir2);
-            //yield return focusHandler.StartHandleFocusTrail();
-
             //------------进行移动--------------
 
             UpdateHeatLevels(); // 更新仇恨值
@@ -119,10 +116,10 @@ namespace ActorModule.ActorAIModule.ActionPlans
             var target = dicSort.First().Key;   // 获取攻击对象
             attackTarget = target;
 
+            
             GameObject selfGo = Actor;
             EnemyController selfController = Actor.GetComponent<EnemyController>();
             PathFinderComponent pathFinder = Actor.GetComponent<PathFinderComponent>();
-
 
             if (aiMoveType != AIMoveType.Stay)
             {

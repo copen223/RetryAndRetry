@@ -4619,7 +4619,6 @@ MonoBehaviour:
   IsEventProtecting: 0
   ActorsInBattle_list:
   - {fileID: 720519338}
-  - {fileID: 1919991900}
   - {fileID: 890014850}
   - {fileID: 1243072708}
 --- !u!114 &609548967
@@ -9030,7 +9029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246656, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6375307661498246657, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9141,17 +9140,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ifMouseStayOnSprite: 0
---- !u!114 &1919991900 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6375307661498246668, guid: 90852b797c18f2d4e8bbad9264ff2ed6, type: 3}
-  m_PrefabInstance: {fileID: 1919991895}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d530a43e0e45c3e4ead9f3010ff3bcef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1926163283
 GameObject:
   m_ObjectHideFlags: 0

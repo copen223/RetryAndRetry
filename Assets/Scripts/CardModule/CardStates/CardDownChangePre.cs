@@ -2,6 +2,7 @@
 using ActorModule.Core;
 using CardModule.CardPool;
 using CardModule.Controllers;
+using UI;
 using UI.ActionTip;
 
 namespace CardModule.CardStates
@@ -14,6 +15,12 @@ namespace CardModule.CardStates
         public event Action OnExitFocusEvent;
 
         private ActionTipsUI actionTipsUI = null;
+
+        private void Start()
+        {
+            actionTipsUI = UIManager.instance.UI_ActionTips;
+        }
+        
         
         public override void StateStart()
         {
