@@ -34,7 +34,7 @@ namespace ActorModule.UI.QueueToken
             else
                 pointHead.SetActive(true);
             
-            print(actor);
+            //print(actor);
         }
 
         public void SetHeadPointActive(bool ifActive)

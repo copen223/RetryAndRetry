@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace CardModule
 {
+    [Serializable]
     public class Card
     {
         /// <summary>

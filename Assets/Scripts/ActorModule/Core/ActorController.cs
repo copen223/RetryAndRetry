@@ -17,6 +17,7 @@ namespace ActorModule.Core
     /// <summary>
     /// 人物对象控制器，player和enemy控制器都继承自它，都实现了可交互对象接口
     /// </summary>
+    [SelectionBase]
     public class ActorController : MonoBehaviour,ICanBeHitObject
     {
         // 标签

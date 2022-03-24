@@ -56,7 +56,7 @@ namespace ActorModule.UI
 
 
                     var screenUIPos = Camera.main.WorldToScreenPoint(worldPos += new Vector3(1, 0, 0));
-                    if (hit.collider.transform.parent.tag == "Actor")
+                    if (hit.collider.transform.parent.CompareTag("Actor"))
                     {
                         var con = hit.collider.transform.parent.GetComponent<ActorController>();
 

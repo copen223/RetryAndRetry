@@ -25,7 +25,18 @@
         /// 可行走通过
         /// </summary>
         WalkPass,
-        CantPass
+        /// <summary>
+        /// 不能穿过
+        /// </summary>
+        CantPass,
+        /// <summary>
+        /// 穿过敌方
+        /// </summary>
+        PassEnemy,
+        /// <summary>
+        /// 穿过友方
+        /// </summary>
+        PassFriend
     }
 
     public class MapCell
@@ -38,6 +49,8 @@
         public MapCellType Type;
         public ObjectStayState StayState;
         public ObjectPassState PassState;
+        // 该块是否因左右Actor碰撞被标记
+        public bool IfActorOccupied;
         public (int, int) IntPos;
         public int height;
         public int fallHeight;  //  下降时的高度

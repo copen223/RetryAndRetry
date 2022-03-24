@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using ActorModule.Core;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -19,25 +21,28 @@ namespace SpaceModule.PathfinderModule
         private Map map; // 扫描场景获得的地图数据
         private Gragh gragh; // 根据map生成的图
         private Dijkstra dijkstra;
+        [SerializeField]
+        private PassActorEdgeHandler passActorEdgeHandler; 
 
         private Collider2D collider2d;
-        private ActorController actor;
+        private ActorController self;
 
         //--------属性值配置--------//
         private int CostPerUnit_Walk = 1;
         private int CostPerUnit_Climb = 1;
         private int CostPerUnit_JumpV = 1;
         private int CostPerUnit_JumpH = 1;
-        private int CostPerUnit_PassE = 24;
-        private int CostPerUnit_PassF = 8;
+        private int CostPerUnit_PassE = 2;
+        private int CostPerUnit_PassF = 1;
 
         [SerializeField]
-        [Header("该单位体积高度，用于判断是否可容纳")]
-        public int SpaceHigh = 4; 
+        [Header("该单位体积高度格数，用于判断是否可容纳")]
+        public int SpaceHigh = 4;
+        public float SpaceWidth = 3f;
 
         //--------------------------//
 
-        public Vector2 cellSize { get { return grid.cellSize; } }
+        public Vector2 cellSize => new Vector2(grid.cellSize.x,grid.cellSize.y);
 
         private void Start()
         {
@@ -45,8 +50,8 @@ namespace SpaceModule.PathfinderModule
             platformTilemap = GameObject.Find("PlatformTilemap").GetComponent<Tilemap>();
             ladderTilemap = GameObject.Find("LadderTilemap").GetComponent<Tilemap>();
             grid = groundTilemap.layoutGrid;
-            actor = GetComponent<ActorController>();
-            collider2d = actor.Sprite.GetComponent<Collider2D>();
+            self = GetComponent<ActorController>();
+            collider2d = self.Sprite.GetComponent<Collider2D>();
         }
 
         /// <summary>
@@ -55,6 +60,8 @@ namespace SpaceModule.PathfinderModule
         private void GenerateMapByRaycast()
         {
             map = new Map();
+            passActorEdgeHandler = new PassActorEdgeHandler();
+            
             BoundsInt groundBounds = groundTilemap.cellBounds;
             BoundsInt platformBounds = platformTilemap.cellBounds;
             BoundsInt ladderBounds = ladderTilemap.cellBounds;
@@ -69,38 +76,44 @@ namespace SpaceModule.PathfinderModule
             bounds.yMin = yMin- mapMargin; bounds.yMax = yMax+ mapMargin;
             bounds.zMax = 1;bounds.zMin = 0;
 
+            var halfSizeX = cellSize.x/2;
+
             Grid gridLayout = groundTilemap.layoutGrid;
 
             List<MapCell> actorCells = new List<MapCell>();
 
-            // 创建cell，填充type
+            //---------------1.创建cell，填充type-----------------------
             foreach (var pos in bounds.allPositionsWithin)
             {
                 MapCell cell = new MapCell((pos.x,pos.y));
+                
                 var rayPos = gridLayout.GetCellCenterWorld(pos);
-                var hit = Physics2D.Raycast(rayPos,Vector2.zero,4f,LayerMask.GetMask("Terrain")|LayerMask.GetMask("EnvirObject"));
-                var hit_actor = Physics2D.Raycast(rayPos, Vector2.zero, 4f, LayerMask.GetMask("Actor"));    // 对象检测用hit
-                // 判定cell类型
+                var hit_terrain = Physics2D.OverlapBox(rayPos,Vector2.one * halfSizeX,0,LayerMask.GetMask("Terrain")|LayerMask.GetMask("EnvirObject"));
+                var hit_actor = Physics2D.OverlapBox(rayPos, Vector2.one * halfSizeX, 0, LayerMask.GetMask("Actor"));    // 对象检测用hit
+                
+                //---------------决定cell高度----------------
                 cell.height = -200;
+                
                 if (map.map_dic.ContainsKey((pos.x, pos.y - 1)))
                 {
                     cell.height = map.map_dic[(pos.x, pos.y - 1)].height + 1;
                     cell.fallHeight = map.map_dic[(pos.x, pos.y - 1)].height + 1;
                 }
-                if (hit.collider == null)
+                
+                //---------------决定cell类型和强制高度--------------
+                if (hit_terrain == null)
                     cell.Type = MapCellType.Empty;
-                else if (hit.collider.tag == "Obstacle")
+                else if (hit_terrain.CompareTag("Obstacle"))
                 { cell.Type = MapCellType.Ground; cell.height = -1; }
-                else if (hit.collider.tag == "Platform")
+                else if (hit_terrain.CompareTag("Platform"))
                 { cell.Type = MapCellType.Platform; cell.height = -1; }
-                else if (hit.collider.tag == "Ladder")
+                else if (hit_terrain.CompareTag("Ladder"))
                     cell.Type = MapCellType.Ladder;
 
-                if(hit_actor.collider != null)
+                if(hit_actor != null)
                 {
-                    GameObject gb = hit_actor.transform.parent.gameObject;
-                    var actor = gb.GetComponent<ActorController>();
-                    var self = gameObject.GetComponent<ActorController>();
+                    var actor = hit_actor.transform.parent.gameObject.GetComponent<ActorController>();
+                    
                     if (actor.group.type != self.group.type)
                     {
                         cell.Type = MapCellType.EnemyActor;
@@ -112,36 +125,11 @@ namespace SpaceModule.PathfinderModule
                 }
 
                 map.map_dic[(pos.x, pos.y)] = cell;
+            }
+            //--------------------1.cell基本类型判断完成----------------------
             
-            }
-
-            // 将Actor对象的临近点设为Actor，防止碰撞
-            float self_x = collider2d.bounds.size.x;
-            int checkCellCount = (int)(self_x / 0.5f);
-            Debug.LogError(self_x + " " +checkCellCount);
-
-            foreach (var mapCell in actorCells)
-            {
-                var actorType = mapCell.Type;
-                int x = mapCell.IntPos.Item1, y = mapCell.IntPos.Item2;
-
-                if (map.map_dic[(x - 1, y)].Type == MapCellType.Empty)
-                {
-                    for (int i = 1;i <= checkCellCount;i ++)
-                    {
-                        map.map_dic[(x - i, y)].Type = actorType;
-                    }
-                }
-
-                if (map.map_dic[(x + 1, y)].Type == MapCellType.Empty)
-                {
-                    for (int i = 1; i <= checkCellCount; i++)
-                    {
-                        map.map_dic[(x + i, y)].Type = actorType;
-                    }
-                }
-            }
-
+            //--------------------2.cell Stay和Pass类型判断------------------
+            
             // 判断Cell的单位停留类型
             foreach (var mapCell in map.map_dic)
             {
@@ -150,48 +138,115 @@ namespace SpaceModule.PathfinderModule
 
                 cell.StayState = ObjectStayState.Fall;
                 cell.PassState = ObjectPassState.None;
-
-                if (cell.Type == MapCellType.EnemyActor || cell.Type == MapCellType.Ground ||cell.Type == MapCellType.FriendActor)
-                    cell.StayState = ObjectStayState.CantHold;
-
-                if (cell.Type == MapCellType.Empty || cell.Type == MapCellType.Ladder || cell.Type == MapCellType.Platform)
+                
+                //------------------------2.1根据类型初步判定----------------------
+                switch (cell.Type)
                 {
-                    // climb要弱于stand，所以先判断，若可站立，后续代码会覆盖该状态
-                    if (cell.Type == MapCellType.Ladder)
+                    case MapCellType.EnemyActor:
+                        cell.StayState = ObjectStayState.CantHold;
+                        cell.PassState = ObjectPassState.PassEnemy;
+                        break;
+                    case MapCellType.FriendActor:
+                        cell.StayState = ObjectStayState.CantHold;
+                        cell.PassState = ObjectPassState.PassFriend;
+                        break;
+                    case MapCellType.Ground:
+                        cell.StayState = ObjectStayState.CantHold;
+                        cell.PassState = ObjectPassState.CantPass;
+                        break;
+                    case MapCellType.Ladder:
                         cell.StayState = ObjectStayState.Climb;
-
-                    if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 - 1)))
-                    {
-                        // 下方为地面，自身为空、梯，则为stand
-                        var cellType = map.map_dic[(pos.Item1, pos.Item2 - 1)].Type;
-                        if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
+                        cell.PassState = ObjectPassState.None;
+                        if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 - 1)))
                         {
-                            cell.StayState = ObjectStayState.Stand;
-                            cell.PassState = ObjectPassState.WalkPass;
-                        }
-
-                        //如果上方4格子内含有Ground，则表明空间不足，不可容纳
-                        for (int i = 0; i < SpaceHigh; i++)
-                        {
-                            if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 + i + 1)))
+                            var cellType = map.map_dic[(pos.Item1, pos.Item2 - 1)].Type;
+                            if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
                             {
-                                if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground ||
-                                    map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.EnemyActor ||
-                                    map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.FriendActor)
-                                {
-                                    cell.StayState = ObjectStayState.CantHold;
-                                }
-                                if (map.map_dic[(pos.Item1, pos.Item2 + i + 1)].Type == MapCellType.Ground)
-                                    cell.PassState = ObjectPassState.CantPass;
+                                cell.StayState = ObjectStayState.Stand;
+                                cell.PassState = ObjectPassState.WalkPass;
                             }
                         }
+                        break;
+                    case MapCellType.Empty:
+                        if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 - 1)))
+                        {
+                            var cellType = map.map_dic[(pos.Item1, pos.Item2 - 1)].Type;
+                            if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
+                            {
+                                cell.StayState = ObjectStayState.Stand;
+                                cell.PassState = ObjectPassState.WalkPass;
+                            }
+                        }
+                        break;
+                    case MapCellType.Platform:
+                        if (map.map_dic.ContainsKey((pos.Item1, pos.Item2 - 1)))
+                        {
+                            var cellType = map.map_dic[(pos.Item1, pos.Item2 - 1)].Type;
+                            if(cellType == MapCellType.Ground || cellType == MapCellType.Platform)
+                            {
+                                cell.StayState = ObjectStayState.Stand;
+                                cell.PassState = ObjectPassState.WalkPass;
+                            }
+                        }
+                        break;
+                    default: break;
+                }
 
+                //-----------------2.2根据附近cell判定---------------------
+                if (cell.StayState != ObjectStayState.CantHold) // 能容纳的cell因为该单位自身体积导致的不能容纳
+                {
+                    //2.2.1 垂直空间上的地形导致空间不足
+                    Vector3Int cellPos = new Vector3Int(cell.IntPos.Item1, cell.IntPos.Item2,0);
+                    var rayCastPos = gridLayout.GetCellCenterWorld(cellPos);
+                    var rayHit =Physics2D.Raycast(rayCastPos, Vector2.up, SpaceHigh * cellSize.x, LayerMask.GetMask("Terrain"));
+                    if (rayHit.collider != null)
+                    {
+                        if(rayHit.collider.CompareTag("Obstacle"))
+                            cell.StayState = ObjectStayState.CantHold;
+                    }
+                    //2.2.2 方形空间上的Actor导致空间不足
+                    {
+                        var overlapPos = gridLayout.GetCellCenterWorld(cellPos) + Vector3.up  * cellSize.x * SpaceHigh / 2f;
+
+                        float boxMarginX = 0f;
+                        float boxMarginY = 0f;
+                        Vector2 ActorSize = new Vector2(SpaceWidth + boxMarginX,  boxMarginY + SpaceHigh) * cellSize.x;
+                        var hits = Physics2D.OverlapBoxAll(overlapPos, ActorSize, 0, LayerMask.GetMask("Actor"));
+                        foreach (var hit in hits)
+                        {
+                            if (hit.transform.parent.TryGetComponent<ActorController>(out ActorController actor))
+                            {
+                                if(actor == self)
+                                    continue;
+
+                                if (actor.@group.type != self.@group.type)
+                                {
+                                    cell.PassState = ObjectPassState.PassEnemy;
+                                }
+                                else
+                                {
+                                    cell.PassState = ObjectPassState.PassFriend;
+                                }
+                                
+                                // 穿行cell记录
+                                if (cell.StayState == ObjectStayState.Stand)
+                                {
+                                    //--------------------3.cell PassEdge判断--------------------
+                                    var edge = passActorEdgeHandler.GetPassActorEdge(actor);
+                                    edge.PassState = cell.PassState;
+                                    if(overlapPos.x < hit.transform.parent.transform.position.x)
+                                        edge.LeftNodePositions.Add(cell.IntPos);
+                                    else
+                                        edge.RightNodePositions.Add(cell.IntPos);
+                                }
+                                
+                                cell.StayState = ObjectStayState.CantHold;
+                            }
+                        }
                     }
                 }
+                
             }
-
-            
-        
 
         }
 
@@ -201,7 +256,7 @@ namespace SpaceModule.PathfinderModule
         private void GenerateGraghByMap()
         {
             gragh = new Gragh();
-
+            
             foreach (var mapCell in map.map_dic)
             {
                 MapCell cell = mapCell.Value;
@@ -213,7 +268,7 @@ namespace SpaceModule.PathfinderModule
                 {
                     CreatEdgeByWalkCheck(x, y); // 行走带来的路径
                     CreatEdgeByClimbCheck(x, y);
-                    CreatEdgeByPassActorCheck(x, y);
+                    //CreatEdgeByPassActorCheck(x, y);
                 }
                 if(cell.StayState == ObjectStayState.Stand)
                 {
@@ -222,6 +277,8 @@ namespace SpaceModule.PathfinderModule
                 }
 
             }
+
+            CreatEdgeByPassActorCheck();
         }
 
         #region 外部调用
@@ -365,11 +422,11 @@ namespace SpaceModule.PathfinderModule
             }
             nearstNodes.Sort((n1, n2) =>
                 {
-                    float disN1 = Mathf.Abs(endPos_map.x - n1.x) + Mathf.Abs(endPos_map.y - n1.y) *0.25f;
-                    float disN2 = Mathf.Abs(endPos_map.x - n2.x) + Mathf.Abs(endPos_map.y - n2.y) *0.25f;
+                    float disN1 = Mathf.Abs(endPos_map.x - n1.x) + Mathf.Abs(endPos_map.y - n1.y);
+                    float disN2 = Mathf.Abs(endPos_map.x - n2.x) + Mathf.Abs(endPos_map.y - n2.y);
                     if (disN1 > disN2)
                         return 1;
-                    else if (disN1 == disN2)
+                    else if (Math.Abs(disN1 - disN2) < Mathf.Epsilon)
                         return 0;
                     else
                         return -1;
@@ -411,11 +468,11 @@ namespace SpaceModule.PathfinderModule
             }
             nearstNodes.Sort((n1, n2) =>
                 {
-                    float disN1 = Mathf.Abs(endPos_map.x - n1.x) + Mathf.Abs(endPos_map.y - n1.y) * 0.25f;
-                    float disN2 = Mathf.Abs(endPos_map.x - n2.x) + Mathf.Abs(endPos_map.y - n2.y) * 0.25f;
+                    float disN1 = Mathf.Abs(endPos_map.x - n1.x) + Mathf.Abs(endPos_map.y - n1.y);
+                    float disN2 = Mathf.Abs(endPos_map.x - n2.x) + Mathf.Abs(endPos_map.y - n2.y);
                     if (disN1 > disN2)
                         return 1;
-                    else if (disN1 == disN2)
+                    else if (Math.Abs(disN1 - disN2) < Mathf.Epsilon)
                         return 0;
                     else
                         return -1;
@@ -721,7 +778,7 @@ namespace SpaceModule.PathfinderModule
         }
 
         /// <summary>
-        /// 创建通过敌人的路径，消耗更大
+        /// 创建通过敌人的路径，消耗更大,已弃用
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -730,13 +787,14 @@ namespace SpaceModule.PathfinderModule
             Node curNode = GetNode((x, y));
             if (curNode == null) return;
 
-            // 搜算左右节点
+            
             List<(int, int)> jumpPos_list = new List<(int, int)> { (-1, 0), (1, 0), (-1, 1), (1, 1), (-1, -1), (1, -1) };
             List<(int, int)> linkPos_list = new List<(int, int)> { (-1, 0), (1, 0), (-1, 1), (1, 1), (-1, -1), (1, -1) };
+            
+            //--------------------相邻节点-----------------------
             foreach (var offset_pos in linkPos_list)
             {
                 int passCost = 0;
-
                 int offset_x = offset_pos.Item1; int offset_y = offset_pos.Item2;
                 (int, int) pos = (x + offset_x, y + offset_y);
 
@@ -744,20 +802,19 @@ namespace SpaceModule.PathfinderModule
                 {
                     MapCell target = map.map_dic[pos];
                     bool isMiddleActor = false;
-                    bool canPass = true;
-                    if (target.PassState == ObjectPassState.CantPass)
-                        canPass = false;
-                    if(target.Type == MapCellType.EnemyActor)
+                    bool canPass = target.PassState != ObjectPassState.CantPass;
+                    if(target.Type == MapCellType.EnemyActor || target.PassState == ObjectPassState.PassEnemy)
                     {
                         isMiddleActor = true;
                         passCost = CostPerUnit_PassE;
                     }
-                    if(target.Type == MapCellType.FriendActor)
+                    if(target.Type == MapCellType.FriendActor || target.PassState == ObjectPassState.PassFriend)
                     {
                         isMiddleActor = true;
                         passCost = CostPerUnit_PassF;
                     }
-
+                    
+                    // 确定是通过敌方
                     if(canPass && isMiddleActor)
                     {
                         foreach(var offset_pos2 in jumpPos_list)
@@ -794,6 +851,54 @@ namespace SpaceModule.PathfinderModule
                 }
             }
         }
+
+        private void CreatEdgeByPassActorCheck()
+        {
+            foreach (var passEdge in passActorEdgeHandler.PassActorEdges)
+            {
+                List<(int, int)> standLeftPositions = new List<(int, int)>();
+                List<(int, int)> standRightPositions = new List<(int, int)>();
+                
+                int costPerUnit = passEdge.PassState == ObjectPassState.PassEnemy
+                    ? CostPerUnit_PassE
+                    : CostPerUnit_PassF;
+                
+                foreach (var left in passEdge.LeftNodePositions)
+                {
+                   standLeftPositions.AddRange(
+                       SearchMapCell3x3(left, cell => cell.StayState == ObjectStayState.Stand)
+                       );
+                }
+                foreach (var right in passEdge.RightNodePositions)
+                {
+                    standRightPositions.AddRange(
+                        SearchMapCell3x3(right, cell => cell.StayState == ObjectStayState.Stand)
+                    );
+                }
+
+                foreach (var left in standLeftPositions)
+                {
+                    foreach (var right in standRightPositions)
+                    {
+                        int width = right.Item1 - left.Item1;
+                        Node leftNode = GetNode(left);
+                        Node rightNode = GetNode(right);
+                        leftNode.ActionToNode = ActorActionToNode.JumpH;
+                        rightNode.ActionToNode = ActorActionToNode.JumpH;
+                        
+                        // 添加edge
+                        Edge edge1 = new Edge(leftNode, rightNode, costPerUnit * width);
+                        Edge edge2 = new Edge(rightNode,leftNode , costPerUnit * width);
+                        gragh.AddEdge(edge1);
+                        gragh.AddEdge(edge2);
+                        Debug.Log("dsfaadsfag");
+                        break;
+                    }
+                    
+                }
+            }
+        }
+        
         #endregion
 
         #region 额外边创建方法
@@ -819,7 +924,9 @@ namespace SpaceModule.PathfinderModule
             (int, int) searchPos = (x, y);
             (int, int) endPos = (x, y); // 最终结束点
 
-            for (int i = 1; i < dis + 1; i++)
+            float width = GetComponent<PathFinderComponent>().SpaceWidth;
+
+            for (int i = 1; i < dis * width + 1; i++)
             { 
                 // 现在检测的位置是(tx,ty）
                 int tx = searchPos.Item1 + Mathf.RoundToInt(nDir.x), ty = searchPos.Item2 + Mathf.RoundToInt(nDir.y);
@@ -827,7 +934,7 @@ namespace SpaceModule.PathfinderModule
                 var curCell = map.map_dic[(tx, ty)];
                 if(ifIgnoreActor)
                 {
-                    if (curCell.Type == MapCellType.EnemyActor || curCell.Type == MapCellType.FriendActor)  // 如果中间块是敌方单位，则先跳过这个块
+                    if (curCell.PassState == ObjectPassState.PassEnemy || curCell.PassState == ObjectPassState.PassFriend)  // 如果中间块是敌方单位，则先跳过这个块
                     {
                         searchPos = (tx, ty);   // 可穿过节点 作为下次搜索的基点，但不可作为targetPos
                         continue;
@@ -881,7 +988,7 @@ namespace SpaceModule.PathfinderModule
 
             // 建立击退edge
             var beatBackNode = GetNode(targetPos);
-            if (beatBackNode == curNode) return (x, y);   // 如果没有移动，则不创建edge
+            if (Equals(beatBackNode, curNode)) return (x, y);   // 如果没有移动，则不创建edge
 
             Edge edge = new Edge(curNode, beatBackNode, 0);   // 否则创建击退edge
             gragh.AddEdge(edge);
@@ -923,6 +1030,9 @@ namespace SpaceModule.PathfinderModule
         }
         /// <summary>
         /// 从(x,y)开始创建下落路径，并用ifToRight记录前置移动方向用于决定碰撞其他物体的击退方向
+        /// 如果返回原来路径点，说明无法下落
+        /// 如果下落将撞击Actor，会尝试将其击退
+        /// 如不可击退则不可下落
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -950,33 +1060,62 @@ namespace SpaceModule.PathfinderModule
             // 下落处理2 位置被占用 检测对方是否能被弹开
             if (targetCell.StayState == ObjectStayState.CantHold)
             {
-                if (targetCell.Type == MapCellType.FriendActor || targetCell.Type == MapCellType.EnemyActor)
+                if (targetCell.PassState == ObjectPassState.PassEnemy || targetCell.PassState == ObjectPassState.PassFriend)
                 {
-                    Vector2 targetWorldPos = grid.GetCellCenterWorld(new Vector3Int(targetCell.IntPos.Item1, targetCell.IntPos.Item2, 0));
-                    var hit = Physics2D.Raycast(targetWorldPos, Vector2.zero, 4f, LayerMask.GetMask("Actor"));
-                    PathFinderComponent targetPathFinder = hit.collider.transform.parent.GetComponent<PathFinderComponent>();
-                
-                    var targetBeHitLeftPath = targetPathFinder.SearchAndGetPathByEnforcedMove(hit.collider.transform.parent.position, Vector2.left, 1, true);
-                    var targetBeHitRightPath = targetPathFinder.SearchAndGetPathByEnforcedMove(hit.collider.transform.parent.position, Vector2.right, 1, true);
+                    Vector3 targetWorldPos = grid.GetCellCenterWorld(new Vector3Int(targetCell.IntPos.Item1, targetCell.IntPos.Item2, 0));
+                    var overlapPos = targetWorldPos + Vector3.up  * cellSize.x * SpaceHigh / 2f;
 
-                    Vector2 dir = Vector2.zero;
+                    float boxMarginX = 0f;
+                    float boxMarginY = 0f;
+                    Vector2 ActorSize = new Vector2(SpaceWidth + boxMarginX,  boxMarginY + SpaceHigh) * cellSize.x;
+                    var hits = Physics2D.OverlapBoxAll(overlapPos, ActorSize, 0, LayerMask.GetMask("Actor"));
 
-                    List<Vector3> targetBeHitPath = new List<Vector3>();
-                    if (ifToRight) { targetBeHitPath = targetBeHitRightPath; dir = Vector2.right; }
-                    else { targetBeHitPath = targetBeHitLeftPath; dir = Vector2.left; }
-
-                    if (targetBeHitPath.Count <= 1) // 原地不动含有一个开始节点，长度为1，没有路径长度为0所以用1作为判据
+                    foreach (var hit in hits)
                     {
-                        targetBeHitPath = ifToRight ? targetBeHitLeftPath : targetBeHitRightPath;
-                        dir = ifToRight ? Vector2.left : Vector2.right;
+                        PathFinderComponent targetPathFinder = hit.transform.parent.GetComponent<PathFinderComponent>();
+
+                        //---------------1.获取下落位置的actor方左右弹开的路径----------------
+                        var targetBeHitLeftPath =
+                            targetPathFinder.SearchAndGetPathByEnforcedMove(hit.transform.parent.position,
+                                Vector2.left, 1, true);
+                        var targetBeHitRightPath =
+                            targetPathFinder.SearchAndGetPathByEnforcedMove(hit.transform.parent.position,
+                                Vector2.right, 1, true);
+
+                        Vector2 dir = Vector2.zero;
+
+                        //----------------2.按朝向决定对方被弹开的方向----------------------
+                        List<Vector3> targetBeHitPath = new List<Vector3>();
+                        if (ifToRight)
+                        {
+                            targetBeHitPath = targetBeHitRightPath;
+                            dir = Vector2.right;
+                        }
+                        else
+                        {
+                            targetBeHitPath = targetBeHitLeftPath;
+                            dir = Vector2.left;
+                        }
+
+                        //----------------3.判断是否可以被弹开----------------------
+                        if (targetBeHitPath.Count <= 1 ) // 原地不动含有一个开始节点，长度为1
+                        {
+                            targetBeHitPath = ifToRight ? targetBeHitLeftPath : targetBeHitRightPath;
+                            dir = ifToRight ? Vector2.left : Vector2.right;
+                        }
+
+                        if (targetBeHitPath.Count <= 1 ) return (x, y); // 两个方向都不能弹开，取消下落
+
+                        // 添加碰撞信息
+                        BeatBackInfomation beatBackInfomation =
+                            new BeatBackInfomation(hit.transform.parent.gameObject, dir, 1);
+
+                        targetNode.BeatBackInfomation = beatBackInfomation;
                     }
-
-                    if (targetBeHitPath.Count <= 1) return (x, y);  // 两个方向都不能弹开，取消下落
-
-                    // 添加碰撞信息
-                    BeatBackInfomation beatBackInfomation = new BeatBackInfomation(hit.transform.parent.gameObject, dir, 1);
-
-                    targetNode.BeatBackInfomation = beatBackInfomation;
+                }
+                else
+                {
+                    return (x, y);
                 }
             }
 
@@ -992,6 +1131,39 @@ namespace SpaceModule.PathfinderModule
         #endregion
 
         #region 工具方法
+
+        /// <summary>
+        /// 返回3*3格子(除中心)中满足要求的cell位置
+        /// </summary>
+        /// <param name="centerCell"></param>
+        /// <param name="checkFunc"></param>
+        /// <returns></returns>
+        private List<(int,int)> SearchMapCell3x3((int,int) centerCell,Predicate<MapCell> checkFunc)
+        {
+            List<(int,int)> mapCells = new List<(int,int)>();
+            
+            List<(int, int)> serchPositions = new List<(int, int)>()
+            {
+                (-1,1), (0,1), (1,1),
+                (-1,0), (1,0),
+                (-1,-1), (0,-1), (1,-1)
+            };
+
+            foreach (var pos in serchPositions)
+            {
+                (int, int) serchPoistion = (pos.Item1 + centerCell.Item1, pos.Item2 + centerCell.Item2);
+                if (map.map_dic.ContainsKey(serchPoistion))
+                {
+                    var curCell = map.map_dic[serchPoistion];
+                    if(checkFunc(curCell))
+                        mapCells.Add((curCell.IntPos.Item1,curCell.IntPos.Item2));
+                }
+            }
+
+            return mapCells;
+        }
+        
+
 
         /// <summary>
         /// 安全的获取节点方法，如果没有则会进行创建。如果无法创建则会返回null
@@ -1048,6 +1220,50 @@ namespace SpaceModule.PathfinderModule
             return nodes;
         }
 
+        private bool IfExistCell(int x, int y,out MapCell cell)
+        {
+
+            if (map.map_dic.ContainsKey((x, y)))
+            {
+                cell = map.map_dic[(x, y)];
+                return true;
+            }
+            else
+            {
+                cell = null;
+                return false;
+            }
+        }
+        
+        /// <summary>
+        /// dir方向的dis范围内存在某个符合checkFunc类型的cell返回true
+        /// </summary>
+        /// <param name="startPos"></param>
+        /// <param name="dir"></param>
+        /// <param name="dis"></param>
+        /// <param name="checkFunc"></param>
+        /// <returns></returns>
+        private bool IfExistCell((int,int)startPos,(int,int)dir,int dis, Predicate<MapCell> checkFunc)
+        {
+            for (int d = 1; d <= dis; d++)
+            {
+                int nextX = startPos.Item1 + dir.Item1 * d;
+                int nextY = startPos.Item2 + dir.Item2 * d;
+                
+                if (IfExistCell(startPos.Item1, startPos.Item2, out MapCell nextCell))
+                {
+                    if (checkFunc(nextCell))
+                        return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
         //private bool IfCanStayByColliderCheck(Vector3 worldPos)
         //{
         //    var hits[] = Physics2D.OverlapBoxNonAlloc(worldPos,)
@@ -1067,5 +1283,74 @@ namespace SpaceModule.PathfinderModule
 
 
         #endregion
+
+        public bool IfGizmosType = true;
+        private void OnDrawGizmosSelected()
+        {
+            if (map != null)
+            {
+                foreach (var mapCell in map.map_dic)
+                {
+                    var cell = mapCell.Value;
+                    var posX = mapCell.Key.Item1;
+                    var posY = mapCell.Key.Item2;
+
+                    var worldPos = CellToWorld((posX, posY));
+                    Color color = Color.clear;
+                    Color reduceColor =  new Color(0,0,0,0.4f);
+
+                    if (IfGizmosType)
+                    {
+                        switch (cell.Type)
+                        {
+                            case MapCellType.Empty:
+                                color = Color.white - reduceColor;
+                                break;
+                            case MapCellType.Ground:
+                                color = Color.black - reduceColor;
+                                break;
+                            case MapCellType.Ladder:
+                                color = Color.yellow - reduceColor;
+                                break;
+                            case MapCellType.Platform:
+                                color = Color.cyan - reduceColor;
+                                break;
+                            case MapCellType.EnemyActor:
+                                color = Color.red - reduceColor;
+                                break;
+                            case MapCellType.FriendActor:
+                                color = Color.green - reduceColor;
+                                break;
+                        }
+
+                        Gizmos.color = color;
+                        Gizmos.DrawCube(worldPos, Vector3.one * 0.25f);
+                        /*Gizmos.color = Color.blue;
+                        Gizmos.DrawWireCube(worldPos,Vector3.one *(cellSize.x - 0.05f));*/
+                    }
+                    else
+                    {
+                        switch (cell.StayState)
+                        {
+                            case ObjectStayState.Stand:
+                                color = Color.white - reduceColor;
+                                break;
+                            case ObjectStayState.CantHold:
+                                color = Color.black - reduceColor;
+                                break;
+                            case ObjectStayState.Climb:
+                                color = Color.yellow - reduceColor;
+                                break;
+                            case ObjectStayState.Fall:
+                                color = Color.cyan - reduceColor;
+                                break;
+                        }
+                        Gizmos.color = color;
+                        Gizmos.DrawCube(worldPos, Vector3.one * 0.25f);
+                    }
+                }
+            }
+            
+        }
     }
 }

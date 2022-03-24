@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CardModule.CardStates;
 using Tools;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -35,6 +36,7 @@ namespace CardModule.Controllers
             get { return Hand.GetComponent<HandController>().Holder; }
             set { }
         }
+        [SerializeField]
         private Card card;
         public Card Card { set { card = value; SpriteObject.GetComponent<CardViewController>().OnCardChanged(Card); } get { return card; } }
 
@@ -169,11 +171,13 @@ namespace CardModule.Controllers
         public void OnPointerEnter(PointerEventData eventData)
         {
             ifMouseSelectThis = true;
+            UIManager.instance.IfActiveUIInteraction = false;
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             ifMouseSelectThis = false;
+            UIManager.instance.IfActiveUIInteraction = true;
         }
     }
 }
