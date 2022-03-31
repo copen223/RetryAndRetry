@@ -24,7 +24,7 @@ TagManager:
   - Actor
   - EnvirObject
   - EnvirElements
-  - 
+  - PhysicsHitCheck
   - 
   - 
   - 

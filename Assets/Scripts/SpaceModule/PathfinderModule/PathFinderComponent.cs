@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Xml.Schema;
 using ActorModule.Core;
+using Physics;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -1072,21 +1074,36 @@ namespace SpaceModule.PathfinderModule
 
                     foreach (var hit in hits)
                     {
-                        PathFinderComponent targetPathFinder = hit.transform.parent.GetComponent<PathFinderComponent>();
+                        var parent = hit.transform.parent;
+                        PathFinderComponent targetPathFinder = parent.GetComponent<PathFinderComponent>();
+                        ActorController hitActor = parent.GetComponent<ActorController>();
 
                         //---------------1.获取下落位置的actor方左右弹开的路径----------------
+                        var position = parent.position;
                         var targetBeHitLeftPath =
-                            targetPathFinder.SearchAndGetPathByEnforcedMove(hit.transform.parent.position,
+                            targetPathFinder.SearchAndGetPathByEnforcedMove(position,
                                 Vector2.left, 1, true);
                         var targetBeHitRightPath =
-                            targetPathFinder.SearchAndGetPathByEnforcedMove(hit.transform.parent.position,
+                            targetPathFinder.SearchAndGetPathByEnforcedMove(position,
                                 Vector2.right, 1, true);
 
                         Vector2 dir = Vector2.zero;
 
-                        //----------------2.按朝向决定对方被弹开的方向----------------------
+                        //----------------2.按朝向和相对位置决定对方被弹开的方向----------------------
+                        List<PhysicsHitTarget> hitTargets = new List<PhysicsHitTarget>();
                         List<Vector3> targetBeHitPath = new List<Vector3>();
-                        if (ifToRight)
+
+                        float disx = hitActor.transform.position.x - CellToWorld((targetCell.IntPos.Item1,targetCell.IntPos.Item2)).x;
+
+                        bool ifBeatBackToRight = ifToRight;
+                        if (disx > Mathf.Epsilon)
+                            ifBeatBackToRight = true;
+                        else if(disx < -Mathf.Epsilon)
+                        {
+                            ifBeatBackToRight = false;
+                        }
+                        
+                        if (ifBeatBackToRight)
                         {
                             targetBeHitPath = targetBeHitRightPath;
                             dir = Vector2.right;
@@ -1098,13 +1115,66 @@ namespace SpaceModule.PathfinderModule
                         }
 
                         //----------------3.判断是否可以被弹开----------------------
-                        if (targetBeHitPath.Count <= 1 ) // 原地不动含有一个开始节点，长度为1
+                        do
                         {
-                            targetBeHitPath = ifToRight ? targetBeHitLeftPath : targetBeHitRightPath;
-                            dir = ifToRight ? Vector2.left : Vector2.right;
-                        }
+                            var bounds = hitActor.SpriteCollider.bounds;
+                            Vector2 hitActorSize = new Vector2(bounds.size.x, bounds.size.y);
+                            
+                            if (targetBeHitPath.Count <= 1) // 原地不动含有一个开始节点，长度为1
+                            {
+                                targetBeHitPath = ifToRight ? targetBeHitLeftPath : targetBeHitRightPath;
+                                dir = ifToRight ? Vector2.left : Vector2.right;
+                            }
+                            else
+                            {
+                                var targetPos = targetBeHitPath[targetBeHitPath.Count - 1] + hitActor.CenterOffset;
+                                
 
-                        if (targetBeHitPath.Count <= 1 ) return (x, y); // 两个方向都不能弹开，取消下落
+                                var hitTarget = PhysicsManager.Insatance.SetHitTargetAt(hitActorSize, targetPos);
+
+                                var fakeHits = Physics2D.OverlapBoxAll(overlapPos, ActorSize, 0,
+                                    LayerMask.GetMask("PhysicsHitCheck"));
+                                //hitTarget.ReturnToFactory();
+                                
+                                if (fakeHits.Length > 0)
+                                {
+                                    targetBeHitPath = ifToRight ? targetBeHitLeftPath : targetBeHitRightPath;
+                                    dir = ifToRight ? Vector2.left : Vector2.right;
+                                    
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+
+
+                            if (targetBeHitPath.Count <= 1)
+                            {
+                                return (x, y); // 两个方向都不能弹开，取消下落
+                            }
+                            else
+                            {
+                                var targetPos = targetBeHitPath[targetBeHitPath.Count - 1] + hitActor.CenterOffset;
+
+                                var hitTarget = PhysicsManager.Insatance.SetHitTargetAt(hitActorSize, targetPos);
+
+                                var fakeHits = Physics2D.OverlapBoxAll(overlapPos, ActorSize, 0,
+                                    LayerMask.GetMask("PhysicsHitCheck"));
+                                
+                                //hitTarget.ReturnToFactory();
+                                
+                                if (fakeHits.Length > 0)
+                                {
+                                    return (x, y);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        } while (false);
+                        
 
                         // 添加碰撞信息
                         BeatBackInfomation beatBackInfomation =

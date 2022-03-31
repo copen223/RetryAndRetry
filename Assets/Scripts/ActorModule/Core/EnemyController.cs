@@ -26,6 +26,7 @@ namespace ActorModule.Core
 
         private void Start()
         {
+            Init();
             ActorStates = new List<ActorState>(StatesChild.GetComponents<ActorState>());
             currentState = ActorStates.Find((x) => { return (x is ActorActionIdle); });
         }

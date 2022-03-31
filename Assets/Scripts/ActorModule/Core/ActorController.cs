@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ActorModule.ActorAIModule;
 using ActorModule.ActorStates;
@@ -10,6 +11,7 @@ using CardModule.Controllers;
 using SpaceModule.PathfinderModule;
 using UI;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 namespace ActorModule.Core
@@ -29,6 +31,8 @@ namespace ActorModule.Core
         public Vector3 CenterOffset { get { return Sprite.transform.localPosition; } }
         public Vector3 CenterPos { get { return transform.position + CenterOffset; } }
 
+        public Collider2D SpriteCollider;
+        
         public int advantage;   // 先攻
         public ActorGroup group;
         /// <summary>
@@ -37,6 +41,12 @@ namespace ActorModule.Core
         [Header("设置标签")]
         [SerializeField]
         private bool SpriteFaceToRight = false;
+
+        protected void Init()
+        {
+            SpriteCollider = Sprite.GetComponent<Collider2D>();
+        }
+
 
         #region 其他对外方法
         /// <summary>
