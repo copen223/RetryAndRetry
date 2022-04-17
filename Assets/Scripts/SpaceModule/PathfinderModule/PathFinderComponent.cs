@@ -103,6 +103,7 @@ namespace SpaceModule.PathfinderModule
                 }
                 
                 //---------------决定cell类型和强制高度--------------
+                cell.ActorType = MapCellActorType.None;
                 if (hit_terrain == null)
                     cell.Type = MapCellType.Empty;
                 else if (hit_terrain.CompareTag("Obstacle"))
@@ -118,10 +119,10 @@ namespace SpaceModule.PathfinderModule
                     
                     if (actor.group.type != self.group.type)
                     {
-                        cell.Type = MapCellType.EnemyActor;
+                        cell.ActorType = MapCellActorType.EnemyActor;
                     }
-                    else if(actor != self)
-                        cell.Type = MapCellType.FriendActor;
+                    else if (actor != self)
+                        cell.ActorType = MapCellActorType.FriendActor;
 
                     actorCells.Add(cell);
                 }
@@ -140,21 +141,15 @@ namespace SpaceModule.PathfinderModule
 
                 cell.StayState = ObjectStayState.Fall;
                 cell.PassState = ObjectPassState.None;
+                cell.IfCanHold = true;
                 
                 //------------------------2.1根据类型初步判定----------------------
                 switch (cell.Type)
                 {
-                    case MapCellType.EnemyActor:
-                        cell.StayState = ObjectStayState.CantHold;
-                        cell.PassState = ObjectPassState.PassEnemy;
-                        break;
-                    case MapCellType.FriendActor:
-                        cell.StayState = ObjectStayState.CantHold;
-                        cell.PassState = ObjectPassState.PassFriend;
-                        break;
                     case MapCellType.Ground:
-                        cell.StayState = ObjectStayState.CantHold;
+                        cell.StayState = ObjectStayState.Block;
                         cell.PassState = ObjectPassState.CantPass;
+                        cell.IfCanHold = false;
                         break;
                     case MapCellType.Ladder:
                         cell.StayState = ObjectStayState.Climb;
@@ -194,8 +189,24 @@ namespace SpaceModule.PathfinderModule
                     default: break;
                 }
 
+                switch (cell.ActorType)
+                {
+                    case MapCellActorType.None:
+                        break;
+                    case MapCellActorType.EnemyActor:
+                        cell.IfCanHold = false;
+                        cell.PassState = ObjectPassState.PassEnemy;
+                        break;
+                    case MapCellActorType.FriendActor:
+                        cell.IfCanHold = false;
+                        cell.PassState = ObjectPassState.PassFriend;
+                        break;
+                    default: break;
+                }
+
                 //-----------------2.2根据附近cell判定---------------------
-                if (cell.StayState != ObjectStayState.CantHold) // 能容纳的cell因为该单位自身体积导致的不能容纳
+                //cell.StayState != ObjectStayState.CantHold
+                if (cell.IfCanHold) // 能容纳的cell因为该单位自身体积导致的不能容纳
                 {
                     //2.2.1 垂直空间上的地形导致空间不足
                     Vector3Int cellPos = new Vector3Int(cell.IntPos.Item1, cell.IntPos.Item2,0);
@@ -203,9 +214,13 @@ namespace SpaceModule.PathfinderModule
                     var rayHit =Physics2D.Raycast(rayCastPos, Vector2.up, SpaceHigh * cellSize.x, LayerMask.GetMask("Terrain"));
                     if (rayHit.collider != null)
                     {
-                        if(rayHit.collider.CompareTag("Obstacle"))
-                            cell.StayState = ObjectStayState.CantHold;
+                        if (rayHit.collider.CompareTag("Obstacle"))
+                        {
+                            cell.StayState = ObjectStayState.Block;
+                            cell.IfCanHold = false;
+                        }
                     }
+
                     //2.2.2 方形空间上的Actor导致空间不足
                     {
                         var overlapPos = gridLayout.GetCellCenterWorld(cellPos) + Vector3.up  * cellSize.x * SpaceHigh / 2f;
@@ -241,8 +256,8 @@ namespace SpaceModule.PathfinderModule
                                     else
                                         edge.RightNodePositions.Add(cell.IntPos);
                                 }
-                                
-                                cell.StayState = ObjectStayState.CantHold;
+
+                                cell.IfCanHold = false;
                             }
                         }
                     }
@@ -267,6 +282,7 @@ namespace SpaceModule.PathfinderModule
                 (int, int) pos = mapCell.Key;
 
                 if(cell.StayState == ObjectStayState.Stand || cell.StayState == ObjectStayState.Climb)
+                //if(cell.StayState)
                 {
                     CreatEdgeByWalkCheck(x, y); // 行走带来的路径
                     CreatEdgeByClimbCheck(x, y);
@@ -379,6 +395,7 @@ namespace SpaceModule.PathfinderModule
         /// 搜索后调用，获得指定路径,确保已使用dijkstra，即调用searchpathfrom
         /// 其获得的是一个带有开始节点的路径，长度至少为1
         /// 如果没有路径，则长度为0
+        /// 获得的路径包含canthold位点，最终位置请手动判断不要为canthold位点
         /// </summary>
         /// <param name="startPos_world"></param>
         /// <param name="endPos_world"></param>
@@ -403,6 +420,9 @@ namespace SpaceModule.PathfinderModule
             CurPath = path_world;
             return path_world;
         }
+
+        
+        
 
         /// <summary>
         /// 该方法用于确定离目标点最近的可用点的路径,确保已使用dijkstra，即调用searchpathfrom
@@ -456,7 +476,7 @@ namespace SpaceModule.PathfinderModule
         /// <param name="endPos_world"></param>
         /// <param name="thresholdOfCost"></param>
         /// <returns></returns>
-        public List<Vector3> GetPathFromToNearst(Vector3 startPos_world, Vector3 endPos_world, float thresholdOfCost)
+        public bool GetPathFromToNearst(Vector3 startPos_world, Vector3 endPos_world, float thresholdOfCost,out List<Vector3> outPath)
         {
             List<Vector3> path_world = new List<Vector3>();
             Vector3Int startPos_map = grid.WorldToCell(startPos_world);
@@ -489,14 +509,17 @@ namespace SpaceModule.PathfinderModule
                 {
                     var cellPos = grid.WorldToCell(new Vector3(path[path.Count - 1].x, path[path.Count - 1].y, 0));
                     Node node = GetNode((cellPos.x, cellPos.y));
-                    if (node.cost > thresholdOfCost)
+                    MapCell cell = map.map_dic[(cellPos.x, cellPos.y)];
+                    if (node.cost > thresholdOfCost || !cell.IfCanHold)
                         continue;
                     CurPath = path;
-                    return path;
+                    outPath = path;
+                    return true;
                 }
             }
 
-            return null;
+            outPath = null;
+            return false;
         }
 
         /// <summary>
@@ -520,12 +543,7 @@ namespace SpaceModule.PathfinderModule
             CurNodePath = nodePathList;
             return nodePathList;
         }
-
-
-
-
-
-
+        
         /// <summary>
         /// 获取当前节点的费用，用于资源消耗
         /// </summary>
@@ -562,6 +580,7 @@ namespace SpaceModule.PathfinderModule
         }
 
         /// <summary>
+        /// 包含了GenerateMap等操作，请直接调用
         /// 获取下落路径
         /// </summary>
         /// <param name="startPos_world"></param>
@@ -636,15 +655,22 @@ namespace SpaceModule.PathfinderModule
                 if (map.map_dic.ContainsKey(pos))
                 {
                     MapCell link = map.map_dic[pos];
-                    if ((link.StayState == ObjectStayState.Climb || link.StayState == ObjectStayState.Stand )&& link.StayState!= ObjectStayState.CantHold)
+                    do
                     {
-                        Node linkNode = GetNode((pos.Item1, pos.Item2));
-                        linkNode.ActionToNode = ActorActionToNode.Climb;
+                        if(!link.IfCanHold && link.ActorType != MapCellActorType.FriendActor)
+                            break;
+                        
+                        if (link.StayState == ObjectStayState.Climb || link.StayState == ObjectStayState.Stand) 
+                        {
+                            Node linkNode = GetNode((pos.Item1, pos.Item2));
+                            linkNode.ActionToNode = ActorActionToNode.Climb;
 
-                        // 添加edge
-                        Edge edge = new Edge(curNode, linkNode, CostPerUnit_Climb);
-                        gragh.AddEdge(edge);
-                    }
+                            // 添加edge
+                            Edge edge = new Edge(curNode, linkNode, CostPerUnit_Climb);
+                            gragh.AddEdge(edge);
+                        }
+                    } while (false);
+
                 }
             }
             // 搜索跳跃节点
@@ -759,7 +785,7 @@ namespace SpaceModule.PathfinderModule
                     {
                         MapCell middle = map.map_dic[middlePos];
                         // 轨迹中含有障碍或者不可容纳本来就是可行走路径，则不创建edge
-                        if (middle.Type == MapCellType.Ground || middle.StayState == ObjectStayState.CantHold)
+                        if (middle.Type == MapCellType.Ground || !middle.IfCanHold)
                             break;
                         else if (i > 1 && middle.StayState == ObjectStayState.Stand)
                         {
@@ -805,12 +831,12 @@ namespace SpaceModule.PathfinderModule
                     MapCell target = map.map_dic[pos];
                     bool isMiddleActor = false;
                     bool canPass = target.PassState != ObjectPassState.CantPass;
-                    if(target.Type == MapCellType.EnemyActor || target.PassState == ObjectPassState.PassEnemy)
+                    if(target.ActorType == MapCellActorType.EnemyActor || target.PassState == ObjectPassState.PassEnemy)
                     {
                         isMiddleActor = true;
                         passCost = CostPerUnit_PassE;
                     }
-                    if(target.Type == MapCellType.FriendActor || target.PassState == ObjectPassState.PassFriend)
+                    if(target.ActorType == MapCellActorType.FriendActor || target.PassState == ObjectPassState.PassFriend)
                     {
                         isMiddleActor = true;
                         passCost = CostPerUnit_PassF;
@@ -904,6 +930,7 @@ namespace SpaceModule.PathfinderModule
         #endregion
 
         #region 额外边创建方法
+
         /// <summary>
         /// 由击退来创建路径
         /// </summary>
@@ -911,6 +938,9 @@ namespace SpaceModule.PathfinderModule
         /// <param name="y"></param>
         /// <param name="方向"></param>
         /// <param name="距离"></param>
+        /// <param name="dir"></param>
+        /// <param name="dis"></param>
+        /// <param name="ifIgnoreActor"></param>
         private (int, int) CreatEdgeByBeatBack(int x, int y, Vector2 dir, int dis, bool ifIgnoreActor)
         {
             Stack<(int, int)> targetPos_stack = new Stack<(int, int)>();
@@ -944,11 +974,11 @@ namespace SpaceModule.PathfinderModule
                 }
 
                 // 如果该节点不可容纳对象，则选取其上方的节点
-                if (curCell.StayState == ObjectStayState.CantHold)
+                if (!curCell.IfCanHold)
                 {
                     ty = ty + 1;
                     var curCell2 = map.map_dic[(tx, ty)];
-                    if (curCell2.StayState == ObjectStayState.CantHold)
+                    if (!curCell2.IfCanHold)
                         break;  // 上方的节点也不可通过，通路全部被堵，结束搜索
                 }
 
@@ -960,7 +990,6 @@ namespace SpaceModule.PathfinderModule
 
             #region 建立下落边，并修正击退位置
             bool ifMoveToRight = (targetPos.Item1 - x) > 0 ? true : false;
-            (int, int) fallPos;
             while (true)
             {
                 targetPos = targetPos_stack.Pop();
@@ -968,7 +997,7 @@ namespace SpaceModule.PathfinderModule
                 if (map.map_dic[targetPos].StayState == ObjectStayState.Fall)
                 {
                     // fallPos = CreatEdgeByFall(targetPos.Item1, targetPos.Item2);
-                    fallPos = CreatEdgeByFall(targetPos.Item1, targetPos.Item2, ifMoveToRight); // 添加下落路径
+                    var fallPos = CreatEdgeByFall(targetPos.Item1, targetPos.Item2, ifMoveToRight);
 
                     if (fallPos == targetPos) // 如果无法下落
                     {
@@ -1016,7 +1045,7 @@ namespace SpaceModule.PathfinderModule
             var targetCell = map.map_dic[(x, y - cell.fallHeight)];
 
             // 下落处理1 位置被占用 取消下落
-            if (targetCell.StayState == ObjectStayState.CantHold)
+            if (!targetCell.IfCanHold)
                 return (x, y);
 
             var targetNode = GetNode((x, y - cell.fallHeight));
@@ -1060,7 +1089,7 @@ namespace SpaceModule.PathfinderModule
             //    return (x, y);
 
             // 下落处理2 位置被占用 检测对方是否能被弹开
-            if (targetCell.StayState == ObjectStayState.CantHold)
+            if (!targetCell.IfCanHold)
             {
                 if (targetCell.PassState == ObjectPassState.PassEnemy || targetCell.PassState == ObjectPassState.PassFriend)
                 {
@@ -1385,10 +1414,15 @@ namespace SpaceModule.PathfinderModule
                             case MapCellType.Platform:
                                 color = Color.cyan - reduceColor;
                                 break;
-                            case MapCellType.EnemyActor:
+                            
+                        }
+
+                        switch (cell.ActorType)
+                        {
+                            case MapCellActorType.EnemyActor:
                                 color = Color.red - reduceColor;
                                 break;
-                            case MapCellType.FriendActor:
+                            case MapCellActorType.FriendActor:
                                 color = Color.green - reduceColor;
                                 break;
                         }
@@ -1405,9 +1439,6 @@ namespace SpaceModule.PathfinderModule
                             case ObjectStayState.Stand:
                                 color = Color.white - reduceColor;
                                 break;
-                            case ObjectStayState.CantHold:
-                                color = Color.black - reduceColor;
-                                break;
                             case ObjectStayState.Climb:
                                 color = Color.yellow - reduceColor;
                                 break;
@@ -1415,6 +1446,10 @@ namespace SpaceModule.PathfinderModule
                                 color = Color.cyan - reduceColor;
                                 break;
                         }
+                        
+                        if(!cell.IfCanHold)
+                            color = Color.black - reduceColor;
+                        
                         Gizmos.color = color;
                         Gizmos.DrawCube(worldPos, Vector3.one * 0.25f);
                     }

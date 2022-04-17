@@ -26,7 +26,9 @@ namespace ActorModule.ActorStates
             // 1.路径获取
             var mousePos_world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //var path = pathfinderComponent.GetPathFromTo(gameObject.transform.position, mousePos_world);
-            var path = pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world, (Controller as PlayerController).MovePoint);
+            bool ifCanFindPath = 
+                pathfinderComponent.GetPathFromToNearst(gameObject.transform.position, mousePos_world,
+                ((PlayerController) Controller).MovePoint,  out List<Vector3> path);
             var nodePath = pathfinderComponent.VectorPath2NodePath(path);
             List<Vector3> linePath = new List<Vector3>();
             foreach(var node in nodePath)
@@ -37,7 +39,7 @@ namespace ActorModule.ActorStates
 
             // 2.移动点数消耗判断,修正path
             int surplus = 0;
-            int point = (Controller as PlayerController).MovePoint;
+            int point = ((PlayerController) Controller).MovePoint;
             while (true)
             {
                 int cost = Mathf.FloorToInt(pathfinderComponent.GetPathCostToNode(path[path.Count - 1]));

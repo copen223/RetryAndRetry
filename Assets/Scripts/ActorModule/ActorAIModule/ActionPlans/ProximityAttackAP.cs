@@ -124,16 +124,25 @@ namespace ActorModule.ActorAIModule.ActionPlans
             if (aiMoveType != AIMoveType.Stay)
             {
                 List<Node> canMoveNodes_list = pathFinder.SearchPathForm(selfGo.transform.position, CheckIfCanAttack2); // 从自己开始进行寻路搜索
+                
                 var path = new List<Vector3>();
+                bool ifGetPath = false;
+               
+                int movePoint = selfController.MovePoint;
+                
                 foreach (var node in canMoveNodes_list)
                 {
                     Vector3 nodeInWorld = pathFinder.CellToWorld((node.x, node.y));
-                    path = pathFinder.GetPathFromTo(selfGo.transform.position, nodeInWorld);
+                    /*path = pathFinder.GetPathFromTo(selfGo.transform.position, nodeInWorld);
                     if (path.Count >= 1)
+                        break;*/
+                    ifGetPath = pathFinder.GetPathFromToNearst(selfGo.transform.position, nodeInWorld, movePoint,
+                        out path);
+                    if (ifGetPath)
                         break;
                 }
 
-                // Cost限制移动
+                /*// Cost限制移动
                 bool ifCanArrive = true;
                 int surplus = 0;
                 int point = selfController.MovePoint;
@@ -151,11 +160,11 @@ namespace ActorModule.ActorAIModule.ActionPlans
                     }
                     else
                         break;
-                }
+                }*/
 
                 do
                 {
-                    if (aiMoveType == AIMoveType.Vigilance && !ifCanArrive)
+                    if (aiMoveType == AIMoveType.Vigilance && !ifGetPath)
                         break;
 
                     selfController.StatesChild.GetComponent<ActorMoveByPath>().SetNodePath(pathFinder.VectorPath2NodePath(path));
